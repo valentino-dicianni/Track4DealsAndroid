@@ -22,4 +22,9 @@
         android:name="com.example.track4deals.ui.notifications.NotificationsFragment"
         android:label="@string/title_notifications"
         tools:layout="@layout/fragment_notifications" />
+    <fragment
+        android:id="@+id/navigation_profile"
+        android:name="com.example.track4deals.ui.login.LoginFragment"
+        android:label="@string/title_profile"
+        tools:layout="@layout/fragment_login" />
 </navigation>
