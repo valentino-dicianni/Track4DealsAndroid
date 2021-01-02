@@ -8,6 +8,7 @@ import com.example.track4deals.data.LoginRepository
 import com.example.track4deals.data.Result
 
 import com.example.track4deals.R
+import com.google.firebase.auth.FirebaseAuth
 
 class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel() {
 
@@ -19,14 +20,7 @@ class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel()
 
     fun login(username: String, password: String) {
         // can be launched in a separate asynchronous job
-        val result = loginRepository.login(username, password)
-
-        if (result is Result.Success) {
-            _loginResult.value =
-                LoginResult(success = LoggedInUserView(displayName = result.data.displayName))
-        } else {
-            _loginResult.value = LoginResult(error = R.string.login_failed)
-        }
+        loginRepository.login(username, password, _loginResult)
     }
 
     fun loginDataChanged(username: String, password: String) {
