@@ -1,4 +1,4 @@
-package com.example.track4deals.ui.login
+package com.example.track4deals.data.models
 
 /**
  * Data validation state of the login form.

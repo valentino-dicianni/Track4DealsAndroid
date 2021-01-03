@@ -2,16 +2,11 @@ package com.example.track4deals.data
 
 import android.app.Activity
 import android.util.Log
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.track4deals.data.model.LoggedInUser
-import com.example.track4deals.ui.login.LoggedInUserView
-import com.example.track4deals.ui.login.LoginResult
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.gms.tasks.Tasks.await
+import com.example.track4deals.data.models.LoggedInUser
+import com.example.track4deals.data.models.LoggedInUserView
+import com.example.track4deals.data.models.LoginResult
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
-import java.io.IOException
 
 
 /**
@@ -52,8 +47,11 @@ class LoginRepository() : Activity() {
                     task.isSuccessful -> {
                         val currentUser = auth.currentUser
                         if (currentUser != null) {
-                            result.value =
-                                LoginResult(success = currentUser.displayName?.let { LoggedInUserView(displayName = it) })
+                            currentUser.getIdToken(false).result?.token?.let {
+                                Log.d("LOGIN TOKEN: ", it)
+                            }
+                            setLoggedInUser(LoggedInUser(currentUser.uid, currentUser.displayName!!))
+                            result.value = LoginResult(success = currentUser.displayName?.let { LoggedInUserView(displayName = it) })
                         }
                     }
                 }
@@ -69,8 +67,4 @@ class LoginRepository() : Activity() {
         // @see https://developer.android.com/training/articles/keystore
     }
 
-
-    fun logoutFirebase() {
-        // TODO: revoke authentication
-    }
 }

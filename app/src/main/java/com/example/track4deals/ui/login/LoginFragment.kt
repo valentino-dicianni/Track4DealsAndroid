@@ -15,8 +15,11 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.Toast
+import androidx.constraintlayout.widget.ConstraintLayout
 
 import com.example.track4deals.R
+import com.example.track4deals.data.models.LoggedInUserView
+import com.example.track4deals.ui.register.RegisterFragment
 
 class LoginFragment : Fragment() {
 
@@ -37,7 +40,8 @@ class LoginFragment : Fragment() {
 
         val usernameEditText = view.findViewById<EditText>(R.id.username)
         val passwordEditText = view.findViewById<EditText>(R.id.password)
-        val loginButton = view.findViewById<Button>(R.id.login)
+        val loginButton = view.findViewById<Button>(R.id.loginButton)
+        val goToRegistationBtn = view.findViewById<Button>(R.id.toRegistrationBtn)
         val loadingProgressBar = view.findViewById<ProgressBar>(R.id.loading)
 
         loginViewModel.loginFormState.observe(viewLifecycleOwner,
@@ -102,11 +106,20 @@ class LoginFragment : Fragment() {
                 passwordEditText.text.toString()
             )
         }
+
+        goToRegistationBtn.setOnClickListener {
+            parentFragmentManager.apply {
+                beginTransaction()
+                    .replace(R.id.nav_host_fragment, RegisterFragment.newInstance())
+                    .addToBackStack(RegisterFragment.TAG)
+                    .commit()
+            }
+
+        }
     }
 
     private fun updateUiWithUser(model: LoggedInUserView) {
         val welcome = getString(R.string.welcome) + model.displayName
-        // TODO : initiate successful logged in experience
         val appContext = context?.applicationContext ?: return
         Toast.makeText(appContext, welcome, Toast.LENGTH_LONG).show()
     }

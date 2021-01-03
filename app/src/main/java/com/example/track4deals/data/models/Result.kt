@@ -1,4 +1,4 @@
-package com.example.track4deals.data
+package com.example.track4deals.data.models
 
 /**
  * A generic class that holds a value with its loading status.

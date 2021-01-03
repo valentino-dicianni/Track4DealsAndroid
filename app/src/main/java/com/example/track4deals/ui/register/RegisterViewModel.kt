@@ -1,13 +1,11 @@
-package com.example.track4deals.ui.login
+package com.example.track4deals.ui.register
 
 import android.util.Log
+import android.util.Patterns
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import android.util.Patterns
 import androidx.lifecycle.viewModelScope
-import com.example.track4deals.data.LoginRepository
-
 import com.example.track4deals.R
 import com.example.track4deals.data.models.LoginFormState
 import com.example.track4deals.data.models.LoginResult
@@ -15,8 +13,7 @@ import com.example.track4deals.services.AuthService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel() {
-
+class RegisterViewModel : ViewModel() {
     private val _loginForm = MutableLiveData<LoginFormState>()
     val loginFormState: LiveData<LoginFormState> = _loginForm
 
@@ -25,15 +22,22 @@ class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel()
 
     private val authService = AuthService.AuthServiceCreator.newService()
 
-
-    fun login(username: String, password: String) {
-        loginRepository.login(username, password, _loginResult)
+    fun addUser(displayName: String, email: String, password: String){
+        this.viewModelScope.launch(Dispatchers.IO) {
+            val response = authService.registerNewUser(displayName, password, email)
+            if (response.isSuccessful) {
+                response.body()?.let {
+                    Log.d("USER", "user id = ${it.user_id} profilePhoto = ${it.profilePhoto} cat_list = ${it.category_list}")
+                }
+            } else {
+                Log.d("USER", "Error msg = ${response.message()}")
+            }
+        }
     }
-
 
     fun loginDataChanged(username: String, password: String) {
         if (!isUserNameValid(username)) {
-            _loginForm.value = LoginFormState(usernameError = R.string.invalid_email)
+            _loginForm.value = LoginFormState(usernameError = R.string.invalid_username)
         } else if (!isPasswordValid(password)) {
             _loginForm.value = LoginFormState(passwordError = R.string.invalid_password)
         } else {
@@ -54,4 +58,5 @@ class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel()
     private fun isPasswordValid(password: String): Boolean {
         return password.length > 5
     }
+
 }

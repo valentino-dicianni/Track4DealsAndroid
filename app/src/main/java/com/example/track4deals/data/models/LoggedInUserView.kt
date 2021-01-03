@@ -1,4 +1,4 @@
-package com.example.track4deals.ui.login
+package com.example.track4deals.data.models
 
 /**
  * User details post authentication that is exposed to the UI
