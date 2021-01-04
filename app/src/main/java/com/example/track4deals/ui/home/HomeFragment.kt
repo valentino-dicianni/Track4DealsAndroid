@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.track4deals.R
+import com.example.track4deals.ui.register.RegisterFragment
 
 class HomeFragment : Fragment() {
 

@@ -1,9 +1,5 @@
 package com.example.track4deals.ui.login
 
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import androidx.annotation.StringRes
-import androidx.fragment.app.Fragment
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -15,8 +11,11 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.Toast
-import androidx.constraintlayout.widget.ConstraintLayout
-
+import androidx.annotation.StringRes
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.example.track4deals.R
 import com.example.track4deals.data.models.LoggedInUserView
 import com.example.track4deals.ui.register.RegisterFragment
@@ -31,7 +30,7 @@ class LoginFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         loginViewModel = ViewModelProvider(this, LoginViewModelFactory())
-                .get(LoginViewModel::class.java)
+            .get(LoginViewModel::class.java)
         return inflater.inflate(R.layout.fragment_login, container, false)
     }
 
@@ -114,7 +113,6 @@ class LoginFragment : Fragment() {
                     .addToBackStack(RegisterFragment.TAG)
                     .commit()
             }
-
         }
     }
 
@@ -122,6 +120,7 @@ class LoginFragment : Fragment() {
         val welcome = getString(R.string.welcome) + model.displayName
         val appContext = context?.applicationContext ?: return
         Toast.makeText(appContext, welcome, Toast.LENGTH_LONG).show()
+        findNavController().navigate(R.id.action_navigation_profile_to_navigation_home)
     }
 
     private fun showLoginFailed(@StringRes errorString: Int) {
