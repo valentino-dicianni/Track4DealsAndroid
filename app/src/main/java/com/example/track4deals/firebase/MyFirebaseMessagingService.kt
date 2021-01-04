@@ -23,8 +23,9 @@ class MyFirebaseMessagingService(): FirebaseMessagingService() {
         // manage this apps subscriptions on the server side, send the
         // Instance ID token to your app server.
         //apiGatewayService.registerFirebaseToken(token)
-        Log.d("MyFirebaseMessagingService", "Sent token to api gateway")
-        //sendRegistrationToServer(token)
+        Log.d("MyFirebaseMessagingService", "Sent token to Track4Deals Server")
+        // TODO: send FCM to server (enable notifications)
+        // sendRegistrationToServer(token)
     }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {

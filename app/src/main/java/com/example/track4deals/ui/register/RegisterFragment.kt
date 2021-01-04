@@ -42,7 +42,6 @@ class RegisterFragment : Fragment() {
 
         registerButton.setOnClickListener {
             loadingProgressBar.visibility = View.VISIBLE
-
             viewModel.addUser(
                 "testUSER",
                 usernameEditText.text.toString(),
