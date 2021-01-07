@@ -2,6 +2,7 @@ package com.example.track4deals.ui.offers
 
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -85,7 +86,7 @@ class OffersFragment : Fragment() {
         val end = start + 16
         //Use Handler if the items are loading too fast.
         //If you remove it, the data will load so fast that you can't even see the LoadingView
-        Handler().postDelayed({
+        Handler(Looper.getMainLooper()).postDelayed({
             for (i in start..end) {
                 //Get data and add them to loadMoreItemsCells ArrayList
                 loadMoreItemsCells.add("Item $i")
