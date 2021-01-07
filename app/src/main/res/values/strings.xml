@@ -2,10 +2,10 @@
     <string name="app_name">Track4Deals</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
-    <string name="title_profile">Profile</string>
-    <string name="title_tracking">Tracking</string>
-    <string name="title_offers">Offers</string>
+    <string name="title_settings">Impostazioni</string>
+    <string name="title_profile">Profilo</string>
+    <string name="title_tracking">Traccia</string>
+    <string name="title_offers">Offerte</string>
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
