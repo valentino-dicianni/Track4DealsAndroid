@@ -6,6 +6,7 @@
     <string name="title_profile">Profilo</string>
     <string name="title_tracking">Traccia</string>
     <string name="title_offers">Offerte</string>
+    <string name="title_login">Login</string>
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
@@ -24,4 +25,10 @@
     <string name="list_item_description">Product Description</string>
     <string name="goto_offer">Go to Offer</string>
     <string name="add_tracking">Add Tracking</string>
+    <!-- Strings related to profile -->
+    <string name="name_surename_it">Nome e Cognome</string>
+    <string name="phone_it">Cellulare</string>
+    <string name="tracked_it">Prodotti tracciati</string>
+    <string name="edit_button_it">MODIFICA</string>
+
 </resources>

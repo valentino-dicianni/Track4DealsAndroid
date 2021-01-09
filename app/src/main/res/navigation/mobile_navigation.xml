@@ -25,10 +25,16 @@
     <fragment
         android:id="@+id/navigation_profile"
         android:name="com.example.track4deals.ui.login.LoginFragment"
-        android:label="@string/title_profile"
+        android:label="@string/title_login"
         tools:layout="@layout/fragment_login" >
         <action
-            android:id="@+id/action_navigation_profile_to_navigation_home"
-            app:destination="@id/navigation_offers" />
+            android:id="@+id/action_navigation_profile_to_user_profile"
+            app:destination="@id/user_profile" />
     </fragment>
+    <fragment
+        android:id="@+id/user_profile"
+        android:name="com.example.track4deals.ui.profile.ProfileFragment"
+        android:label="@string/title_profile"
+        tools:layout="@layout/fragment_profile"
+        />
 </navigation>
