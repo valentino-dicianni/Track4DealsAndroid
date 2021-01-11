@@ -6,8 +6,8 @@ import com.example.track4deals.R
 import com.example.track4deals.data.database.entity.ProductEntity
 import com.xwray.groupie.kotlinandroidextensions.Item
 import com.xwray.groupie.kotlinandroidextensions.ViewHolder
-import kotlinx.android.synthetic.main.linear_item_row.*
-import kotlinx.android.synthetic.main.linear_item_row.view.*
+import kotlinx.android.synthetic.main.element_row_rv.view.*
+
 
 class ProductListItem(
     var productEntity: ProductEntity
@@ -21,7 +21,7 @@ class ProductListItem(
         }
     }
 
-    override fun getLayout() = R.layout.linear_item_row
+    override fun getLayout() = R.layout.element_row_rv
 
     private fun ViewHolder.updateImage() {
         // per le immagini usiamo Glide -> servono opzioni in caso non sia diponibile l'immagine
