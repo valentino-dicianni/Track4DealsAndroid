@@ -1,13 +1,14 @@
 package com.example.track4deals.ui.offers
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.track4deals.data.OffersRepository
+import com.example.track4deals.internal.lazyDeferred
 
-class OffersViewModel : ViewModel() {
+class OffersViewModel(
+    private val offerRepository: OffersRepository
+) : ViewModel() {
 
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is Offers Fragment"
+    val offers by lazyDeferred {
+        offerRepository.getOffers()
     }
-    val text: LiveData<String> = _text
 }

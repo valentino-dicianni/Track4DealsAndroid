@@ -1,46 +1,56 @@
 package com.example.track4deals.services
 
 import com.example.track4deals.data.constants.AppConstants
-import com.example.track4deals.data.models.UserInfo
-import com.google.gson.Gson
+import com.example.track4deals.data.models.ServerResponse
+import com.example.track4deals.services.utils.ConnectivityInterceptor
+import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
+import kotlinx.coroutines.Deferred
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.*
-import java.util.concurrent.TimeUnit
 
 
 interface OffersService {
 
-    @FormUrlEncoded
-    @POST("/offers/get_offers")
-    suspend fun getAllOffers(): retrofit2.Response<UserInfo>
+    @GET("/offers/get_offers")
+    fun getAllOffers(): Deferred<ServerResponse>
 
-    object OffersServiceCreator {
-        fun newService(): OffersService {
-            val interceptor = HttpLoggingInterceptor()
-            interceptor.level = HttpLoggingInterceptor.Level.BODY
-            val httpBuilder = OkHttpClient.Builder()
-            httpBuilder.addInterceptor(interceptor)
-            httpBuilder.addInterceptor(Interceptor { chain ->
-                val r = chain.request()
-                val builder = r.newBuilder()
-                builder.addHeader("Accept", "application/json")
-                builder.addHeader("Content-Type", "application/x-www-form-urlencoded")
-                builder.method(r.method, r.body)
-                chain.proceed(builder.build())
-            })
-            httpBuilder.connectTimeout(30, TimeUnit.SECONDS)
-            httpBuilder.readTimeout(30, TimeUnit.SECONDS)
+    companion object {
+        operator fun invoke(
+            connectivityInterceptor: ConnectivityInterceptor
+        ): OffersService {
+            val requestInterceptor = Interceptor { chain ->
 
-            val retrofit = Retrofit.Builder()
-                .baseUrl(AppConstants.baseServerURL)
-                .addConverterFactory(GsonConverterFactory.create(Gson()))
-                .client(httpBuilder.build())
+                //todo: aggiungere session token qui
+                val url = chain.request().url
+
+                val request = chain.request()
+                    .newBuilder()
+                    .url(url)
+                    .build()
+
+                return@Interceptor chain.proceed(request)
+            }
+
+            val okHttpClient = OkHttpClient.Builder()
+                .addInterceptor(requestInterceptor)
+                .addInterceptor(connectivityInterceptor)
+                .addInterceptor { chain ->
+                    val newRequest = chain.request().newBuilder()
+                        .addHeader("Authorization", "Bearer d19a0ca0-3142-4345-9f1d-68383d53a3d4")
+                        .build()
+                    chain.proceed(newRequest)
+                }
                 .build()
-            return retrofit.create(OffersService::class.java)
+
+            return Retrofit.Builder().client(okHttpClient)
+                .baseUrl(AppConstants.baseServerURL)
+                .addCallAdapterFactory(CoroutineCallAdapterFactory())
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(OffersService::class.java)
         }
     }
 }

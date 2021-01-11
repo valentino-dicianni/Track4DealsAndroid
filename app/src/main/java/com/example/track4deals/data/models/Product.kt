@@ -7,9 +7,9 @@ data class Product(
     val brand: String,
     val category: String,
     val description: String,
-    val normal_price: Number,
-    val offer_price: Number,
-    val discount_perc: Number,
+    val normal_price: Double,
+    val offer_price: Double,
+    val discount_perc: Double,
     val imageUrl_large: String,
     val imageUrl_medium: String,
     val isDeal: Boolean
