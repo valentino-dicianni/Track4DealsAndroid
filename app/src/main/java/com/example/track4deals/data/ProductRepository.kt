@@ -13,7 +13,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class OffersRepository(
+class ProductRepository(
     private val productDAO: ProductDAO,
     private val offersDataService : OffersDataService
 ) {
@@ -57,6 +57,10 @@ class OffersRepository(
             initOffersData()
             return@withContext productDAO.getAllProduct()
         }
+    }
+
+    suspend fun addTrackingProduct(product: ProductEntity) {
+
     }
 
     private suspend fun initOffersData() {

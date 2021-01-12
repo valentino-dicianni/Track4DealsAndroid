@@ -1,7 +1,7 @@
 package com.example.track4deals
 
 import android.app.Application
-import com.example.track4deals.data.OffersRepository
+import com.example.track4deals.data.ProductRepository
 import com.example.track4deals.data.database.ProductDB
 import com.example.track4deals.services.utils.ConnectivityInterceptor
 import com.example.track4deals.services.OffersDataService
@@ -21,7 +21,7 @@ class Track4DealsApplication : Application(), KodeinAware {
         bind() from singleton { ConnectivityInterceptor(instance()) }
         bind() from singleton { OffersService(instance()) }
         bind() from singleton { OffersDataService(instance()) }
-        bind() from singleton { OffersRepository(instance(), instance()) }
+        bind() from singleton { ProductRepository(instance(), instance()) }
         bind() from provider { OffersViewModelFactory(instance()) }
     }
 

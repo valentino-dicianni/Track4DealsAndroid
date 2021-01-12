@@ -26,9 +26,6 @@ class OffersFragment :  ScopedFragment(), KodeinAware {
     private lateinit var offersViewModel: OffersViewModel
     private val offersViewModelFactory: OffersViewModelFactory by instance()
 
-    lateinit var itemsCells: ArrayList<ProductEntity?>
-    private lateinit var productsData: ArrayList<ProductEntity>
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -40,6 +37,10 @@ class OffersFragment :  ScopedFragment(), KodeinAware {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        swipeContainer.setOnRefreshListener {
+            bindUI()
+            swipeContainer.isRefreshing = false
+        }
         bindUI()
     }
 

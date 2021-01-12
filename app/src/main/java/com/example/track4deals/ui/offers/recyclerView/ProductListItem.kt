@@ -7,6 +7,7 @@ import android.net.Uri
 import android.text.Spannable
 import android.text.Spanned
 import android.text.style.StrikethroughSpan
+import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import com.bumptech.glide.Glide
@@ -17,6 +18,9 @@ import com.example.track4deals.ui.offers.OffersViewModel
 import com.xwray.groupie.kotlinandroidextensions.Item
 import com.xwray.groupie.kotlinandroidextensions.ViewHolder
 import kotlinx.android.synthetic.main.element_row_rv.view.*
+import kotlinx.android.synthetic.main.fragment_offers.*
+import kotlinx.android.synthetic.main.fragment_offers.view.*
+import kotlinx.coroutines.*
 
 
 class ProductListItem(
@@ -50,10 +54,12 @@ class ProductListItem(
         }
 
         viewHolder.itemView.addTrackingBtn.setOnClickListener{
-            offersViewModel.addTracking(productEntity)
+            val job = GlobalScope.launch(Dispatchers.IO) {
+                withContext(Dispatchers.Default){ offersViewModel.addTracking(productEntity) }
+            }
+
             Toast.makeText(context, "Prodotto aggiunto!", Toast.LENGTH_LONG).show()
         }
-
     }
 
 
