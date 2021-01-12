@@ -31,6 +31,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="10dp"
+            android:showDividers=""
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -45,6 +46,16 @@
                 android:textSize="19sp" />
 
             <TextView
+                android:id="@+id/brand"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity=""
+                android:layout_marginTop="10dp"
+                android:text="@string/Brand"
+                android:textSize="15sp"
+                android:textStyle="bold|italic" />
+
+            <TextView
                 android:id="@+id/productDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -52,10 +63,37 @@
                 android:text="@string/list_item_description"
                 android:textSize="15sp" />
 
+            <LinearLayout
+                android:id="@+id/container2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                >
+
+                <TextView
+                    android:id="@+id/oldPrice"
+                    android:layout_width="64dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/price"
+                    android:textSize="15sp"
+                    />
+
+                <TextView
+                    android:id="@+id/newPrice"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/price"
+                    android:textSize="15sp"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+
             <Button
                 android:id="@+id/goToOfferBtn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
                 android:text="@string/goto_offer" />
 
             <Button

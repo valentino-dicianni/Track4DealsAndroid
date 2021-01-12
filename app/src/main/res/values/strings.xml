@@ -30,5 +30,7 @@
     <string name="phone_it">Cellulare</string>
     <string name="tracked_it">Prodotti tracciati</string>
     <string name="edit_button_it">MODIFICA</string>
+    <string name="price">Price</string>
+    <string name="Brand">Brand</string>
 
 </resources>
