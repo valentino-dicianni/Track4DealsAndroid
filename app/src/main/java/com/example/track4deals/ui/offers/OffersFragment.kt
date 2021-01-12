@@ -54,7 +54,7 @@ class OffersFragment :  ScopedFragment(), KodeinAware {
 
     private fun List<ProductEntity>.toItemsList(): List<ProductListItem> {
         return this.map {
-            ProductListItem(it)
+            context?.let { ctx -> ProductListItem(it, offersViewModel, ctx) }!!
         }
     }
 
@@ -68,5 +68,6 @@ class OffersFragment :  ScopedFragment(), KodeinAware {
             items_linear_rv.layoutManager = LinearLayoutManager(context)
             items_linear_rv.setHasFixedSize(true)
         }
+
     }
 }

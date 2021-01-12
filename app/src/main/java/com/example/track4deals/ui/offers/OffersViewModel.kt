@@ -2,6 +2,7 @@ package com.example.track4deals.ui.offers
 
 import androidx.lifecycle.ViewModel
 import com.example.track4deals.data.OffersRepository
+import com.example.track4deals.data.database.entity.ProductEntity
 import com.example.track4deals.internal.lazyDeferred
 
 class OffersViewModel(
@@ -10,5 +11,12 @@ class OffersViewModel(
 
     val offers by lazyDeferred {
         offerRepository.getOffers()
+    }
+
+
+    fun addTracking(productEntity: ProductEntity){
+
+
+
     }
 }
