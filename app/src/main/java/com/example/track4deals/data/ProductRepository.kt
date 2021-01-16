@@ -6,31 +6,31 @@ import com.example.track4deals.data.database.ProductDAO
 import com.example.track4deals.data.database.entity.ProductEntity
 import com.example.track4deals.data.models.Product
 import com.example.track4deals.data.models.ServerResponse
-import com.example.track4deals.services.OffersDataService
-import com.example.track4deals.services.OffersService
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import com.example.track4deals.services.ProductDataService
+import kotlinx.coroutines.*
 
 class ProductRepository(
     private val productDAO: ProductDAO,
-    private val offersDataService : OffersDataService
+    private val productDataService: ProductDataService
 ) {
 
     init {
-        offersDataService.downloadedOffers.observeForever { newOffers ->
-            persistOffersData(newOffers)
+        productDataService.downloadedOffers.observeForever { newOffers ->
+            persistProductData(newOffers, 0)
+        }
+        productDataService.downloadeTracking.observeForever { newTrackings ->
+            persistProductData(newTrackings, 1)
         }
     }
 
-    private fun persistOffersData(newOffers: ServerResponse?) {
+
+    private fun persistProductData(newOffers: ServerResponse?, isTracking: Int) {
         GlobalScope.launch(Dispatchers.IO) {
             val products: ArrayList<Product>? = newOffers?.response
             var deal: Int
             if (products != null) {
                 for (p: Product in products) {
-                    deal = if(p.isDeal) 1
+                    deal = if (p.isDeal) 1
                     else 0
                     val newP = ProductEntity(
                         p.ASIN,
@@ -44,7 +44,8 @@ class ProductRepository(
                         p.discount_perc,
                         p.imageUrl_large,
                         p.imageUrl_medium,
-                        deal
+                        deal,
+                        isTracking
                     )
                     productDAO.upsert(newP)
                 }
@@ -54,16 +55,19 @@ class ProductRepository(
 
     suspend fun getOffers(): LiveData<List<ProductEntity>> {
         return withContext(Dispatchers.IO) {
-            initOffersData()
+            productDataService.getOffers()
             return@withContext productDAO.getAllProduct()
         }
     }
 
-    suspend fun addTrackingProduct(product: ProductEntity) {
-
+    suspend fun getTracking(): LiveData<List<ProductEntity>> {
+        return withContext(Dispatchers.IO) {
+            productDataService.getTracking()
+            return@withContext productDAO.getAllTracking()
+        }
     }
 
-    private suspend fun initOffersData() {
-        offersDataService.getOffers()
+    suspend fun addTrackingProduct(productEntity: ProductEntity) {
+        delay(500)
     }
 }

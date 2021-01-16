@@ -20,9 +20,9 @@ data class ProductEntity(
     val discount_perc: Double,
     val imageUrl_large: String,
     val imageUrl_medium: String,
-    val isDeal: Int
-    /*val last_modify: String,
-    val is_tracking: Int*/
+    val isDeal: Int,
+    val is_tracking: Int
+    /*val last_modify: String,*/
 ) {
 
 }

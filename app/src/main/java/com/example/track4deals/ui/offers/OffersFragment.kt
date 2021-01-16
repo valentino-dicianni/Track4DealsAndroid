@@ -32,6 +32,7 @@ class OffersFragment :  ScopedFragment(), KodeinAware {
         savedInstanceState: Bundle?
     ): View? {
         offersViewModel = ViewModelProvider(this, offersViewModelFactory).get(OffersViewModel::class.java)
+        bindUI()
         return inflater.inflate(R.layout.fragment_offers, container, false)
     }
 
@@ -41,7 +42,7 @@ class OffersFragment :  ScopedFragment(), KodeinAware {
             bindUI()
             swipeContainer.isRefreshing = false
         }
-        bindUI()
+
     }
 
     private fun bindUI() = launch(Dispatchers.Main) {

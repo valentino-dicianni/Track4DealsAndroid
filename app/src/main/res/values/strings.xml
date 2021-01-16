@@ -10,21 +10,16 @@
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
-    <string name="prompt_repeat_password">Repeat Password</string>
-    <string name="action_register">Register</string>
-    <string name="action_cancel">Cancel</string>
+    <string name="prompt_repeat_password">Ripeti la  Password</string>
+    <string name="action_register">Registrati</string>
+    <string name="action_cancel">Cancella</string>
     <string name="action_sign_in_short">Sign in</string>
-    <string name="welcome">"Welcome!"</string>
-    <string name="invalid_username">Not a valid username</string>
-    <string name="invalid_password">Password must be >5 characters</string>
-    <string name="login_failed">"Login failed"</string>
-    <string name="invalid_email">Invalid Email</string>
-    <string name="loading">Loading…</string>
-    <string name="product">product</string>
-    <string name="list_item_title">Product Name</string>
-    <string name="list_item_description">Product Description</string>
-    <string name="goto_offer">Go to Offer</string>
-    <string name="add_tracking">Add Tracking</string>
+    <string name="welcome">"Benvenuto!"</string>
+    <string name="invalid_username">Non è unsername valido</string>
+    <string name="invalid_password">La password deve essere >5 caratteri</string>
+    <string name="login_failed">Login fallito</string>
+    <string name="invalid_email">Email non valida</string>
+    <string name="loading">Caricamento…</string>
     <!-- Strings related to profile -->
     <string name="name_surename_it">Nome e Cognome</string>
     <string name="phone_it">Cellulare</string>
@@ -32,5 +27,14 @@
     <string name="edit_button_it">MODIFICA</string>
     <string name="price">Price</string>
     <string name="Brand">Brand</string>
+    <!-- Strings related to products -->
+    <string name="product">prodotto</string>
+    <string name="list_item_title">Nome Prodotto</string>
+    <string name="list_item_description">Descrizione</string>
+    <string name="goto_offer">Vai all\' Offerta</string>
+    <string name="add_tracking">Aggiungi al Tracking</string>
+    <string name="remove_tracking">Rimuovi dal Tracking</string>
+    <string name="track_added">Prodotto Aggiunto!</string>
+    <string name="track_remove">Prodotto Rimosso!</string>
 
 </resources>

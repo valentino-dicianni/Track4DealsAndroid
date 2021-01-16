@@ -28,7 +28,7 @@ abstract class ProductDB : RoomDatabase() {
         private fun buildDatabase(context: Context) =
             Room.databaseBuilder(
                 context.applicationContext,
-                ProductDB::class.java, "productDatabase.db"
+                ProductDB::class.java, "productDatabase1.db"
             ).build()
     }
 }

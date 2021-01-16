@@ -4,7 +4,7 @@ import android.app.Application
 import com.example.track4deals.data.ProductRepository
 import com.example.track4deals.data.database.ProductDB
 import com.example.track4deals.services.utils.ConnectivityInterceptor
-import com.example.track4deals.services.OffersDataService
+import com.example.track4deals.services.ProductDataService
 import com.example.track4deals.services.OffersService
 import com.example.track4deals.ui.offers.OffersViewModelFactory
 import com.jakewharton.threetenabp.AndroidThreeTen
@@ -20,7 +20,7 @@ class Track4DealsApplication : Application(), KodeinAware {
         bind() from singleton { instance<ProductDB>().productDAO() }
         bind() from singleton { ConnectivityInterceptor(instance()) }
         bind() from singleton { OffersService(instance()) }
-        bind() from singleton { OffersDataService(instance()) }
+        bind() from singleton { ProductDataService(instance()) }
         bind() from singleton { ProductRepository(instance(), instance()) }
         bind() from provider { OffersViewModelFactory(instance()) }
     }

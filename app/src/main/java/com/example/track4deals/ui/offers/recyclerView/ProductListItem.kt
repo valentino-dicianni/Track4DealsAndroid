@@ -44,6 +44,10 @@ class ProductListItem(
             text.setSpan(STRIKE_THROUGH_SPAN, 0, text.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
 
             viewHolder.itemView.newPrice.text = "${productEntity.offer_price} €"
+            if(productEntity.is_tracking == 1)
+                viewHolder.itemView.addTrackingBtn.text = context.getString(R.string.remove_tracking)
+            if(productEntity.is_tracking == 0)
+                viewHolder.itemView.addTrackingBtn.text = context.getString(R.string.add_tracking)
             updateImage()
         }
 
@@ -53,12 +57,24 @@ class ProductListItem(
             context.startActivity(intent)
         }
 
-        viewHolder.itemView.addTrackingBtn.setOnClickListener{
-            val job = GlobalScope.launch(Dispatchers.IO) {
-                withContext(Dispatchers.Default){ offersViewModel.addTracking(productEntity) }
-            }
+        viewHolder.itemView.addTrackingBtn.setOnClickListener {
+            if (viewHolder.itemView.addTrackingBtn.text == context.getString(R.string.add_tracking)) {
+                GlobalScope.launch(Dispatchers.IO) {
+                    offersViewModel.addTracking(productEntity)
+                }
 
-            Toast.makeText(context, "Prodotto aggiunto!", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, context.getString(R.string.track_added), Toast.LENGTH_LONG).show()
+                viewHolder.itemView.addTrackingBtn.text =
+                    context.getString(R.string.remove_tracking)
+            }
+            else {
+                GlobalScope.launch(Dispatchers.IO) {
+                    offersViewModel.removeTracking(productEntity)
+                }
+                Toast.makeText(context, context.getString(R.string.track_remove), Toast.LENGTH_LONG).show()
+                viewHolder.itemView.addTrackingBtn.text =
+                    context.getString(R.string.add_tracking)
+            }
         }
     }
 

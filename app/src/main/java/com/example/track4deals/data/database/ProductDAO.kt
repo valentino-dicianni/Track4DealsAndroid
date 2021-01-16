@@ -11,9 +11,9 @@ interface ProductDAO {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun upsert(productEntity: ProductEntity)
 
-    //TODO: sarebbe bello in ordine di modifica
     @Query("select * from product where isDeal = 1")
     fun getAllProduct(): LiveData<List<ProductEntity>>
 
-
+    @Query("select * from product where is_tracking = 1")
+    fun getAllTracking(): LiveData<List<ProductEntity>>
 }
