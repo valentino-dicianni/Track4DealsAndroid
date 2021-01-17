@@ -30,5 +30,6 @@ class TrackingFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         group_loading.visibility = View.GONE
 
+
     }
 }
