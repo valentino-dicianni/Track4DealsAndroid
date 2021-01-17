@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.track4deals.data.models.ServerResponse
 import com.example.track4deals.internal.NoConnectivityException
+import com.google.firebase.auth.FirebaseAuth
 
 
 class ProductDataService(
@@ -29,7 +30,12 @@ class ProductDataService(
 
     suspend fun getTracking() {
         try {
-            val offers = offersService.getAllTrackingAsync().await()
+            val firebaseUser = FirebaseAuth.getInstance().currentUser
+            var firebaseToken: String = ""
+            if (firebaseUser != null) {
+                firebaseToken = firebaseUser.getIdToken(false).result?.token!!
+            }
+            val offers = offersService.getAllTrackingAsync("Bearer $firebaseToken").await()
             _downloadeTracking.postValue(offers)
         } catch (e: NoConnectivityException) {
             Log.e("Connectivity", "NO internet connection", e)

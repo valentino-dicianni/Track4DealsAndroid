@@ -18,11 +18,16 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.track4deals.R
 import com.example.track4deals.data.models.LoggedInUserView
+import com.example.track4deals.ui.profile.ProfileFragment
 import com.example.track4deals.ui.register.RegisterFragment
 
 class LoginFragment : Fragment() {
-
     private lateinit var loginViewModel: LoginViewModel
+
+    companion object {
+        const val TAG = "RegistrationFragment"
+        fun newInstance() = ProfileFragment()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -120,7 +125,11 @@ class LoginFragment : Fragment() {
         val welcome = getString(R.string.welcome) + model.displayName
         val appContext = context?.applicationContext ?: return
         Toast.makeText(appContext, welcome, Toast.LENGTH_LONG).show()
-        findNavController().navigate(R.id.action_navigation_profile_to_user_profile)
+        parentFragmentManager.apply {
+            beginTransaction()
+                .replace(R.id.nav_host_fragment, ProfileFragment.newInstance())
+                .commit()
+        }
     }
 
     private fun showLoginFailed(@StringRes errorString: Int) {
