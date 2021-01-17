@@ -52,6 +52,7 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui-ktx:2.3.2'
     implementation 'androidx.annotation:annotation:1.1.0'
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2")
+    implementation 'androidx.preference:preference:1.1.1'
 
     // Room
     def room_version = "2.2.6"
