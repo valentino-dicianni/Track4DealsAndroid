@@ -6,10 +6,12 @@ import android.text.Spannable
 import android.text.Spanned
 import android.text.style.StrikethroughSpan
 import android.widget.TextView
+import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.track4deals.R
 import com.example.track4deals.data.database.entity.ProductEntity
+import com.google.firebase.auth.FirebaseAuth
 
 import com.xwray.groupie.kotlinandroidextensions.Item
 import com.xwray.groupie.kotlinandroidextensions.ViewHolder
@@ -49,14 +51,19 @@ class ProductListItem(
         }
 
         viewHolder.itemView.addTrackingBtn.setOnClickListener {
-            if (viewHolder.itemView.addTrackingBtn.text == context.getString(R.string.add_tracking)) {
-                viewHolder.itemView.addTrackingBtn.text =
-                    context.getString(R.string.remove_tracking)
-                onProductl.onAddTracking(productEntity)
-            } else {
-                viewHolder.itemView.addTrackingBtn.text =
-                    context.getString(R.string.add_tracking)
-                onProductl.onRemoveTracking(productEntity)
+            if (FirebaseAuth.getInstance().currentUser != null) {
+                if (viewHolder.itemView.addTrackingBtn.text == context.getString(R.string.add_tracking)) {
+                    viewHolder.itemView.addTrackingBtn.text =
+                        context.getString(R.string.remove_tracking)
+                    onProductl.onAddTracking(productEntity)
+                } else {
+                    viewHolder.itemView.addTrackingBtn.text =
+                        context.getString(R.string.add_tracking)
+                    onProductl.onRemoveTracking(productEntity)
+                }
+            }
+            else {
+                Toast.makeText(context, context.getString(R.string.errorToast), Toast.LENGTH_LONG).show()
             }
         }
     }

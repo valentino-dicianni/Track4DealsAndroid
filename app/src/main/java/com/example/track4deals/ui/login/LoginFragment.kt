@@ -25,8 +25,8 @@ class LoginFragment : Fragment() {
     private lateinit var loginViewModel: LoginViewModel
 
     companion object {
-        const val TAG = "RegistrationFragment"
-        fun newInstance() = ProfileFragment()
+        const val TAG = "LoginFragment"
+        fun newInstance() = LoginFragment()
     }
 
     override fun onCreateView(

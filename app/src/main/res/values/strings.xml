@@ -50,5 +50,9 @@
     <string name="attachment_summary_on">Automatically download attachments for incoming emails
     </string>
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <string name="errorToast">Devi prima autenticarti!</string>
+    <string name="logout">Esci</string>
+    <string name="logoutDesc">Esegui il log out</string>
+    <string name="logoutExecuted">"Logout Eseguito! "</string>
 
 </resources>

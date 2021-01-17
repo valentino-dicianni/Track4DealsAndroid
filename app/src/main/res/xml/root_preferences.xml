@@ -1,4 +1,5 @@
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory app:title="@string/messages_header">
 
@@ -33,6 +34,10 @@
     </PreferenceCategory>
 
     // Esci
+    <Preference
+        android:key="@string/logoutDesc"
+        android:summary="@string/logoutDesc"
+        android:title="@string/logout" />
     // versione app
     // termini e condizioni
 

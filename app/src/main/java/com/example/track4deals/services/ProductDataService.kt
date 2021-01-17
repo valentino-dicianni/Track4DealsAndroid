@@ -35,6 +35,8 @@ class ProductDataService(
             if (firebaseUser != null) {
                 firebaseToken = firebaseUser.getIdToken(false).result?.token!!
             }
+
+            //TODO: da mettere a posto se lútente non è registrato
             val offers = offersService.getAllTrackingAsync("Bearer $firebaseToken").await()
             _downloadeTracking.postValue(offers)
         } catch (e: NoConnectivityException) {
