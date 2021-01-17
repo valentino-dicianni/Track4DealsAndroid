@@ -2,31 +2,23 @@ package com.example.track4deals.ui.offers.recyclerView
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import android.text.Spannable
 import android.text.Spanned
 import android.text.style.StrikethroughSpan
-import android.view.View
 import android.widget.TextView
-import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.track4deals.R
 import com.example.track4deals.data.database.entity.ProductEntity
-import com.example.track4deals.ui.offers.OffersViewModel
+
 import com.xwray.groupie.kotlinandroidextensions.Item
 import com.xwray.groupie.kotlinandroidextensions.ViewHolder
 import kotlinx.android.synthetic.main.element_row_rv.view.*
-import kotlinx.android.synthetic.main.fragment_offers.*
-import kotlinx.android.synthetic.main.fragment_offers.view.*
-import kotlinx.coroutines.*
-
 
 class ProductListItem(
     var productEntity: ProductEntity,
-    var offersViewModel: OffersViewModel,
-    var context: Context
+    var context: Context,
+    var onProductl: OnProductListener
 ) : Item() {
     private val STRIKE_THROUGH_SPAN = StrikethroughSpan()
 
@@ -44,36 +36,27 @@ class ProductListItem(
             text.setSpan(STRIKE_THROUGH_SPAN, 0, text.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
 
             viewHolder.itemView.newPrice.text = "${productEntity.offer_price} €"
-            if(productEntity.is_tracking == 1)
-                viewHolder.itemView.addTrackingBtn.text = context.getString(R.string.remove_tracking)
-            if(productEntity.is_tracking == 0)
+            if (productEntity.is_tracking == 1)
+                viewHolder.itemView.addTrackingBtn.text =
+                    context.getString(R.string.remove_tracking)
+            if (productEntity.is_tracking == 0)
                 viewHolder.itemView.addTrackingBtn.text = context.getString(R.string.add_tracking)
             updateImage()
         }
 
         viewHolder.itemView.goToOfferBtn.setOnClickListener {
-            val intent = Intent(Intent.ACTION_VIEW)
-            intent.data = Uri.parse(productEntity.product_url)
-            context.startActivity(intent)
+            onProductl.onUrlClick(productEntity.product_url)
         }
 
         viewHolder.itemView.addTrackingBtn.setOnClickListener {
             if (viewHolder.itemView.addTrackingBtn.text == context.getString(R.string.add_tracking)) {
-                GlobalScope.launch(Dispatchers.IO) {
-                    offersViewModel.addTracking(productEntity)
-                }
-
-                Toast.makeText(context, context.getString(R.string.track_added), Toast.LENGTH_LONG).show()
                 viewHolder.itemView.addTrackingBtn.text =
                     context.getString(R.string.remove_tracking)
-            }
-            else {
-                GlobalScope.launch(Dispatchers.IO) {
-                    offersViewModel.removeTracking(productEntity)
-                }
-                Toast.makeText(context, context.getString(R.string.track_remove), Toast.LENGTH_LONG).show()
+                onProductl.onAddTracking(productEntity)
+            } else {
                 viewHolder.itemView.addTrackingBtn.text =
                     context.getString(R.string.add_tracking)
+                onProductl.onRemoveTracking(productEntity)
             }
         }
     }

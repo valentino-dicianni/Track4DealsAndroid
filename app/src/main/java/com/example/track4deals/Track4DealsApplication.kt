@@ -6,7 +6,9 @@ import com.example.track4deals.data.database.ProductDB
 import com.example.track4deals.services.utils.ConnectivityInterceptor
 import com.example.track4deals.services.ProductDataService
 import com.example.track4deals.services.OffersService
+import com.example.track4deals.ui.offers.OffersFragment
 import com.example.track4deals.ui.offers.OffersViewModelFactory
+import com.example.track4deals.ui.offers.recyclerView.ProductListItem
 import com.jakewharton.threetenabp.AndroidThreeTen
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
@@ -31,3 +33,4 @@ class Track4DealsApplication : Application(), KodeinAware {
     }
 
 }
+

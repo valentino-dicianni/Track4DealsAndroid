@@ -68,6 +68,6 @@ class ProductRepository(
     }
 
     suspend fun addTrackingProduct(productEntity: ProductEntity) {
-        delay(500)
+        delay(5000)
     }
 }

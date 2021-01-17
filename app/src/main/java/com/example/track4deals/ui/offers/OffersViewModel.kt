@@ -15,7 +15,6 @@ class OffersViewModel(
         productRepository.getOffers()
     }
 
-
     suspend fun addTracking(productEntity: ProductEntity) {
        productRepository.addTrackingProduct(productEntity)
     }
