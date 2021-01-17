@@ -13,9 +13,9 @@
 
     <fragment
         android:id="@+id/navigation_track"
-        android:name="com.example.track4deals.ui.dashboard.DashboardFragment"
-        android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_dashboard" />
+        android:name="com.example.track4deals.ui.tracking.TrackingFragment"
+        android:label="@string/title_tracking"
+        tools:layout="@layout/fragment_tracking" />
 
     <fragment
         android:id="@+id/navigation_settings"
