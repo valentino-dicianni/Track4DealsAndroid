@@ -5,23 +5,29 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.track4deals.R
+import com.example.track4deals.internal.ScopedFragment
 import kotlinx.android.synthetic.main.fragment_offers.*
+import kotlinx.android.synthetic.main.fragment_offers.group_loading
+import kotlinx.android.synthetic.main.fragment_tracking.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
-class TrackingFragment : Fragment() {
+class TrackingFragment : ScopedFragment() {
 
     private lateinit var trackingViewModel: TrackingViewModel
 
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
         trackingViewModel =
-                ViewModelProvider(this).get(TrackingViewModel::class.java)
+            ViewModelProvider(this).get(TrackingViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_tracking, container, false)
         return root
     }
@@ -30,6 +36,18 @@ class TrackingFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         group_loading.visibility = View.GONE
 
+        track_btn.setOnClickListener {
+            val link = edit_text_link.text.toString()
+            if (link != "") {
+                group_loading.visibility = View.VISIBLE
+                launch(Dispatchers.Main) {
+                    trackingViewModel.trackProduct(link)
+                    group_loading.visibility = View.GONE
+                    // TODO: dipende dal risultato
+                    Toast.makeText(context, "Fine", Toast.LENGTH_LONG).show()
+                }
+            }
 
+        }
     }
 }

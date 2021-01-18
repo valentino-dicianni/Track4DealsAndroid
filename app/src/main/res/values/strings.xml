@@ -35,6 +35,8 @@
     <string name="remove_tracking">Rimuovi dal Tracking</string>
     <string name="track_added">Prodotto Aggiunto!</string>
     <string name="track_remove">Prodotto Rimosso!</string>
+    <string name="searching">Ricerca in corso…</string>
+
     <!-- Preference Titles -->
     <string name="messages_header">Messages</string>
     <string name="sync_header">Sync</string>
@@ -55,5 +57,6 @@
     <string name="logoutExecuted">"Logout Eseguito! "</string>
     <string name="link_prod_title">Link al prodotto Amazon</string>
     <string name="traccia">Traccia</string>
+
 
 </resources>

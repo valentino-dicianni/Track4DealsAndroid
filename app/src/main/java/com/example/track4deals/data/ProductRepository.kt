@@ -21,8 +21,10 @@ class ProductRepository(
         productDataService.downloadeTracking.observeForever { newTrackings ->
             persistProductData(newTrackings, 1)
         }
+        productDataService.addTrackingRes.observeForever { trackingResponse ->
+            persistProductData(trackingResponse, 1)
+        }
     }
-
 
     private fun persistProductData(newOffers: ServerResponse?, isTracking: Int) {
         GlobalScope.launch(Dispatchers.IO) {
@@ -60,14 +62,15 @@ class ProductRepository(
         }
     }
 
-    suspend fun getTracking(): LiveData<List<ProductEntity>> {
+    suspend fun getTrackingProducts(): LiveData<List<ProductEntity>> {
         return withContext(Dispatchers.IO) {
             productDataService.getTracking()
             return@withContext productDAO.getAllTracking()
         }
     }
 
+    // TODO: gestire insuccesso
     suspend fun addTrackingProduct(productEntity: ProductEntity) {
-        delay(5000)
+        productDataService.addTrackProduct(productEntity)
     }
 }

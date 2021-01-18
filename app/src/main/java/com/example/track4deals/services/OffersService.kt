@@ -30,13 +30,13 @@ interface OffersService {
     // TODO: controllare il parametro productID sia passato corretamente
     @POST("/tracking/verify/:productID")
     fun verifyProductAsync(
-        @Field("profilePhoto") profilePhoto: String,
-        @Field("caregoty_list") caregoty_list: Array<String?>,
+        @Header("Authorization") token: String
     ): Deferred<ServerResponse>
 
     @FormUrlEncoded
     @POST("/tracking/add_tracking")
     fun addTrackingProductAsync(
+        @Header("Authorization") token: String,
         @Field("ASIN") ASIN: String,
         @Field("product_url") product_url: String,
         @Field("title") title: String,
