@@ -29,31 +29,17 @@ class ProductRepository(
     private fun persistProductData(newOffers: ServerResponse?, isTracking: Int) {
         GlobalScope.launch(Dispatchers.IO) {
             val products: ArrayList<Product>? = newOffers?.response
-            var deal: Int
             if (products != null) {
                 for (p: Product in products) {
-                    deal = if (p.isDeal) 1
-                    else 0
-                    val newP = ProductEntity(
-                        p.ASIN,
-                        p.product_url,
-                        p.title,
-                        p.brand,
-                        p.category,
-                        p.description,
-                        p.normal_price,
-                        p.offer_price,
-                        p.discount_perc,
-                        p.imageUrl_large,
-                        p.imageUrl_medium,
-                        deal,
-                        isTracking
-                    )
-                    productDAO.upsert(newP)
+                    if(isTracking == 0)
+                        productDAO.customUpsert(p.productToEntity(isTracking))
+                    if(isTracking == 1)
+                        productDAO.upsert(p.productToEntity(isTracking))
                 }
             }
         }
     }
+
 
     suspend fun getOffers(): LiveData<List<ProductEntity>> {
         return withContext(Dispatchers.IO) {

@@ -92,7 +92,6 @@ class OffersFragment :  ScopedFragment(), KodeinAware, OnProductListener {
             offersViewModel.addTracking(product)
             Toast.makeText(context, getString(R.string.track_added), Toast.LENGTH_LONG).show()
         }
-
     }
 
     override fun onRemoveTracking(product: ProductEntity) {

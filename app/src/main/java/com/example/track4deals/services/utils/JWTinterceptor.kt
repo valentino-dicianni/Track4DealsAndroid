@@ -12,10 +12,14 @@ class JWTinterceptor(
 ) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val token = tokenProvider.get()
-        Log.d(TAG, "intercept: ${token}")
-        val newRequest: Request = chain.request().newBuilder()
-            .addHeader("Authorization", "Bearer ${token}")
-            .build()
+        val newRequest: Request
+        newRequest = if (token != "") {
+            chain.request().newBuilder()
+                .addHeader("Authorization", "Bearer $token")
+                .build()
+        } else {
+            chain.request()
+        }
         return chain.proceed(newRequest)
     }
 }
