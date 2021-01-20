@@ -11,6 +11,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.track4deals.R
 import com.example.track4deals.data.database.entity.ProductEntity
+import com.example.track4deals.internal.TokenProvider
 import com.google.firebase.auth.FirebaseAuth
 
 import com.xwray.groupie.kotlinandroidextensions.Item
@@ -20,7 +21,8 @@ import kotlinx.android.synthetic.main.element_row_rv.view.*
 class ProductListItem(
     var productEntity: ProductEntity,
     var context: Context,
-    var onProductl: OnProductListener
+    var onProductl: OnProductListener,
+    var tokenProvider: TokenProvider
 ) : Item() {
     private val STRIKE_THROUGH_SPAN = StrikethroughSpan()
 
@@ -51,7 +53,7 @@ class ProductListItem(
         }
 
         viewHolder.itemView.addTrackingBtn.setOnClickListener {
-            if (FirebaseAuth.getInstance().currentUser != null) {
+            if (tokenProvider.get() != "") {
                 if (viewHolder.itemView.addTrackingBtn.text == context.getString(R.string.add_tracking)) {
                     viewHolder.itemView.addTrackingBtn.text =
                         context.getString(R.string.remove_tracking)

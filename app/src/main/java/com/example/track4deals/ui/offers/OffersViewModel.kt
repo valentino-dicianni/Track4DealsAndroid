@@ -19,8 +19,7 @@ class OffersViewModel(
        productRepository.addTrackingProduct(productEntity)
     }
 
-
-    fun removeTracking(productEntity: ProductEntity) {
-
+    suspend fun removeTracking(productEntity: ProductEntity) {
+        productRepository.removeTrackingProduct(productEntity)
     }
 }

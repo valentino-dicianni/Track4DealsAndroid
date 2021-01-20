@@ -20,8 +20,13 @@ import com.example.track4deals.R
 import com.example.track4deals.data.models.LoggedInUserView
 import com.example.track4deals.ui.profile.ProfileFragment
 import com.example.track4deals.ui.register.RegisterFragment
+import org.kodein.di.KodeinAware
+import org.kodein.di.android.x.closestKodein
+import org.kodein.di.generic.instance
 
-class LoginFragment : Fragment() {
+class LoginFragment : Fragment(), KodeinAware {
+    override val kodein by closestKodein()
+    private val loginViewModelFactory :LoginViewModelFactory by instance()
     private lateinit var loginViewModel: LoginViewModel
 
     companion object {
@@ -34,7 +39,7 @@ class LoginFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        loginViewModel = ViewModelProvider(this, LoginViewModelFactory())
+        loginViewModel = ViewModelProvider(this, loginViewModelFactory)
             .get(LoginViewModel::class.java)
         return inflater.inflate(R.layout.fragment_login, container, false)
     }

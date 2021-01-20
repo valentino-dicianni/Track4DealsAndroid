@@ -72,5 +72,10 @@ class ProductRepository(
     // TODO: gestire insuccesso
     suspend fun addTrackingProduct(productEntity: ProductEntity) {
         productDataService.addTrackProduct(productEntity)
+
+    }
+
+    fun removeTrackingProduct(productEntity: ProductEntity) {
+        productDataService.removeTrackProduct(productEntity)
     }
 }

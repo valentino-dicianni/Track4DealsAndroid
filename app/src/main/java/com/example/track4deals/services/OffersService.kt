@@ -21,22 +21,17 @@ interface OffersService {
     fun getAllOffersAsync(): Deferred<ServerResponse>
 
     @GET("/tracking/get_offers")
-    fun getAllTrackingAsync(
-        @Header("Authorization") token: String
-    ): Deferred<ServerResponse>
+    fun getAllTrackingAsync(): Deferred<ServerResponse>
 
 
     @FormUrlEncoded
     // TODO: controllare il parametro productID sia passato corretamente
     @POST("/tracking/verify/:productID")
-    fun verifyProductAsync(
-        @Header("Authorization") token: String
-    ): Deferred<ServerResponse>
+    fun verifyProductAsync(): Deferred<ServerResponse>
 
     @FormUrlEncoded
     @POST("/tracking/add_tracking")
     fun addTrackingProductAsync(
-        @Header("Authorization") token: String,
         @Field("ASIN") ASIN: String,
         @Field("product_url") product_url: String,
         @Field("title") title: String,
@@ -54,7 +49,8 @@ interface OffersService {
 
     companion object {
         operator fun invoke(
-            connectivityInterceptor: ConnectivityInterceptor
+            connectivityInterceptor: ConnectivityInterceptor,
+            jwTinterceptor: JWTinterceptor
         ): OffersService {
             val requestInterceptor = Interceptor { chain ->
                 val url = chain.request().url
@@ -69,6 +65,7 @@ interface OffersService {
             val okHttpClient = OkHttpClient.Builder()
                 .addInterceptor(requestInterceptor)
                 .addInterceptor(connectivityInterceptor)
+                .addInterceptor(jwTinterceptor)
                 .addInterceptor(Interceptor { chain ->
                     val r = chain.request()
                     val builder = r.newBuilder()

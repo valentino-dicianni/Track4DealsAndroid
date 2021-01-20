@@ -6,7 +6,6 @@ import androidx.lifecycle.MutableLiveData
 import com.example.track4deals.data.database.entity.ProductEntity
 import com.example.track4deals.data.models.ServerResponse
 import com.example.track4deals.internal.NoConnectivityException
-import com.google.firebase.auth.FirebaseAuth
 
 
 class ProductDataService(
@@ -35,13 +34,7 @@ class ProductDataService(
 
     suspend fun getTracking() {
         try {
-            val firebaseUser = FirebaseAuth.getInstance().currentUser
-            var firebaseToken: String = ""
-            if (firebaseUser != null) {
-                firebaseToken = firebaseUser.getIdToken(false).result?.token!!
-            }
-
-            val offers = offersService.getAllTrackingAsync("Bearer $firebaseToken").await()
+            val offers = offersService.getAllTrackingAsync().await()
             _downloadeTracking.postValue(offers)
         } catch (e: NoConnectivityException) {
             Log.e("Connectivity", "NO internet connection", e)
@@ -50,15 +43,9 @@ class ProductDataService(
 
     suspend fun addTrackProduct(p: ProductEntity) {
         try {
-            val firebaseUser = FirebaseAuth.getInstance().currentUser
-            var firebaseToken: String = ""
-            if (firebaseUser != null) {
-                firebaseToken = firebaseUser.getIdToken(false).result?.token!!
-            }
             var isDeal:Boolean = false
             if(p.isDeal == 1) isDeal = true
             val serverRes = offersService.addTrackingProductAsync(
-                firebaseToken,
                 p.ASIN,
                 p.product_url,
                 p.title,
@@ -76,6 +63,10 @@ class ProductDataService(
         } catch (e: NoConnectivityException) {
             Log.e("Connectivity", "NO internet connection", e)
         }
+    }
+
+    fun removeTrackProduct(productEntity: ProductEntity) {
+        TODO("Not yet implemented")
     }
 
 

@@ -6,15 +6,15 @@ import androidx.lifecycle.MutableLiveData
 import com.example.track4deals.data.models.LoggedInUser
 import com.example.track4deals.data.models.LoggedInUserView
 import com.example.track4deals.data.models.LoginResult
+import com.example.track4deals.internal.TokenProvider
 import com.google.firebase.auth.FirebaseAuth
-
 
 /**
  * Class that requests authentication and user information from the remote data source and
  * maintains an in-memory cache of login status and user credentials information.
  */
 
-class LoginRepository() : Activity() {
+class LoginRepository(private val tokenProvider: TokenProvider)  {
     private lateinit var auth: FirebaseAuth
 
     // in-memory cache of the loggedInUser object
@@ -49,9 +49,17 @@ class LoginRepository() : Activity() {
                         if (currentUser != null) {
                             currentUser.getIdToken(false).result?.token?.let {
                                 Log.d("LOGIN TOKEN: ", it)
+                                tokenProvider.load()
                             }
-                            setLoggedInUser(LoggedInUser(currentUser.uid, currentUser.displayName!!))
-                            result.value = LoginResult(success = currentUser.displayName?.let { LoggedInUserView(displayName = it) })
+                            setLoggedInUser(
+                                LoggedInUser(
+                                    currentUser.uid,
+                                    currentUser.displayName!!
+                                )
+                            )
+                            result.value = LoginResult(success = currentUser.displayName?.let {
+                                LoggedInUserView(displayName = it)
+                            })
                         }
                     }
                 }
