@@ -27,6 +27,12 @@
     <string name="edit_password_button_it">CAMBIA PASSWORD</string>
     <string name="price">Price</string>
     <string name="Brand">Brand</string>
+    <string name="Save">SALVA</string>
+    <!-- Strings related to change password -->
+    <string name="old_password">Vecchia Password</string>
+    <string name="new_password">Nuova Password</string>
+    <string name="repeat_password">Ripeti la Password</string>
+    <string name="change_password_btn">Cambia la Password</string>
     <!-- Strings related to products -->
     <string name="product">prodotto</string>
     <string name="list_item_title">Nome Prodotto</string>
