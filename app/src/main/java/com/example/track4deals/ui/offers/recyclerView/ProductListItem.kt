@@ -40,11 +40,17 @@ class ProductListItem(
             text.setSpan(STRIKE_THROUGH_SPAN, 0, text.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
 
             viewHolder.itemView.newPrice.text = "${productEntity.offer_price} €"
-            if (productEntity.is_tracking == 1)
+            if (tokenProvider.get() != "") {
+                if (productEntity.is_tracking == 1)
+                    viewHolder.itemView.addTrackingBtn.text =
+                        context.getString(R.string.remove_tracking)
+                if (productEntity.is_tracking == 0)
+                    viewHolder.itemView.addTrackingBtn.text =
+                        context.getString(R.string.add_tracking)
+            } else {
                 viewHolder.itemView.addTrackingBtn.text =
-                    context.getString(R.string.remove_tracking)
-            if (productEntity.is_tracking == 0)
-                viewHolder.itemView.addTrackingBtn.text = context.getString(R.string.add_tracking)
+                    context.getString(R.string.add_tracking)
+            }
             updateImage()
         }
 
@@ -63,9 +69,9 @@ class ProductListItem(
                         context.getString(R.string.add_tracking)
                     onProductl.onRemoveTracking(productEntity)
                 }
-            }
-            else {
-                Toast.makeText(context, context.getString(R.string.errorToast), Toast.LENGTH_LONG).show()
+            } else {
+                Toast.makeText(context, context.getString(R.string.errorToast), Toast.LENGTH_LONG)
+                    .show()
             }
         }
     }

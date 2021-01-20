@@ -15,6 +15,10 @@ class OffersViewModel(
         productRepository.getOffers()
     }
 
+    val trackings by lazyDeferred {
+        productRepository.getTrackingProducts()
+    }
+
     suspend fun addTracking(productEntity: ProductEntity) {
        productRepository.addTrackingProduct(productEntity)
     }

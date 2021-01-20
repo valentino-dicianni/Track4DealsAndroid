@@ -7,6 +7,7 @@ import com.example.track4deals.data.models.LoggedInUser
 import com.example.track4deals.data.models.LoggedInUserView
 import com.example.track4deals.data.models.LoginResult
 import com.example.track4deals.internal.TokenProvider
+import com.example.track4deals.services.ProductDataService
 import com.google.firebase.auth.FirebaseAuth
 
 /**
@@ -14,23 +15,18 @@ import com.google.firebase.auth.FirebaseAuth
  * maintains an in-memory cache of login status and user credentials information.
  */
 
-class LoginRepository(private val tokenProvider: TokenProvider)  {
+class LoginRepository(
+    private val tokenProvider: TokenProvider,
+    private val productDataService: ProductDataService
+
+) {
     private lateinit var auth: FirebaseAuth
 
     // in-memory cache of the loggedInUser object
     var user: LoggedInUser? = null
         private set
 
-    val isLoggedIn: Boolean
-        get() = user != null
-
     init {
-        // If user credentials will be cached in local storage, it is recommended it be encrypted
-        // @see https://developer.android.com/training/articles/keystore
-        user = null
-    }
-
-    fun logout() {
         user = null
     }
 
@@ -48,7 +44,6 @@ class LoginRepository(private val tokenProvider: TokenProvider)  {
                         val currentUser = auth.currentUser
                         if (currentUser != null) {
                             currentUser.getIdToken(false).result?.token?.let {
-                                Log.d("LOGIN TOKEN: ", it)
                                 tokenProvider.load()
                             }
                             setLoggedInUser(
@@ -69,10 +64,12 @@ class LoginRepository(private val tokenProvider: TokenProvider)  {
         }
     }
 
+    suspend fun updateTracking() {
+        productDataService.getTracking()
+    }
+
     private fun setLoggedInUser(loggedInUser: LoggedInUser) {
         this.user = loggedInUser
-        // If user credentials will be cached in local storage, it is recommended it be encrypted
-        // @see https://developer.android.com/training/articles/keystore
     }
 
 }

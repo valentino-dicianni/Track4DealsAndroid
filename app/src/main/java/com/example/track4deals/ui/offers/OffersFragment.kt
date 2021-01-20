@@ -55,6 +55,9 @@ class OffersFragment :  ScopedFragment(), KodeinAware, OnProductListener {
 
     private fun bindUI(listener: OnProductListener) = launch(Dispatchers.Main) {
         val offers = offersViewModel.offers.await()
+        if(tokenProvider.get() != "") {
+            val tracking = offersViewModel.trackings.await()
+        }
         offers.observe(viewLifecycleOwner, Observer {
             if (it == null) return@Observer
             group_loading.visibility = View.GONE

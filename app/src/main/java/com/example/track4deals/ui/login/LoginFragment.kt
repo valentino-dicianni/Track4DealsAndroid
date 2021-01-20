@@ -12,21 +12,20 @@ import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.annotation.StringRes
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
 import com.example.track4deals.R
 import com.example.track4deals.data.models.LoggedInUserView
+import com.example.track4deals.internal.ScopedFragment
 import com.example.track4deals.ui.profile.ProfileFragment
 import com.example.track4deals.ui.register.RegisterFragment
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.x.closestKodein
 import org.kodein.di.generic.instance
 
-class LoginFragment : Fragment(), KodeinAware {
+class LoginFragment : ScopedFragment(), KodeinAware {
     override val kodein by closestKodein()
-    private val loginViewModelFactory :LoginViewModelFactory by instance()
+    private val loginViewModelFactory: LoginViewModelFactory by instance()
     private lateinit var loginViewModel: LoginViewModel
 
     companion object {
