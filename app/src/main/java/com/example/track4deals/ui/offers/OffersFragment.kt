@@ -56,12 +56,16 @@ class OffersFragment :  ScopedFragment(), KodeinAware, OnProductListener {
         val offers = offersViewModel.offers.await()
         if(userProvider.getToken() != "") {
             val tracking = offersViewModel.trackings.await()
+            tracking.observe(viewLifecycleOwner, Observer {
+                userProvider.setNumTracking(it.size)
+            })
         }
         offers.observe(viewLifecycleOwner, Observer {
             if (it == null) return@Observer
             group_loading.visibility = View.GONE
             initRecyclerView(it.toItemsList(listener))
         })
+
     }
 
     private fun List<ProductEntity>.toItemsList(listener: OnProductListener): List<ProductListItem> {

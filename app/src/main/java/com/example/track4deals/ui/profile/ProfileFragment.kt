@@ -50,10 +50,12 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
         val navController = findNavController()
 
         if (userProvider.isLoggedIn()) {
+            name_profile.setText(userProvider.getUserName())
             fullname_field.text = userProvider.getUserName()
             email_field.text = userProvider.getEmail()
             email_profile.setText(userProvider.getEmail())
             phone_profile.setText(userProvider.getPhoneNumber())
+            item_tracked_label.text = userProvider.getNumTracking().toString()
         } else {
             navController.navigate(R.id.navigation_login)
         }

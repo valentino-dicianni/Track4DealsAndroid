@@ -4,14 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import android.widget.Toast
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.track4deals.R
 import com.example.track4deals.internal.ScopedFragment
-import kotlinx.android.synthetic.main.fragment_offers.*
 import kotlinx.android.synthetic.main.fragment_offers.group_loading
 import kotlinx.android.synthetic.main.fragment_tracking.*
 import kotlinx.coroutines.Dispatchers
@@ -28,8 +24,7 @@ class TrackingFragment : ScopedFragment() {
     ): View? {
         trackingViewModel =
             ViewModelProvider(this).get(TrackingViewModel::class.java)
-        val root = inflater.inflate(R.layout.fragment_tracking, container, false)
-        return root
+        return inflater.inflate(R.layout.fragment_tracking, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

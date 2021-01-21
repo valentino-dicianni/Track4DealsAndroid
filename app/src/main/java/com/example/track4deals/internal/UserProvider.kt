@@ -8,9 +8,7 @@ class UserProvider {
     private var email: String = ""
     private var profilePic : String = ""
     private var phone : String = ""
-
-
-
+    private var numTracking : Int = 0
 
     fun getToken() = token
 
@@ -30,6 +28,14 @@ class UserProvider {
 
     fun getPhoneNumber(): String {
         return this.phone
+    }
+
+    fun getNumTracking() : Int {
+        return this.numTracking
+    }
+
+    fun setNumTracking(numT : Int) {
+        this.numTracking = numT
     }
 
     fun isLoggedIn(): Boolean {
