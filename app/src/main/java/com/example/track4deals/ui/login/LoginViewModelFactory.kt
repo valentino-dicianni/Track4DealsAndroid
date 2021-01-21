@@ -3,9 +3,6 @@ package com.example.track4deals.ui.login
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.track4deals.data.LoginRepository
-import com.example.track4deals.data.ProductRepository
-import com.example.track4deals.internal.TokenProvider
-import com.example.track4deals.services.ProductDataService
 
 /**
  * ViewModel provider factory to instantiate LoginViewModel.

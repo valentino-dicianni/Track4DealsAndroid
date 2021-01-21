@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.track4deals.R
 import com.example.track4deals.data.database.entity.ProductEntity
 import com.example.track4deals.internal.ScopedFragment
-import com.example.track4deals.internal.TokenProvider
+import com.example.track4deals.internal.UserProvider
 import com.example.track4deals.ui.offers.recyclerView.OnProductListener
 import com.example.track4deals.ui.offers.recyclerView.ProductListItem
 import com.example.track4deals.ui.offers.recyclerView.TopSpacingItemDecoration
@@ -31,7 +31,7 @@ class OffersFragment :  ScopedFragment(), KodeinAware, OnProductListener {
     override val kodein by closestKodein()
     private lateinit var offersViewModel: OffersViewModel
     private val offersViewModelFactory: OffersViewModelFactory by instance()
-    private val tokenProvider : TokenProvider by instance()
+    private val userProvider : UserProvider by instance()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -54,7 +54,7 @@ class OffersFragment :  ScopedFragment(), KodeinAware, OnProductListener {
 
     private fun bindUI(listener: OnProductListener) = launch(Dispatchers.Main) {
         val offers = offersViewModel.offers.await()
-        if(tokenProvider.get() != "") {
+        if(userProvider.getToken() != "") {
             val tracking = offersViewModel.trackings.await()
         }
         offers.observe(viewLifecycleOwner, Observer {
@@ -66,7 +66,7 @@ class OffersFragment :  ScopedFragment(), KodeinAware, OnProductListener {
 
     private fun List<ProductEntity>.toItemsList(listener: OnProductListener): List<ProductListItem> {
         return this.map {
-            context?.let { ctx -> ProductListItem(it, ctx, listener, tokenProvider) }!!
+            context?.let { ctx -> ProductListItem(it, ctx, listener, userProvider) }!!
         }
     }
 

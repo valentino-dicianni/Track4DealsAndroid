@@ -1,17 +1,15 @@
 package com.example.track4deals.services.utils
 
-import android.util.Log
-import com.example.track4deals.internal.TokenProvider
-import com.example.track4deals.ui.login.LoginFragment.Companion.TAG
+import com.example.track4deals.internal.UserProvider
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
 
 class JWTinterceptor(
-    private val tokenProvider: TokenProvider
+    private val userProvider: UserProvider
 ) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
-        val token = tokenProvider.get()
+        val token = userProvider.getToken()
         val newRequest: Request
         newRequest = if (token != "") {
             chain.request().newBuilder()

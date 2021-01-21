@@ -1,12 +1,11 @@
 package com.example.track4deals.data
 
-import android.app.Activity
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.example.track4deals.data.models.LoggedInUser
 import com.example.track4deals.data.models.LoggedInUserView
 import com.example.track4deals.data.models.LoginResult
-import com.example.track4deals.internal.TokenProvider
+import com.example.track4deals.internal.UserProvider
 import com.example.track4deals.services.ProductDataService
 import com.google.firebase.auth.FirebaseAuth
 
@@ -16,7 +15,7 @@ import com.google.firebase.auth.FirebaseAuth
  */
 
 class LoginRepository(
-    private val tokenProvider: TokenProvider,
+    private val userProvider: UserProvider,
     private val productDataService: ProductDataService
 
 ) {
@@ -44,7 +43,7 @@ class LoginRepository(
                         val currentUser = auth.currentUser
                         if (currentUser != null) {
                             currentUser.getIdToken(false).result?.token?.let {
-                                tokenProvider.load()
+                                userProvider.loadToken()
                             }
                             setLoggedInUser(
                                 LoggedInUser(

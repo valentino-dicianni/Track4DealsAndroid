@@ -11,8 +11,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.track4deals.R
 import com.example.track4deals.data.database.entity.ProductEntity
-import com.example.track4deals.internal.TokenProvider
-import com.google.firebase.auth.FirebaseAuth
+import com.example.track4deals.internal.UserProvider
 
 import com.xwray.groupie.kotlinandroidextensions.Item
 import com.xwray.groupie.kotlinandroidextensions.ViewHolder
@@ -22,7 +21,7 @@ class ProductListItem(
     var productEntity: ProductEntity,
     var context: Context,
     var onProductl: OnProductListener,
-    var tokenProvider: TokenProvider
+    var userProvider: UserProvider
 ) : Item() {
     private val STRIKE_THROUGH_SPAN = StrikethroughSpan()
 
@@ -40,7 +39,7 @@ class ProductListItem(
             text.setSpan(STRIKE_THROUGH_SPAN, 0, text.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
 
             viewHolder.itemView.newPrice.text = "${productEntity.offer_price} €"
-            if (tokenProvider.get() != "") {
+            if (userProvider.getToken() != "") {
                 if (productEntity.is_tracking == 1)
                     viewHolder.itemView.addTrackingBtn.text =
                         context.getString(R.string.remove_tracking)
@@ -59,7 +58,7 @@ class ProductListItem(
         }
 
         viewHolder.itemView.addTrackingBtn.setOnClickListener {
-            if (tokenProvider.get() != "") {
+            if (userProvider.getToken() != "") {
                 if (viewHolder.itemView.addTrackingBtn.text == context.getString(R.string.add_tracking)) {
                     viewHolder.itemView.addTrackingBtn.text =
                         context.getString(R.string.remove_tracking)

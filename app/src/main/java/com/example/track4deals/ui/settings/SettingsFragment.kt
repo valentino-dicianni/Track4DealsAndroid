@@ -8,7 +8,7 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 import com.example.track4deals.R
-import com.example.track4deals.internal.TokenProvider
+import com.example.track4deals.internal.UserProvider
 import com.google.firebase.auth.FirebaseAuth
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.x.closestKodein
@@ -17,7 +17,7 @@ import org.kodein.di.generic.instance
 
 class SettingsFragment : PreferenceFragmentCompat(), KodeinAware {
     override val kodein by closestKodein()
-    private val tokenProvider by instance<TokenProvider>()
+    private val userProvider by instance<UserProvider>()
     private lateinit var settingsViewModel: SettingsViewModel
     private lateinit var manager: PreferenceManager
 
@@ -37,7 +37,7 @@ class SettingsFragment : PreferenceFragmentCompat(), KodeinAware {
         if (preference != null) {
             if( preference.key == context?.getString(R.string.logoutDesc)) {
                 FirebaseAuth.getInstance().signOut()
-                tokenProvider.flush()
+                userProvider.flush()
                 Toast.makeText(context, getString(R.string.logoutExecuted), Toast.LENGTH_LONG).show()
                 return true
             }
