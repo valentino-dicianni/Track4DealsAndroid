@@ -22,6 +22,7 @@ import com.example.track4deals.ui.register.RegisterFragment
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.x.closestKodein
 import org.kodein.di.generic.instance
+import kotlinx.android.synthetic.main.fragment_login.*
 
 class LoginFragment : ScopedFragment(), KodeinAware {
     override val kodein by closestKodein()
@@ -46,12 +47,6 @@ class LoginFragment : ScopedFragment(), KodeinAware {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val usernameEditText = view.findViewById<EditText>(R.id.username)
-        val passwordEditText = view.findViewById<EditText>(R.id.password)
-        val loginButton = view.findViewById<Button>(R.id.loginButton)
-        val goToRegistationBtn = view.findViewById<Button>(R.id.toRegistrationBtn)
-        val loadingProgressBar = view.findViewById<ProgressBar>(R.id.loading)
-
         loginViewModel.loginFormState.observe(viewLifecycleOwner,
             Observer { loginFormState ->
                 if (loginFormState == null) {
@@ -59,17 +54,17 @@ class LoginFragment : ScopedFragment(), KodeinAware {
                 }
                 loginButton.isEnabled = loginFormState.isDataValid
                 loginFormState.usernameError?.let {
-                    usernameEditText.error = getString(it)
+                    username.error = getString(it)
                 }
                 loginFormState.passwordError?.let {
-                    passwordEditText.error = getString(it)
+                    password.error = getString(it)
                 }
             })
 
         loginViewModel.loginResult.observe(viewLifecycleOwner,
             Observer { loginResult ->
                 loginResult ?: return@Observer
-                loadingProgressBar.visibility = View.GONE
+                loading.visibility = View.GONE
                 loginResult.error?.let {
                     showLoginFailed(it)
                 }
@@ -90,32 +85,32 @@ class LoginFragment : ScopedFragment(), KodeinAware {
 
             override fun afterTextChanged(s: Editable) {
                 loginViewModel.loginDataChanged(
-                    usernameEditText.text.toString(),
-                    passwordEditText.text.toString()
+                    username.text.toString(),
+                    password.text.toString()
                 )
             }
         }
-        usernameEditText.addTextChangedListener(afterTextChangedListener)
-        passwordEditText.addTextChangedListener(afterTextChangedListener)
-        passwordEditText.setOnEditorActionListener { _, actionId, _ ->
+        username.addTextChangedListener(afterTextChangedListener)
+        password.addTextChangedListener(afterTextChangedListener)
+        password.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 loginViewModel.login(
-                    usernameEditText.text.toString(),
-                    passwordEditText.text.toString()
+                    username.text.toString(),
+                    password.text.toString()
                 )
             }
             false
         }
 
         loginButton.setOnClickListener {
-            loadingProgressBar.visibility = View.VISIBLE
+            loading.visibility = View.VISIBLE
             loginViewModel.login(
-                usernameEditText.text.toString(),
-                passwordEditText.text.toString()
+                username.text.toString(),
+                password.text.toString()
             )
         }
 
-        goToRegistationBtn.setOnClickListener {
+        toRegistrationBtn.setOnClickListener {
             parentFragmentManager.apply {
                 beginTransaction()
                     .replace(R.id.nav_host_fragment, RegisterFragment.newInstance())
