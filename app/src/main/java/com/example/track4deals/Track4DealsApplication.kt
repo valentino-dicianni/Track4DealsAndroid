@@ -13,6 +13,7 @@ import com.example.track4deals.ui.login.LoginViewModelFactory
 import com.example.track4deals.ui.offers.OffersFragment
 import com.example.track4deals.ui.offers.OffersViewModelFactory
 import com.example.track4deals.ui.offers.recyclerView.ProductListItem
+import com.example.track4deals.ui.profile.ProfileViewModelFactory
 import com.jakewharton.threetenabp.AndroidThreeTen
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
@@ -33,6 +34,7 @@ class Track4DealsApplication : Application(), KodeinAware {
         bind() from singleton { LoginRepository(instance(), instance()) }
         bind() from provider { LoginViewModelFactory(instance()) }
         bind() from provider { OffersViewModelFactory(instance()) }
+        bind() from provider { ProfileViewModelFactory(instance()) }
     }
 
     override fun onCreate() {

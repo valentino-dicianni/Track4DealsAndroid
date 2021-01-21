@@ -1,26 +1,25 @@
 package com.example.track4deals.ui.profile
 
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.children
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.track4deals.R
-import com.example.track4deals.ui.login.LoginFragment
-import com.example.track4deals.ui.profile.ProfileFragment.Companion.newInstance
-import com.example.track4deals.ui.register.RegisterFragment
+import com.example.track4deals.internal.ScopedFragment
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import kotlinx.android.synthetic.main.fragment_notifications.view.*
 import kotlinx.android.synthetic.main.fragment_profile.*
-import java.util.*
+import org.kodein.di.KodeinAware
+import org.kodein.di.android.x.closestKodein
+import org.kodein.di.generic.instance
 
-class ProfileFragment : Fragment() {
+class ProfileFragment : ScopedFragment(), KodeinAware {
+    override val kodein by closestKodein()
+    private val profileViewModelFactory: ProfileViewModelFactory by instance()
 
     companion object {
         fun newInstance() = ProfileFragment()
@@ -41,7 +40,7 @@ class ProfileFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewModel = ViewModelProvider(this).get(ProfileViewModel::class.java)
+        viewModel = ViewModelProvider(this, profileViewModelFactory).get(ProfileViewModel::class.java)
         firebaseUser = FirebaseAuth.getInstance().currentUser
         return inflater.inflate(R.layout.fragment_profile, container, false)
     }
