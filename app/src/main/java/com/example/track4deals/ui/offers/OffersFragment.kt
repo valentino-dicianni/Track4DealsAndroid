@@ -27,18 +27,19 @@ import org.kodein.di.KodeinAware
 import org.kodein.di.android.x.closestKodein
 import org.kodein.di.generic.instance
 
-class OffersFragment :  ScopedFragment(), KodeinAware, OnProductListener {
+class OffersFragment : ScopedFragment(), KodeinAware, OnProductListener {
     override val kodein by closestKodein()
     private lateinit var offersViewModel: OffersViewModel
     private val offersViewModelFactory: OffersViewModelFactory by instance()
-    private val userProvider : UserProvider by instance()
+    private val userProvider: UserProvider by instance()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        offersViewModel = ViewModelProvider(this, offersViewModelFactory).get(OffersViewModel::class.java)
+        offersViewModel =
+            ViewModelProvider(this, offersViewModelFactory).get(OffersViewModel::class.java)
         bindUI(this)
         return inflater.inflate(R.layout.fragment_offers, container, false)
     }
@@ -53,13 +54,13 @@ class OffersFragment :  ScopedFragment(), KodeinAware, OnProductListener {
     }
 
     private fun bindUI(listener: OnProductListener) = launch(Dispatchers.Main) {
-        val offers = offersViewModel.offers.await()
-        if(userProvider.getToken() != "") {
+        if (userProvider.getToken() != "") {
             val tracking = offersViewModel.trackings.await()
             tracking.observe(viewLifecycleOwner, Observer {
                 userProvider.setNumTracking(it.size)
             })
         }
+        val offers = offersViewModel.offers.await()
         offers.observe(viewLifecycleOwner, Observer {
             if (it == null) return@Observer
             group_loading.visibility = View.GONE

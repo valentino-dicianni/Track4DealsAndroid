@@ -25,9 +25,8 @@ interface OffersService {
 
 
     @FormUrlEncoded
-    // TODO: controllare il parametro productID sia passato corretamente
-    @POST("/tracking/verify/:productID")
-    fun verifyProductAsync(): Deferred<ServerResponse>
+    @POST("/tracking/verify")
+    fun verifyProductAsync(@Field("productASIN") asin: String): Deferred<ServerResponse>
 
     @FormUrlEncoded
     @POST("/tracking/add_tracking")

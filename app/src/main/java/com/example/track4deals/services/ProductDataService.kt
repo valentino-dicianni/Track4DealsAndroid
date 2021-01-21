@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.track4deals.data.database.entity.ProductEntity
+import com.example.track4deals.data.models.Product
 import com.example.track4deals.data.models.ServerResponse
 import com.example.track4deals.internal.NoConnectivityException
 
@@ -23,6 +24,11 @@ class ProductDataService(
     val addTrackingRes: LiveData<ServerResponse>
         get() = _addTrackingRes
 
+    private val _fetchedProduct = MutableLiveData<ServerResponse>()
+    val fetchedProduct: LiveData<ServerResponse>
+        get() = _fetchedProduct
+
+
     suspend fun getOffers() {
         try {
             val offers = offersService.getAllOffersAsync().await()
@@ -41,11 +47,21 @@ class ProductDataService(
         }
     }
 
+    suspend fun fetchAmazonProduct(ASIN: String): LiveData<ServerResponse> {
+        try {
+            val res = offersService.verifyProductAsync(ASIN).await()
+            _fetchedProduct.postValue(res)
+        } catch (e: NoConnectivityException) {
+            Log.e("Connectivity", "NO internet connection", e)
+        }
+        return fetchedProduct
+    }
+
     // TODO: productEntity to product
     suspend fun addTrackProduct(p: ProductEntity) {
         try {
-            var isDeal:Boolean = false
-            if(p.isDeal == 1) isDeal = true
+            var isDeal: Boolean = false
+            if (p.isDeal == 1) isDeal = true
             val serverRes = offersService.addTrackingProductAsync(
                 p.ASIN,
                 p.product_url,
