@@ -11,7 +11,7 @@ class TrackingViewModel(
     private val productRepository: ProductRepository
 ) : ViewModel() {
 
-    private var currentProduct : String = ""
+    lateinit var currentProduct : String
 
     fun setProduct(p : String) {
         this.currentProduct = p

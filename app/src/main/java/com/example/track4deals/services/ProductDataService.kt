@@ -24,6 +24,10 @@ class ProductDataService(
     val addTrackingRes: LiveData<ServerResponse>
         get() = _addTrackingRes
 
+    private val _removeTrackingRes = MutableLiveData<ServerResponse>()
+    val removeTrackingRes: LiveData<ServerResponse>
+        get() = _removeTrackingRes
+
     private val _fetchedProduct = MutableLiveData<ServerResponse>()
     val fetchedProduct: LiveData<ServerResponse>
         get() = _fetchedProduct
@@ -57,10 +61,9 @@ class ProductDataService(
         return fetchedProduct
     }
 
-    // TODO: productEntity to product
-    suspend fun addTrackProduct(p: ProductEntity) {
+    suspend fun addTrackProduct(p: ProductEntity): LiveData<ServerResponse> {
         try {
-            var isDeal: Boolean = false
+            var isDeal = false
             if (p.isDeal == 1) isDeal = true
             val serverRes = offersService.addTrackingProductAsync(
                 p.ASIN,
@@ -80,11 +83,31 @@ class ProductDataService(
         } catch (e: NoConnectivityException) {
             Log.e("Connectivity", "NO internet connection", e)
         }
+        return addTrackingRes
     }
 
-    fun removeTrackProduct(productEntity: ProductEntity) {
-        TODO("Not yet implemented")
+    suspend fun removeTrackProduct(p: ProductEntity): LiveData<ServerResponse> {
+        try {
+            var isDeal = false
+            if (p.isDeal == 1) isDeal = true
+            val res = offersService.removeTrackingProductAsync(
+                p.ASIN,
+                p.product_url,
+                p.title,
+                p.brand,
+                p.category,
+                p.description,
+                p.normal_price,
+                p.offer_price,
+                p.discount_perc,
+                p.imageUrl_large,
+                p.imageUrl_medium,
+                isDeal,
+            ).await()
+            _removeTrackingRes.postValue(res)
+        } catch (e: NoConnectivityException) {
+            Log.e("Connectivity", "NO internet connection", e)
+        }
+        return removeTrackingRes
     }
-
-
 }

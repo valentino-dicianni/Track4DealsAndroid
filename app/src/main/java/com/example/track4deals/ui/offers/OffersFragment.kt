@@ -12,7 +12,9 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.track4deals.R
+import com.example.track4deals.data.constants.AppConstants.Companion.SERVER_OK
 import com.example.track4deals.data.database.entity.ProductEntity
+import com.example.track4deals.data.models.ServerResponse
 import com.example.track4deals.internal.ScopedFragment
 import com.example.track4deals.internal.UserProvider
 import com.example.track4deals.ui.offers.recyclerView.OnProductListener
@@ -96,15 +98,27 @@ class OffersFragment : ScopedFragment(), KodeinAware, OnProductListener {
 
     override fun onAddTracking(product: ProductEntity) {
         launch(Dispatchers.Main) {
-            offersViewModel.addTracking(product)
-            Toast.makeText(context, getString(R.string.track_added), Toast.LENGTH_LONG).show()
+            offersViewModel.addTrackingProduct = product
+            val serverRes  = offersViewModel.addTrackingRes.await()
+            if(serverRes.value?.ok == SERVER_OK) {
+                Toast.makeText(context, getString(R.string.track_added), Toast.LENGTH_LONG).show()
+            }
+            else{
+                Toast.makeText(context, serverRes.value?.err, Toast.LENGTH_LONG).show()
+            }
         }
     }
 
     override fun onRemoveTracking(product: ProductEntity) {
         launch(Dispatchers.Main) {
-            offersViewModel.removeTracking(product)
-            Toast.makeText(context, getString(R.string.track_remove), Toast.LENGTH_LONG).show()
+            offersViewModel.removeTrackingProduct = product
+            val serverRes  = offersViewModel.removeTrackingRes.await()
+            if(serverRes.value?.ok == SERVER_OK) {
+                Toast.makeText(context, getString(R.string.track_remove), Toast.LENGTH_LONG).show()
+            }
+            else{
+                Toast.makeText(context, serverRes.value?.err, Toast.LENGTH_LONG).show()
+            }
         }
     }
 }

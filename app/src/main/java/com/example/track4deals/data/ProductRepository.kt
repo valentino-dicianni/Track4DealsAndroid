@@ -16,24 +16,31 @@ class ProductRepository(
 
     init {
         productDataService.downloadedOffers.observeForever { newOffers ->
-            persistProductData(newOffers, 0)
+            persistProductData(newOffers, true, 0)
         }
         productDataService.downloadeTracking.observeForever { newTrackings ->
-            persistProductData(newTrackings, 1)
+            persistProductData(newTrackings, false, 1)
         }
         productDataService.addTrackingRes.observeForever { trackingResponse ->
-            persistProductData(trackingResponse, 1)
+            persistProductData(trackingResponse, false, 1)
+        }
+        productDataService.removeTrackingRes.observeForever { trackingResponse ->
+            persistProductData(trackingResponse, false, 0)
         }
     }
 
-    private fun persistProductData(newOffers: ServerResponse?, isTracking: Int) {
+    private fun persistProductData(
+        newOffers: ServerResponse?,
+        customUpsert: Boolean,
+        isTracking: Int
+    ) {
         GlobalScope.launch(Dispatchers.IO) {
             val products: ArrayList<Product>? = newOffers?.response
             if (products != null) {
                 for (p: Product in products) {
-                    if (isTracking == 0)
+                    if (customUpsert)
                         productDAO.customUpsert(p.productToEntity(isTracking))
-                    if (isTracking == 1)
+                    else
                         productDAO.upsert(p.productToEntity(isTracking))
                 }
             }
@@ -55,14 +62,16 @@ class ProductRepository(
         }
     }
 
-    // TODO: gestire insuccesso
-    suspend fun addTrackingProduct(productEntity: ProductEntity) {
-        productDataService.addTrackProduct(productEntity)
-
+    suspend fun addTrackingProduct(productEntity: ProductEntity): LiveData<ServerResponse> {
+        return withContext(Dispatchers.IO) {
+            productDataService.addTrackProduct(productEntity)
+        }
     }
 
-    fun removeTrackingProduct(productEntity: ProductEntity) {
-        productDataService.removeTrackProduct(productEntity)
+    suspend fun removeTrackingProduct(productEntity: ProductEntity): LiveData<ServerResponse> {
+        return withContext(Dispatchers.IO) {
+            productDataService.removeTrackProduct(productEntity)
+        }
     }
 
     suspend fun findProductByAsin(ASIN: String): LiveData<ServerResponse> {

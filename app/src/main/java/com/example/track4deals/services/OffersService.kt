@@ -46,6 +46,24 @@ interface OffersService {
     ): Deferred<ServerResponse>
 
 
+    @FormUrlEncoded
+    @POST("/tracking/remove_tracking")
+    fun removeTrackingProductAsync(
+        @Field("ASIN") ASIN: String,
+        @Field("product_url") product_url: String,
+        @Field("title") title: String,
+        @Field("brand") brand: String,
+        @Field("category") category: String,
+        @Field("description") description: String,
+        @Field("normal_price") normal_price: Double,
+        @Field("offer_price") offer_price: Double,
+        @Field("discount_perc") discount_perc: Double,
+        @Field("imageUrl_large") imageUrl_large: String,
+        @Field("imageUrl_medium") imageUrl_medium: String,
+        @Field("isDeal") isDeal: Boolean
+    ): Deferred<ServerResponse>
+
+
     companion object {
         operator fun invoke(
             connectivityInterceptor: ConnectivityInterceptor,

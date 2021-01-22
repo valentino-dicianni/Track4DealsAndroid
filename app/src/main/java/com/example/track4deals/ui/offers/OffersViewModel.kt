@@ -11,6 +11,9 @@ class OffersViewModel(
     private val productRepository: ProductRepository
 ) : ViewModel() {
 
+    lateinit var addTrackingProduct : ProductEntity
+    lateinit var removeTrackingProduct : ProductEntity
+
     val offers by lazyDeferred {
         productRepository.getOffers()
     }
@@ -19,11 +22,13 @@ class OffersViewModel(
         productRepository.getTrackingProducts()
     }
 
-    suspend fun addTracking(productEntity: ProductEntity) {
-       productRepository.addTrackingProduct(productEntity)
+    val addTrackingRes by lazyDeferred {
+        productRepository.addTrackingProduct(addTrackingProduct)
     }
 
-    suspend fun removeTracking(productEntity: ProductEntity) {
-        productRepository.removeTrackingProduct(productEntity)
+    val removeTrackingRes by lazyDeferred {
+        productRepository.removeTrackingProduct(removeTrackingProduct)
     }
+
+
 }
