@@ -15,7 +15,7 @@
     <string name="action_sign_in_short">Sign in</string>
     <string name="welcome">"Benvenuto!"</string>
     <string name="invalid_username">Non è unsername valido</string>
-    <string name="invalid_password">La password deve essere >5 caratteri</string>
+    <string name="invalid_password">La password deve essere maggiore di 5 caratteri</string>
     <string name="login_failed">Login fallito</string>
     <string name="invalid_email">Email non valida</string>
     <string name="loading">Caricamento…</string>
@@ -33,6 +33,7 @@
     <string name="new_password">Nuova Password</string>
     <string name="repeat_password">Ripeti la Password</string>
     <string name="change_password_btn">Cambia la Password</string>
+    <string name="pswd_must_be_equal">Le password non combaciano</string>
     <!-- Strings related to products -->
     <string name="product">prodotto</string>
     <string name="list_item_title">Nome Prodotto</string>
