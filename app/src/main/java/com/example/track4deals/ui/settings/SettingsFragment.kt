@@ -1,6 +1,7 @@
 package com.example.track4deals.ui.settings
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
@@ -40,6 +41,9 @@ class SettingsFragment : PreferenceFragmentCompat(), KodeinAware {
                 userProvider.flush()
                 Toast.makeText(context, getString(R.string.logoutExecuted), Toast.LENGTH_LONG).show()
                 return true
+            }
+            if( preference.key == context?.getString(R.string.GetToken)) {
+                Log.d("TEST: ", "onPreferenceTreeClick: ${userProvider.getToken()}")
             }
         }
         return false

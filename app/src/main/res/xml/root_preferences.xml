@@ -38,6 +38,11 @@
         android:key="@string/logoutDesc"
         android:summary="@string/logoutDesc"
         android:title="@string/logout" />
+
+    <Preference
+        android:key="@string/GetToken"
+        android:summary="@string/TokenDesc"
+        android:title="@string/GetToken" />
     // versione app
     // termini e condizioni
 

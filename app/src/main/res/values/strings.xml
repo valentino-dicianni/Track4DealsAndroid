@@ -65,6 +65,11 @@
     <string name="logoutExecuted">"Logout Eseguito! "</string>
     <string name="link_prod_title">Link al prodotto Amazon</string>
     <string name="traccia">Traccia</string>
+    <string name="trackingDialogTitle">Confermi di voler tracciare questo prodotto?</string>
+    <string name="GetToken">Ottieni Token</string>
+    <string name="TokenDesc">Dev Mode only</string>
+    <string name="no">Cancella</string>
+    <string name="yes">Traccia</string>
 
 
 </resources>
