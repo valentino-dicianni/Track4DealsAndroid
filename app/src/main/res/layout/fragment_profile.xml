@@ -119,10 +119,7 @@
                     android:layout_height="wrap_content"
                     android:drawableStart="@drawable/ic_user_field"
                     android:drawablePadding="10dp"
-                    android:text="Mario Rossi"
-                    android:focusable="false"
-                    android:clickable="false"
-                    android:cursorVisible="false"/>
+                    android:text="Mario Rossi" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -138,10 +135,7 @@
                     android:layout_height="wrap_content"
                     android:drawableStart="@drawable/ic_email"
                     android:drawablePadding="10dp"
-                    android:text="mario.rossi@email.com"
-                    android:focusable="false"
-                    android:clickable="false"
-                    android:cursorVisible="false"/>
+                    android:text="mario.rossi@email.com"/>
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -157,10 +151,7 @@
                     android:layout_height="wrap_content"
                     android:drawableStart="@drawable/ic_phone"
                     android:drawablePadding="10dp"
-                    android:text="+39 3385467084"
-                    android:focusable="false"
-                    android:clickable="false"
-                    android:cursorVisible="false"/>
+                    android:text="+39 3385467084"/>
 
             </com.google.android.material.textfield.TextInputLayout>
 
