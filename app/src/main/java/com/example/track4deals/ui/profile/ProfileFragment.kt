@@ -1,9 +1,11 @@
 package com.example.track4deals.ui.profile
 
 import android.os.Bundle
+import android.text.method.KeyListener
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.track4deals.R
@@ -20,6 +22,7 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
     override val kodein by closestKodein()
     private val profileViewModelFactory: ProfileViewModelFactory by instance()
     private val userProvider : UserProvider by instance()
+
 
     companion object {
         fun newInstance() = ProfileFragment()
@@ -48,6 +51,10 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val navController = findNavController()
+        val formFieldList : List<EditText> = listOf(name_profile, email_profile, phone_profile)
+        val mapOfFields = createEditTextListenersMap(formFieldList)
+
+        disableAllTextField(formFieldList)
 
         if (userProvider.isLoggedIn()) {
             name_profile.setText(userProvider.getUserName())
@@ -61,9 +68,7 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
         }
 
         modify_profile_btn.setOnClickListener{
-            makeVisible(name_profile)
-            makeVisible(email_profile)
-            makeVisible(phone_profile)
+            enableAllTextField(mapOfFields)
 
             //TODO API communication
             modify_profile_btn.text = getString(R.string.Save)
@@ -78,8 +83,44 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
             }
         }
 
+
+
+
     }
 
+    //INPUT: Map of  EditText component and respective key listener to be enabled
+    //OUTPUT: none
+    //Makes text view focusable and editable
+    private fun enableAllTextField(fieldsMap: MutableMap<EditText, KeyListener>){
+
+        fieldsMap.forEach {
+            it.key.keyListener = it.value
+            it.key.isFocusableInTouchMode = true
+        }
+    }
+
+    //INPUT: EditText component to be disabled
+    //OUTPUT: none
+    //Makes text view not focusable and editable anymore
+    private fun disableAllTextField(fields: List<EditText>){
+
+        fields.forEach {
+            it.keyListener = null
+            it.isFocusableInTouchMode = false
+        }
+    }
+
+    //INPUT: List of EditText
+    //OUTPUT: Map of EditText fields paired with respective KeyListener
+    //Bound each EditText fields with respective key listeners
+    private fun createEditTextListenersMap(fields: List<EditText>): MutableMap<EditText, KeyListener> {
+        val listeners = mutableMapOf<EditText, KeyListener>()
+        fields.forEach {
+            listeners[it] = it.keyListener
+        }
+
+        return listeners
+    }
 
 
 

@@ -44,6 +44,7 @@ class ChangePasswordFragment : Fragment(), KodeinAware {
 
         viewModel.changeFormState.observe(viewLifecycleOwner,
                 Observer { changePswdState ->
+
                     if (changePswdState == null) {
                         return@Observer
                     }

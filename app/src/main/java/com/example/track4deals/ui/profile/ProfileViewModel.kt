@@ -1,11 +1,14 @@
 package com.example.track4deals.ui.profile
 
+import android.text.method.KeyListener
+import android.widget.EditText
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.track4deals.R
 import com.example.track4deals.data.LoginRepository
 import com.example.track4deals.data.models.ChangePasswordFormState
+import kotlinx.android.synthetic.main.fragment_profile.*
 
 class ProfileViewModel(
     private  val loginRepository: LoginRepository
@@ -14,6 +17,10 @@ class ProfileViewModel(
     private val changeForm = MutableLiveData<ChangePasswordFormState>()
     val changeFormState: LiveData<ChangePasswordFormState> = changeForm
 
+
+    //INPUT:    String value from change password text field
+    //OUTPUT:   No returned value.
+    //Set the LiveData variable changeForm.value with right ChangePasswordForm state value for displaying the right error in the view
     fun passwdDataChanged(oldPswd: String, newPswd: String, rptPswd: String) {
 
         if(!isPasswordValid(oldPswd)) {
@@ -34,5 +41,7 @@ class ProfileViewModel(
     private fun isPasswordValid(password: String): Boolean {
         return password.length > 5
     }
+
+
 
 }
