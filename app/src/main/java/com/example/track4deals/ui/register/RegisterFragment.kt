@@ -10,21 +10,26 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ProgressBar
 import com.example.track4deals.R
+import org.kodein.di.KodeinAware
+import org.kodein.di.android.x.closestKodein
+import org.kodein.di.generic.instance
 
-class RegisterFragment : Fragment() {
+class RegisterFragment : Fragment(), KodeinAware {
+    override val kodein by closestKodein()
+    private lateinit var viewModel: RegisterViewModel
+    private val registerViewModelFactory: RegisterViewModelFactory by instance()
 
     companion object {
         const val TAG = "RegistrationFragment"
         fun newInstance() = RegisterFragment()
     }
 
-    private lateinit var viewModel: RegisterViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewModel = ViewModelProvider(this).get(RegisterViewModel::class.java)
+        viewModel = ViewModelProvider(this, registerViewModelFactory).get(RegisterViewModel::class.java)
         return inflater.inflate(R.layout.fragment_register, container, false)
     }
 

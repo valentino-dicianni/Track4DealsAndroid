@@ -15,7 +15,7 @@ interface ProductDAO {
     fun insert(obj: ProductEntity?): Long
 
 
-    @Query("UPDATE product SET  normal_price = :normal_price, offer_price = :offer_price, discount_perc = :discount_perc, isDeal = :isDeal WHERE ASIN = :ASIN")
+    @Query("UPDATE product SET  normal_price = :normal_price, offer_price = :offer_price, discount_perc = :discount_perc, isDeal = :isDeal WHERE ASIN = :ASIN AND offer_price <> :offer_price")
     fun update(
         ASIN: String,
         normal_price: Double,

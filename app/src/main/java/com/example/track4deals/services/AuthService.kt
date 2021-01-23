@@ -2,7 +2,10 @@ package com.example.track4deals.services
 
 import com.example.track4deals.data.constants.AppConstants
 import com.example.track4deals.data.models.UserInfo
+import com.example.track4deals.services.utils.ConnectivityInterceptor
+import com.example.track4deals.services.utils.JWTinterceptor
 import com.google.gson.Gson
+import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -31,29 +34,39 @@ interface AuthService {
         @Field("uid") uid: String
     ): retrofit2.Response<UserInfo>
 
-    object AuthServiceCreator {
-        fun newService(): AuthService {
-            val interceptor = HttpLoggingInterceptor()
-            interceptor.level = HttpLoggingInterceptor.Level.BODY
-            val httpBuilder = OkHttpClient.Builder()
-            httpBuilder.addInterceptor(interceptor)
-            httpBuilder.addInterceptor(Interceptor { chain ->
-                val r = chain.request()
-                val builder = r.newBuilder()
-                builder.addHeader("Accept", "application/json")
-                builder.addHeader("Content-Type", "application/x-www-form-urlencoded")
-                builder.method(r.method, r.body)
-                chain.proceed(builder.build())
-            })
-            httpBuilder.connectTimeout(30, TimeUnit.SECONDS)
-            httpBuilder.readTimeout(30, TimeUnit.SECONDS)
+    companion object {
+        operator fun invoke(
+            connectivityInterceptor: ConnectivityInterceptor,
+        ): AuthService {
+            val requestInterceptor = Interceptor { chain ->
+                val url = chain.request().url
+                val request = chain.request()
+                    .newBuilder()
+                    .url(url)
+                    .build()
+                return@Interceptor chain.proceed(request)
+            }
 
-            val retrofit = Retrofit.Builder()
-                .baseUrl(AppConstants.baseServerURL)
-                .addConverterFactory(GsonConverterFactory.create(Gson()))
-                .client(httpBuilder.build())
+            val okHttpClient = OkHttpClient.Builder()
+                .callTimeout(20, TimeUnit.SECONDS)
+                .addInterceptor(requestInterceptor)
+                .addInterceptor(connectivityInterceptor)
+                .addInterceptor(Interceptor { chain ->
+                    val r = chain.request()
+                    val builder = r.newBuilder()
+                    builder.addHeader("Accept", "application/json")
+                    builder.addHeader("Content-Type", "application/x-www-form-urlencoded")
+                    builder.method(r.method, r.body)
+                    chain.proceed(builder.build())
+                })
                 .build()
-            return retrofit.create(AuthService::class.java)
+
+            return Retrofit.Builder().client(okHttpClient)
+                .baseUrl(AppConstants.baseServerURL)
+                .addCallAdapterFactory(CoroutineCallAdapterFactory())
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(AuthService::class.java)
         }
     }
 }

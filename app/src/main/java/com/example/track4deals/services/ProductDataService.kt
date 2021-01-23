@@ -7,6 +7,8 @@ import com.example.track4deals.data.database.entity.ProductEntity
 import com.example.track4deals.data.models.Product
 import com.example.track4deals.data.models.ServerResponse
 import com.example.track4deals.internal.NoConnectivityException
+import com.example.track4deals.internal.TimeOutException
+import java.net.SocketTimeoutException
 
 
 class ProductDataService(
@@ -39,6 +41,8 @@ class ProductDataService(
             _downloadedOffers.postValue(offers)
         } catch (e: NoConnectivityException) {
             Log.e("Connectivity", "NO internet connection", e)
+        } catch (e: SocketTimeoutException) {
+            Log.e("Connectivity", "TimeOut exception", e)
         }
     }
 
@@ -48,6 +52,8 @@ class ProductDataService(
             _downloadeTracking.postValue(offers)
         } catch (e: NoConnectivityException) {
             Log.e("Connectivity", "NO internet connection", e)
+        } catch (e: SocketTimeoutException) {
+            Log.e("Connectivity", "TimeOut exception", e)
         }
     }
 
@@ -57,6 +63,8 @@ class ProductDataService(
             _fetchedProduct.postValue(res)
         } catch (e: NoConnectivityException) {
             Log.e("Connectivity", "NO internet connection", e)
+        } catch (e: SocketTimeoutException) {
+            Log.e("Connectivity", "TimeOut exception", e)
         }
         return fetchedProduct
     }
@@ -82,6 +90,8 @@ class ProductDataService(
             _addTrackingRes.postValue(serverRes)
         } catch (e: NoConnectivityException) {
             Log.e("Connectivity", "NO internet connection", e)
+        } catch (e: SocketTimeoutException) {
+            Log.e("Connectivity", "TimeOut exception", e)
         }
         return addTrackingRes
     }
@@ -107,6 +117,8 @@ class ProductDataService(
             _removeTrackingRes.postValue(res)
         } catch (e: NoConnectivityException) {
             Log.e("Connectivity", "NO internet connection", e)
+        } catch (e: SocketTimeoutException) {
+            Log.e("Connectivity", "TimeOut exception", e)
         }
         return removeTrackingRes
     }

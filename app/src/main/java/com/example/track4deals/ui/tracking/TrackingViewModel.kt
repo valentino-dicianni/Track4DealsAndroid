@@ -27,13 +27,4 @@ class TrackingViewModel(
         productRepository.addTrackingProduct(trackProduct)
     }
 
-    suspend fun trackProduct(link: String) {
-        delay(5000)
-    }
-
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is dashboard Fragment"
-    }
-
-
 }

@@ -13,6 +13,8 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.*
+import java.time.Duration
+import java.util.concurrent.TimeUnit
 
 
 interface OffersService {
@@ -80,6 +82,7 @@ interface OffersService {
             }
 
             val okHttpClient = OkHttpClient.Builder()
+                .callTimeout(20, TimeUnit.SECONDS)
                 .addInterceptor(requestInterceptor)
                 .addInterceptor(connectivityInterceptor)
                 .addInterceptor(jwTinterceptor)

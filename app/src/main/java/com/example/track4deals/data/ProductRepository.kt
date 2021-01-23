@@ -54,7 +54,7 @@ class ProductRepository(
 
     suspend fun getOffers(): LiveData<List<ProductEntity>> {
         return withContext(Dispatchers.IO) {
-            if (isServerFetchtNeeded(lastFetchTimeOffers)) {
+            if (isServerFetchNeeded(lastFetchTimeOffers)) {
                 productDataService.getOffers()
                 lastFetchTimeOffers = ZonedDateTime.now()
                 Log.d("TEST", "getOffers: update dal server: $lastFetchTimeOffers")
@@ -65,7 +65,7 @@ class ProductRepository(
 
     suspend fun getTrackingProducts(): LiveData<List<ProductEntity>> {
         return withContext(Dispatchers.IO) {
-            if (isServerFetchtNeeded(lastFetchTimeOffers)) {
+            if (isServerFetchNeeded(lastFetchTimeOffers)) {
             productDataService.getTracking()
                 lastFetchTimeTrackings = ZonedDateTime.now()
                 Log.d("TEST", "getOffers: update dal server: $lastFetchTimeTrackings")
@@ -93,7 +93,7 @@ class ProductRepository(
         }
     }
 
-    private fun isServerFetchtNeeded(lastTime: ZonedDateTime): Boolean {
+    private fun isServerFetchNeeded(lastTime: ZonedDateTime): Boolean {
         val oneMinutesAgo = ZonedDateTime.now().minusMinutes(1)
         return lastTime.isBefore(oneMinutesAgo)
     }
