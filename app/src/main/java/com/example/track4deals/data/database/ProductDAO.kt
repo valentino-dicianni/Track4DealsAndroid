@@ -15,11 +15,14 @@ interface ProductDAO {
     fun insert(obj: ProductEntity?): Long
 
 
-    @Query("UPDATE product SET  normal_price = :normal_price, offer_price = :offer_price, discount_perc = :discount_perc, isDeal = :isDeal")
-    fun update(normal_price: Double,
-               offer_price: Double,
-               discount_perc: Double,
-               isDeal: Int)
+    @Query("UPDATE product SET  normal_price = :normal_price, offer_price = :offer_price, discount_perc = :discount_perc, isDeal = :isDeal WHERE ASIN = :ASIN")
+    fun update(
+        ASIN: String,
+        normal_price: Double,
+        offer_price: Double,
+        discount_perc: Double,
+        isDeal: Int
+    )
 
 
     @Query("select * from product where isDeal = 1")
@@ -33,7 +36,7 @@ interface ProductDAO {
         val id = insert(obj)
         if (id == -1L) {
             if (obj != null) {
-                update(obj.normal_price, obj.offer_price, obj.discount_perc, obj.isDeal)
+                update(obj.ASIN, obj.normal_price, obj.offer_price, obj.discount_perc, obj.isDeal)
             }
         }
     }
