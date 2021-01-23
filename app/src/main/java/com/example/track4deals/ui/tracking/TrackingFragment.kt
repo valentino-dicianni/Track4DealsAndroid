@@ -72,15 +72,17 @@ class TrackingFragment : ScopedFragment(), KodeinAware {
         group_loading.visibility = View.GONE
 
         Log.d(TAG, "findProductDetails: ${response.value.toString()}")
-        if(response.value?.ok == SERVER_OK){
+        if (response.value?.ok == SERVER_OK) {
             context?.let { response.value!!.response?.get(0)?.let { it1 -> showDialog(it1, it) } }
+        } else {
+            context?.let { showDialogError(it) }
         }
     }
 
     private fun showDialog(product: Product, context: Context) {
         val builder = AlertDialog.Builder(context)
         builder.setTitle(R.string.trackingDialogTitle)
-        builder.setMessage(Html.fromHtml("<b>PRODOTTO: </b>" + product.title  + "<br><br><b>BRAND: </b> "+ product.brand))
+        builder.setMessage(Html.fromHtml("<b>PRODOTTO: </b>" + product.title + "<br><br><b>BRAND: </b> " + product.brand))
 
         builder.setPositiveButton(R.string.yes) { _, _ ->
             var isDeal = 0
@@ -99,16 +101,26 @@ class TrackingFragment : ScopedFragment(), KodeinAware {
         builder.show()
     }
 
+    private fun showDialogError(context: Context) {
+        val builder = AlertDialog.Builder(context)
+        builder.setTitle(R.string.warning)
+        builder.setMessage("Non è possibile tracciare questo prodotto!")
+
+        builder.setNeutralButton(R.string.closeBtn) { _, _ ->
+            edit_text_link.setText("")
+        }
+        builder.show()
+    }
+
     private fun onAddTracking(product: ProductEntity) {
         launch(Dispatchers.Main) {
             trackingViewModel.trackProduct = product
             group_loading.visibility = View.VISIBLE
-            val serverRes  = trackingViewModel.addTrackingRes.await()
+            val serverRes = trackingViewModel.addTrackingRes.await()
             group_loading.visibility = View.GONE
-            if(serverRes.value?.ok == SERVER_OK) {
+            if (serverRes.value?.ok == SERVER_OK) {
                 Toast.makeText(context, getString(R.string.track_added), Toast.LENGTH_LONG).show()
-            }
-            else{
+            } else {
                 Toast.makeText(context, serverRes.value?.err, Toast.LENGTH_LONG).show()
             }
         }

@@ -75,6 +75,8 @@
     <string name="AppVersion">Versione App</string>
     <string name="Version">0.0.1</string>
     <string name="Theme">Tema</string>
+    <string name="warning">ATTENZIONE:</string>
+    <string name="closeBtn">Chiudi</string>
 
 
 </resources>

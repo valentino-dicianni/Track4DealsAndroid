@@ -57,7 +57,6 @@ class ProductRepository(
             if (isServerFetchNeeded(lastFetchTimeOffers)) {
                 productDataService.getOffers()
                 lastFetchTimeOffers = ZonedDateTime.now()
-                Log.d("TEST", "getOffers: update dal server: $lastFetchTimeOffers")
             }
             return@withContext productDAO.getAllProduct()
         }
@@ -68,7 +67,6 @@ class ProductRepository(
             if (isServerFetchNeeded(lastFetchTimeOffers)) {
             productDataService.getTracking()
                 lastFetchTimeTrackings = ZonedDateTime.now()
-                Log.d("TEST", "getOffers: update dal server: $lastFetchTimeTrackings")
             }
             return@withContext productDAO.getAllTracking()
         }
@@ -77,19 +75,19 @@ class ProductRepository(
 
     suspend fun addTrackingProduct(productEntity: ProductEntity): LiveData<ServerResponse> {
         return withContext(Dispatchers.IO) {
-            productDataService.addTrackProduct(productEntity)
+            return@withContext productDataService.addTrackProduct(productEntity)
         }
     }
 
     suspend fun removeTrackingProduct(productEntity: ProductEntity): LiveData<ServerResponse> {
         return withContext(Dispatchers.IO) {
-            productDataService.removeTrackProduct(productEntity)
+            return@withContext productDataService.removeTrackProduct(productEntity)
         }
     }
 
     suspend fun findProductByAsin(ASIN: String): LiveData<ServerResponse> {
         return withContext(Dispatchers.IO) {
-            productDataService.fetchAmazonProduct(ASIN)
+            return@withContext productDataService.fetchAmazonProduct(ASIN)
         }
     }
 
