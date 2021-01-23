@@ -4,6 +4,7 @@ package com.example.track4deals.ui.offers
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -40,19 +41,17 @@ class OffersFragment : ScopedFragment(), KodeinAware, OnProductListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        offersViewModel =
-            ViewModelProvider(this, offersViewModelFactory).get(OffersViewModel::class.java)
-        bindUI(this)
         return inflater.inflate(R.layout.fragment_offers, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        offersViewModel = ViewModelProvider(this, offersViewModelFactory).get(OffersViewModel::class.java)
+        bindUI(this)
         swipeContainer.setOnRefreshListener {
             bindUI(this)
             swipeContainer.isRefreshing = false
         }
-
     }
 
     private fun bindUI(listener: OnProductListener) = launch(Dispatchers.Main) {
@@ -82,10 +81,10 @@ class OffersFragment : ScopedFragment(), KodeinAware, OnProductListener {
             addAll(items)
         }
         items_linear_rv.apply {
-            adapter = groupAdapter
             addItemDecoration(TopSpacingItemDecoration(30))
-            items_linear_rv.layoutManager = LinearLayoutManager(context)
-            items_linear_rv.setHasFixedSize(true)
+            layoutManager = LinearLayoutManager(context)
+            adapter = groupAdapter
+            setHasFixedSize(true)
         }
 
     }
@@ -99,11 +98,10 @@ class OffersFragment : ScopedFragment(), KodeinAware, OnProductListener {
     override fun onAddTracking(product: ProductEntity) {
         launch(Dispatchers.Main) {
             offersViewModel.addTrackingProduct = product
-            val serverRes  = offersViewModel.addTrackingRes.await()
-            if(serverRes.value?.ok == SERVER_OK) {
+            val serverRes = offersViewModel.addTrackingRes.await()
+            if (serverRes.value?.ok == SERVER_OK) {
                 Toast.makeText(context, getString(R.string.track_added), Toast.LENGTH_LONG).show()
-            }
-            else{
+            } else {
                 Toast.makeText(context, serverRes.value?.err, Toast.LENGTH_LONG).show()
             }
         }
@@ -112,11 +110,10 @@ class OffersFragment : ScopedFragment(), KodeinAware, OnProductListener {
     override fun onRemoveTracking(product: ProductEntity) {
         launch(Dispatchers.Main) {
             offersViewModel.removeTrackingProduct = product
-            val serverRes  = offersViewModel.removeTrackingRes.await()
-            if(serverRes.value?.ok == SERVER_OK) {
+            val serverRes = offersViewModel.removeTrackingRes.await()
+            if (serverRes.value?.ok == SERVER_OK) {
                 Toast.makeText(context, getString(R.string.track_remove), Toast.LENGTH_LONG).show()
-            }
-            else{
+            } else {
                 Toast.makeText(context, serverRes.value?.err, Toast.LENGTH_LONG).show()
             }
         }
