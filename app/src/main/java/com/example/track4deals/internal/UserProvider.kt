@@ -10,6 +10,12 @@ class UserProvider {
     private var phone : String = ""
     private var numTracking : Int = 0
 
+    init {
+        getToken {
+            token = it
+        }
+    }
+
     fun getToken() = token
 
     fun loadToken() {
