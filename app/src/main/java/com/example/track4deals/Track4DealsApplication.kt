@@ -4,6 +4,7 @@ import android.app.Application
 import com.example.track4deals.data.LoginRepository
 import com.example.track4deals.data.ProductRepository
 import com.example.track4deals.data.database.ProductDB
+import com.example.track4deals.firebase.MyFirebaseMessagingService
 import com.example.track4deals.internal.UserProvider
 import com.example.track4deals.services.AuthService
 import com.example.track4deals.services.utils.ConnectivityInterceptor

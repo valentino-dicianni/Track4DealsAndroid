@@ -3,6 +3,7 @@ package com.example.track4deals.ui.login
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,11 +15,15 @@ import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.example.track4deals.MainActivity
 import com.example.track4deals.R
 import com.example.track4deals.data.models.LoggedInUserView
+import com.example.track4deals.firebase.MyFirebaseMessagingService
 import com.example.track4deals.internal.ScopedFragment
 import com.example.track4deals.ui.profile.ProfileFragment
 import com.example.track4deals.ui.register.RegisterFragment
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.messaging.FirebaseMessaging
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.x.closestKodein
 import org.kodein.di.generic.instance
@@ -122,6 +127,7 @@ class LoginFragment : ScopedFragment(), KodeinAware {
 
     private fun updateUiWithUser(model: LoggedInUserView) {
         val welcome = getString(R.string.welcome) + model.displayName
+        registerFirebaseToken()
         val appContext = context?.applicationContext ?: return
         Toast.makeText(appContext, welcome, Toast.LENGTH_LONG).show()
         parentFragmentManager.apply {
@@ -134,5 +140,22 @@ class LoginFragment : ScopedFragment(), KodeinAware {
     private fun showLoginFailed(@StringRes errorString: Int) {
         val appContext = context?.applicationContext ?: return
         Toast.makeText(appContext, errorString, Toast.LENGTH_LONG).show()
+    }
+
+    private fun registerFirebaseToken(){
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.w(TAG, "Fetching FCM registration token failed", task.exception)
+                return@OnCompleteListener
+            }
+
+            // Get new FCM registration token
+            val token = task.result
+
+            // Log and toast
+            val msg = getString(R.string.msg_token_fmt) + token
+            Log.d(TAG, msg)
+            Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+        })
     }
 }

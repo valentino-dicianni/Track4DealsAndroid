@@ -10,31 +10,36 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.example.track4deals.MainActivity
 import com.example.track4deals.R
+import com.example.track4deals.services.AuthService
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import org.kodein.di.KodeinAware
+import org.kodein.di.android.closestKodein
+import org.kodein.di.generic.instance
 
 
-class MyFirebaseMessagingService(): FirebaseMessagingService() {
+class MyFirebaseMessagingService() : FirebaseMessagingService(), KodeinAware {
+    override val kodein by closestKodein()
+    private val authService: AuthService by instance()
 
     override fun onNewToken(token: String) {
         Log.d("MyFirebaseMessagingService", "Refreshed token: $token")
-
-        // If you want to send messages to this application instance or
-        // manage this apps subscriptions on the server side, send the
-        // Instance ID token to your app server.
-        //apiGatewayService.registerFirebaseToken(token)
-        Log.d("MyFirebaseMessagingService", "Sent token to Track4Deals Server")
-        // TODO: send FCM to server (enable notifications)
-        // sendRegistrationToServer(token)
+        registerToken(token)
     }
 
+    private fun registerToken(token: String) {
+        GlobalScope.launch() {
+            authService.registerFirebaseToken(token)
+            Log.d("MyFirebaseMessagingService", "Sent token to Track4Deals Server")
+        }
+    }
+
+
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        // ...
 
-        // TODO(developer): Handle FCM messages here.
-        // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
         Log.d("MyFirebaseMessagingService", "From: ${remoteMessage.from}")
-
 
         // Check if message contains a notification payload.
         remoteMessage.notification?.let {
@@ -51,8 +56,10 @@ class MyFirebaseMessagingService(): FirebaseMessagingService() {
     private fun sendNotification(message: RemoteMessage.Notification) {
         val intent = Intent(this, MainActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        val pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
-            PendingIntent.FLAG_ONE_SHOT)
+        val pendingIntent = PendingIntent.getActivity(
+            this, 0 /* Request code */, intent,
+            PendingIntent.FLAG_ONE_SHOT
+        )
 
         val notificationBuilder = NotificationCompat.Builder(this, "Channel")
             .setSmallIcon(R.drawable.notification_icon_background)
@@ -60,13 +67,16 @@ class MyFirebaseMessagingService(): FirebaseMessagingService() {
             .setContentText(message.body.toString())
             .setContentIntent(pendingIntent)
 
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager =
+            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         // Since android Oreo notification channel is needed.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel("Channel",
+            val channel = NotificationChannel(
+                "Channel",
                 "Channel human readable title",
-                NotificationManager.IMPORTANCE_DEFAULT)
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
             notificationManager.createNotificationChannel(channel)
         }
 

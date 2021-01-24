@@ -1,9 +1,11 @@
 package com.example.track4deals.services
 
 import com.example.track4deals.data.constants.AppConstants
+import com.example.track4deals.data.models.ServerResponse
 import com.example.track4deals.data.models.UserInfo
 import com.example.track4deals.services.utils.ConnectivityInterceptor
 import com.example.track4deals.services.utils.JWTinterceptor
+import com.google.firebase.inject.Deferred
 import com.google.gson.Gson
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import okhttp3.Interceptor
@@ -33,6 +35,12 @@ interface AuthService {
         @Field("email") email: String,
         @Field("uid") uid: String
     ): retrofit2.Response<UserInfo>
+
+    @FormUrlEncoded
+    @POST("/auth/register_firebaseToken")
+    suspend fun registerFirebaseToken(
+        @Field("firebaseToken") token: String
+    ): Deferred<ServerResponse>
 
     companion object {
         operator fun invoke(
