@@ -4,7 +4,6 @@ package com.example.track4deals.ui.offers
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -60,8 +59,12 @@ class OffersFragment : ScopedFragment(), KodeinAware, OnProductListener {
             adapter = groupAdapter
             setHasFixedSize(true)
         }
+
+        // Bind recycler view
         bindUI(this)
 
+
+        // On refresh UI
         swipeContainer.setOnRefreshListener {
             groupAdapter = GroupAdapter<ViewHolder>()
             items_linear_rv.adapter = groupAdapter
@@ -72,11 +75,16 @@ class OffersFragment : ScopedFragment(), KodeinAware, OnProductListener {
         }
     }
 
+    /**
+     * Fetch for offers and tracking products and populate the
+     * recycler view with 2 sections (tracking only if user is
+     * loggedIn)
+     * @param listener listener interface for buttons
+     * in the items of the recycler view
+     */
     private fun bindUI(listener: OnProductListener) = launch(Dispatchers.Main) {
-        Log.d("TAG", "bindUI: CHIAMATAAA")
         val offers = offersViewModel.offers.await()
         offers.observe(viewLifecycleOwner, Observer {
-            Log.d("TAG", "bindUI: offers -> ${it.size}")
             if (it == null) return@Observer // gestrire null
             if (!userProvider.isLoggedIn()) {
                 group_loading.visibility = View.GONE
@@ -87,7 +95,6 @@ class OffersFragment : ScopedFragment(), KodeinAware, OnProductListener {
         if (userProvider.isLoggedIn()) {
             val trackings = offersViewModel.trackings.await()
             trackings.observe(viewLifecycleOwner, Observer {
-                Log.d("TAG", "bindUI: tracking -> ${it.size}")
                 if (it == null) return@Observer // gestrire null
                 userProvider.setNumTracking(it.size)
                 group_loading.visibility = View.GONE
@@ -97,12 +104,19 @@ class OffersFragment : ScopedFragment(), KodeinAware, OnProductListener {
         }
     }
 
+    /**
+     * Mapping function from list of ProductEntity to list of ProductListItem
+     */
     private fun List<ProductEntity>.toItemsList(listener: OnProductListener): List<ProductListItem> {
         return this.map {
             context?.let { ctx -> ProductListItem(it, ctx, listener, userProvider) }!!
         }
     }
 
+    /**
+     * Add a new group called "Offerte" to the recycler view
+     * @param itemsOffers item list to add in the group
+     */
     private fun addOffersRecyclerView(
         itemsOffers: List<ProductListItem>,
     ) {
@@ -116,6 +130,10 @@ class OffersFragment : ScopedFragment(), KodeinAware, OnProductListener {
         numOffers++
     }
 
+    /**
+     * Add a new group called "Tracking" to the recycler view
+     * @param itemsOffers item list to add in the group
+     */
     private fun addTrackingRecyclerView(
         itemsTracking: List<ProductListItem>
     ) {
@@ -128,6 +146,17 @@ class OffersFragment : ScopedFragment(), KodeinAware, OnProductListener {
         }
         numTracking++
     }
+
+
+
+    /**
+     *
+     * OnProductListener interface implementation
+     * - onUrlClick: launch an intent to the url passed as parameter
+     * - onAddTracking: add tracking product
+     * - onRemoveTracking: remove tracking product
+     *
+     */
 
     override fun onUrlClick(url: String) {
         val intent = Intent(Intent.ACTION_VIEW)

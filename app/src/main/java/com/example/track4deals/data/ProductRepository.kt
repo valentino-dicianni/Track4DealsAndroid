@@ -1,7 +1,6 @@
 package com.example.track4deals.data
 
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import com.example.track4deals.data.database.ProductDAO
 import com.example.track4deals.data.database.entity.ProductEntity
@@ -22,24 +21,36 @@ class ProductRepository(
         productDataService.downloadedOffers.observeForever { newOffers ->
             persistProductData(newOffers, true, 0)
         }
-        productDataService.downloadeTracking.observeForever { newTrackings ->
+        productDataService.downloadedTracking.observeForever { newTrackings ->
             persistProductData(newTrackings, false, 1)
         }
         productDataService.addTrackingRes.observeForever { trackingResponse ->
             persistProductData(trackingResponse, false, 1)
+            lastFetchTimeTrackings = ZonedDateTime.now().minusMinutes(30)
         }
         productDataService.removeTrackingRes.observeForever { trackingResponse ->
             persistProductData(trackingResponse, false, 0)
+            lastFetchTimeTrackings = ZonedDateTime.now().minusMinutes(30)
         }
     }
 
+    /**
+     * Makes persistent the downloaded data from server.
+     * For downloaded offers we need to use a custom Upsert due to
+     * the difference between local database and remote database
+     *
+     * @param customUpsert true if we need to use the custom upser in DAO
+     * @param isTracking true if the data to persist needs to tracked
+     * @param serverResponse response from server
+     *
+     */
     private fun persistProductData(
-        newOffers: ServerResponse?,
+        serverResponse: ServerResponse?,
         customUpsert: Boolean,
         isTracking: Int
     ) {
         GlobalScope.launch(Dispatchers.IO) {
-            val products: ArrayList<Product>? = newOffers?.response
+            val products: ArrayList<Product>? = serverResponse?.response
             if (products != null) {
                 for (p: Product in products) {
                     if (customUpsert)
@@ -50,7 +61,6 @@ class ProductRepository(
             }
         }
     }
-
 
     suspend fun getOffers(): LiveData<List<ProductEntity>> {
         return withContext(Dispatchers.IO) {
@@ -91,10 +101,11 @@ class ProductRepository(
         }
     }
 
+    /**
+     * check if refreshed product are needed from the server
+     */
     private fun isServerFetchNeeded(lastTime: ZonedDateTime): Boolean {
-        /*val oneMinutesAgo = ZonedDateTime.now().minusMinutes(1)
+        val oneMinutesAgo = ZonedDateTime.now().minusMinutes(1)
         return lastTime.isBefore(oneMinutesAgo)
-         */
-        return true
     }
 }

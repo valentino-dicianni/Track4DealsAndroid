@@ -19,7 +19,7 @@ class ProductDataService(
         get() = _downloadedOffers
 
     private val _downloadeTracking = MutableLiveData<ServerResponse>()
-    val downloadeTracking: LiveData<ServerResponse>
+    val downloadedTracking: LiveData<ServerResponse>
         get() = _downloadeTracking
 
     private val _addTrackingRes = MutableLiveData<ServerResponse>()
