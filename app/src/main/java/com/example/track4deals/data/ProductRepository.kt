@@ -64,8 +64,8 @@ class ProductRepository(
 
     suspend fun getTrackingProducts(): LiveData<List<ProductEntity>> {
         return withContext(Dispatchers.IO) {
-            if (isServerFetchNeeded(lastFetchTimeOffers)) {
-            productDataService.getTracking()
+            if (isServerFetchNeeded(lastFetchTimeTrackings)) {
+                productDataService.getTracking()
                 lastFetchTimeTrackings = ZonedDateTime.now()
             }
             return@withContext productDAO.getAllTracking()
@@ -92,7 +92,9 @@ class ProductRepository(
     }
 
     private fun isServerFetchNeeded(lastTime: ZonedDateTime): Boolean {
-        val oneMinutesAgo = ZonedDateTime.now().minusMinutes(1)
+        /*val oneMinutesAgo = ZonedDateTime.now().minusMinutes(1)
         return lastTime.isBefore(oneMinutesAgo)
+         */
+        return true
     }
 }

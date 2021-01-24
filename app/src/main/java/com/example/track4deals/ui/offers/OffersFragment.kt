@@ -21,10 +21,7 @@ import com.example.track4deals.ui.offers.recyclerView.ExpandableHeaderItem
 import com.example.track4deals.ui.offers.recyclerView.OnProductListener
 import com.example.track4deals.ui.offers.recyclerView.ProductListItem
 import com.example.track4deals.ui.offers.recyclerView.TopSpacingItemDecoration
-import com.xwray.groupie.ExpandableGroup
-import com.xwray.groupie.GroupAdapter
-import com.xwray.groupie.Section
-import com.xwray.groupie.ViewHolder
+import com.xwray.groupie.*
 import kotlinx.android.synthetic.main.fragment_offers.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -40,6 +37,8 @@ class OffersFragment : ScopedFragment(), KodeinAware, OnProductListener {
     private val userProvider: UserProvider by instance()
 
     private lateinit var groupAdapter: GroupAdapter<ViewHolder>
+    private var numTracking : Int = 0
+    private var numOffers : Int = 0
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -54,7 +53,7 @@ class OffersFragment : ScopedFragment(), KodeinAware, OnProductListener {
         offersViewModel =
             ViewModelProvider(this, offersViewModelFactory).get(OffersViewModel::class.java)
 
-        groupAdapter = GroupAdapter()
+        groupAdapter = GroupAdapter<ViewHolder>()
         items_linear_rv.apply {
             addItemDecoration(TopSpacingItemDecoration(30))
             layoutManager = LinearLayoutManager(context)
@@ -62,29 +61,38 @@ class OffersFragment : ScopedFragment(), KodeinAware, OnProductListener {
             setHasFixedSize(true)
         }
         bindUI(this)
+
         swipeContainer.setOnRefreshListener {
+            groupAdapter = GroupAdapter<ViewHolder>()
+            items_linear_rv.adapter = groupAdapter
+            numOffers = 0
+            numTracking = 0
             bindUI(this)
             swipeContainer.isRefreshing = false
         }
     }
 
     private fun bindUI(listener: OnProductListener) = launch(Dispatchers.Main) {
+        Log.d("TAG", "bindUI: CHIAMATAAA")
         val offers = offersViewModel.offers.await()
         offers.observe(viewLifecycleOwner, Observer {
+            Log.d("TAG", "bindUI: offers -> ${it.size}")
             if (it == null) return@Observer // gestrire null
             if (!userProvider.isLoggedIn()) {
                 group_loading.visibility = View.GONE
             }
-            addOffersRecyclerView(it.toItemsList(listener))
+            if(numOffers < 1)
+                addOffersRecyclerView(it.toItemsList(listener))
         })
-        Log.d("TEST", "bindUI: ${userProvider.isLoggedIn()}")
         if (userProvider.isLoggedIn()) {
             val trackings = offersViewModel.trackings.await()
             trackings.observe(viewLifecycleOwner, Observer {
+                Log.d("TAG", "bindUI: tracking -> ${it.size}")
                 if (it == null) return@Observer // gestrire null
                 userProvider.setNumTracking(it.size)
                 group_loading.visibility = View.GONE
-                addTrackingRecyclerView(it.toItemsList(listener))
+                if(numTracking < 1)
+                    addTrackingRecyclerView(it.toItemsList(listener))
             })
         }
     }
@@ -105,17 +113,20 @@ class OffersFragment : ScopedFragment(), KodeinAware, OnProductListener {
             add(Section(itemsOffers))
             groupAdapter.add(this)
         }
+        numOffers++
     }
 
     private fun addTrackingRecyclerView(
         itemsTracking: List<ProductListItem>
     ) {
-        val group = ExpandableGroup(
-            context?.let { ExpandableHeaderItem(it.getString(R.string.title_tracking)) }, false
+        ExpandableGroup(
+            context?.let { ExpandableHeaderItem(it.getString(R.string.title_tracking)) },
+            false
         ).apply {
             add(Section(itemsTracking))
+            groupAdapter.add(this)
         }
-        groupAdapter.add(group)
+        numTracking++
     }
 
     override fun onUrlClick(url: String) {
