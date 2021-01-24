@@ -73,6 +73,22 @@ class OffersFragment : ScopedFragment(), KodeinAware, OnProductListener {
             bindUI(this)
             swipeContainer.isRefreshing = false
         }
+
+        offersViewModel.addTrackingRes.observe(viewLifecycleOwner, Observer {
+            if (it.ok == SERVER_OK) {
+                Toast.makeText(context, getString(R.string.track_added), Toast.LENGTH_LONG).show()
+            } else {
+                Toast.makeText(context, it.err, Toast.LENGTH_LONG).show()
+            }
+        })
+
+        offersViewModel.removeTrackingRes.observe(viewLifecycleOwner, Observer {
+            if (it.ok == SERVER_OK) {
+                Toast.makeText(context, getString(R.string.track_remove), Toast.LENGTH_LONG).show()
+            } else {
+                Toast.makeText(context, it.err, Toast.LENGTH_LONG).show()
+            }
+        })
     }
 
     /**
@@ -165,23 +181,9 @@ class OffersFragment : ScopedFragment(), KodeinAware, OnProductListener {
 
     override fun onAddTracking(product: ProductEntity) {
         offersViewModel.setAddT(product)
-        offersViewModel.addTrackingRes.observe(this, Observer {
-            if (it.ok == SERVER_OK) {
-                Toast.makeText(context, getString(R.string.track_added), Toast.LENGTH_LONG).show()
-            } else {
-                Toast.makeText(context, it.err, Toast.LENGTH_LONG).show()
-            }
-        })
     }
 
     override fun onRemoveTracking(product: ProductEntity) {
         offersViewModel.setRemT(product)
-        offersViewModel.removeTrackingRes.observe(this, Observer {
-            if (it.ok == SERVER_OK) {
-                Toast.makeText(context, getString(R.string.track_remove), Toast.LENGTH_LONG).show()
-            } else {
-                Toast.makeText(context, it.err, Toast.LENGTH_LONG).show()
-            }
-        })
     }
 }
