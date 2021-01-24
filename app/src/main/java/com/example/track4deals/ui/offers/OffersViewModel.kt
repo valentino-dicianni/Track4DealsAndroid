@@ -1,22 +1,32 @@
 package com.example.track4deals.ui.offers
 
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
 import com.example.track4deals.data.ProductRepository
 import com.example.track4deals.data.database.entity.ProductEntity
+import com.example.track4deals.data.models.LoginFormState
+import com.example.track4deals.data.models.Product
+import com.example.track4deals.data.models.ServerResponse
 import com.example.track4deals.internal.lazyDeferred
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class OffersViewModel(
     private val productRepository: ProductRepository
 ) : ViewModel() {
 
-    lateinit var addTrackingProduct : ProductEntity
-    lateinit var removeTrackingProduct : ProductEntity
+    private val addTrack = MutableLiveData<ProductEntity>()
+    private val remTrack = MutableLiveData<ProductEntity>()
 
 
+
+    fun setAddT(p: ProductEntity) {
+        this.addTrack.postValue(p)
+    }
+
+    fun setRemT(p: ProductEntity) {
+        this.remTrack.postValue(p)
+    }
 
     val offers by lazyDeferred {
         productRepository.getOffers()
@@ -26,12 +36,17 @@ class OffersViewModel(
         productRepository.getTrackingProducts()
     }
 
-    val addTrackingRes by lazyDeferred {
-        productRepository.addTrackingProduct(addTrackingProduct)
+    // switchMap starts a coroutine whenever the value of a LiveData changes.
+    val addTrackingRes = addTrack.switchMap {
+        liveData {
+            productRepository.addTrackingProduct(it).value?.let { emit(it) }
+        }
     }
 
-    val removeTrackingRes by lazyDeferred {
-        productRepository.removeTrackingProduct(removeTrackingProduct)
+    val removeTrackingRes = remTrack.switchMap {
+        liveData {
+            productRepository.removeTrackingProduct(it).value?.let { emit(it) }
+        }
     }
 
 

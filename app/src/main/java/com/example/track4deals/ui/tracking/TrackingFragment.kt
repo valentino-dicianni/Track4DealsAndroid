@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.track4deals.R
 import com.example.track4deals.data.constants.AppConstants.Companion.SERVER_OK
@@ -49,34 +50,58 @@ class TrackingFragment : ScopedFragment(), KodeinAware {
         super.onViewCreated(view, savedInstanceState)
         group_loading.visibility = View.GONE
 
+        trackingViewModel.verifyProdResult.observe(viewLifecycleOwner, Observer { response ->
+            group_loading.visibility = View.GONE
+            Log.d(TAG, "findProductDetails: ${response.toString()}")
+            if (response.ok == SERVER_OK) {
+                context?.let { response.response?.let { it1 -> showDialog(it1.get(0), it) } }
+            } else {
+                context?.let { showDialogError(it) }
+            }
+
+        })
+
+        trackingViewModel.addTrackingRes.observe(viewLifecycleOwner, Observer { response ->
+            group_loading.visibility = View.GONE
+
+            if (response.ok == SERVER_OK) {
+                Toast.makeText(context, getString(R.string.track_added), Toast.LENGTH_LONG).show()
+            } else {
+                Toast.makeText(context, response.err, Toast.LENGTH_LONG).show()
+            }
+        })
+
         track_btn.setOnClickListener {
             if (userProvider.isLoggedIn()) {
                 val link = edit_text_link.text.toString()
                 if (link != "") {
-                    val pattern = "/([a-zA-Z0-9]{10})(?:[/?]|$)".toRegex()
-                    val ASIN = pattern.find(link)?.value?.replace("/", "");
+                    val pattern = "(\\/[a-zA-Z0-9]{10})(?:[/?]|)".toRegex()
+                    val ASIN = pattern.find(link)?.value?.replace("/", "")?.replace("?", "")
                     if (ASIN != null) {
                         findProductDetails(ASIN)
+                        edit_text_link.setText("")
+                    } else { // no ASIN in text
+                        edit_text_link.setText("")
+                        Toast.makeText(context, getString(R.string.errorText), Toast.LENGTH_SHORT)
+                            .show()
                     }
                 }
             } else {
+                edit_text_link.setText("")
                 Toast.makeText(context, context?.getString(R.string.errorToast), Toast.LENGTH_LONG)
+                    .show()
             }
         }
     }
 
-    private fun findProductDetails(ASIN: String) = launch(Dispatchers.Main) {
+    private fun findProductDetails(ASIN: String) {
         group_loading.visibility = View.VISIBLE
         trackingViewModel.setProduct(ASIN)
-        val response = trackingViewModel.trackingProduct.await()
-        group_loading.visibility = View.GONE
+    }
 
-        Log.d(TAG, "findProductDetails: ${response.value.toString()}")
-        if (response.value?.ok == SERVER_OK) {
-            context?.let { response.value!!.response?.get(0)?.let { it1 -> showDialog(it1, it) } }
-        } else {
-            context?.let { showDialogError(it) }
-        }
+    private fun onAddTracking(product: ProductEntity) {
+        trackingViewModel.setTrackProduct(product)
+        group_loading.visibility = View.VISIBLE
     }
 
     private fun showDialog(product: Product, context: Context) {
@@ -88,10 +113,7 @@ class TrackingFragment : ScopedFragment(), KodeinAware {
             var isDeal = 0
             if (product.isDeal) isDeal = 1
             onAddTracking(product.productToEntity(isDeal))
-            Toast.makeText(
-                context,
-                R.string.yes, Toast.LENGTH_SHORT
-            ).show()
+            edit_text_link.setText("")
         }
 
         builder.setNegativeButton(R.string.no) { _, _ ->
@@ -112,18 +134,5 @@ class TrackingFragment : ScopedFragment(), KodeinAware {
         builder.show()
     }
 
-    private fun onAddTracking(product: ProductEntity) {
-        launch(Dispatchers.Main) {
-            trackingViewModel.trackProduct = product
-            group_loading.visibility = View.VISIBLE
-            val serverRes = trackingViewModel.addTrackingRes.await()
-            group_loading.visibility = View.GONE
-            if (serverRes.value?.ok == SERVER_OK) {
-                Toast.makeText(context, getString(R.string.track_added), Toast.LENGTH_LONG).show()
-            } else {
-                Toast.makeText(context, serverRes.value?.err, Toast.LENGTH_LONG).show()
-            }
-        }
-    }
 
 }

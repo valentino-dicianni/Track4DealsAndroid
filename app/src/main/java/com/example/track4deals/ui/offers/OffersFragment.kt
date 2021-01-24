@@ -36,8 +36,8 @@ class OffersFragment : ScopedFragment(), KodeinAware, OnProductListener {
     private val userProvider: UserProvider by instance()
 
     private lateinit var groupAdapter: GroupAdapter<ViewHolder>
-    private var numTracking : Int = 0
-    private var numOffers : Int = 0
+    private var numTracking: Int = 0
+    private var numOffers: Int = 0
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -89,7 +89,7 @@ class OffersFragment : ScopedFragment(), KodeinAware, OnProductListener {
             if (!userProvider.isLoggedIn()) {
                 group_loading.visibility = View.GONE
             }
-            if(numOffers < 1)
+            if (numOffers < 1)
                 addOffersRecyclerView(it.toItemsList(listener))
         })
         if (userProvider.isLoggedIn()) {
@@ -98,7 +98,7 @@ class OffersFragment : ScopedFragment(), KodeinAware, OnProductListener {
                 if (it == null) return@Observer // gestrire null
                 userProvider.setNumTracking(it.size)
                 group_loading.visibility = View.GONE
-                if(numTracking < 1)
+                if (numTracking < 1)
                     addTrackingRecyclerView(it.toItemsList(listener))
             })
         }
@@ -148,7 +148,6 @@ class OffersFragment : ScopedFragment(), KodeinAware, OnProductListener {
     }
 
 
-
     /**
      *
      * OnProductListener interface implementation
@@ -165,26 +164,24 @@ class OffersFragment : ScopedFragment(), KodeinAware, OnProductListener {
     }
 
     override fun onAddTracking(product: ProductEntity) {
-        launch(Dispatchers.Main) {
-            offersViewModel.addTrackingProduct = product
-            val serverRes = offersViewModel.addTrackingRes.await()
-            if (serverRes.value?.ok == SERVER_OK) {
+        offersViewModel.setAddT(product)
+        offersViewModel.addTrackingRes.observe(this, Observer {
+            if (it.ok == SERVER_OK) {
                 Toast.makeText(context, getString(R.string.track_added), Toast.LENGTH_LONG).show()
             } else {
-                Toast.makeText(context, serverRes.value?.err, Toast.LENGTH_LONG).show()
+                Toast.makeText(context, it.err, Toast.LENGTH_LONG).show()
             }
-        }
+        })
     }
 
     override fun onRemoveTracking(product: ProductEntity) {
-        launch(Dispatchers.Main) {
-            offersViewModel.removeTrackingProduct = product
-            val serverRes = offersViewModel.removeTrackingRes.await()
-            if (serverRes.value?.ok == SERVER_OK) {
+        offersViewModel.setRemT(product)
+        offersViewModel.removeTrackingRes.observe(this, Observer {
+            if (it.ok == SERVER_OK) {
                 Toast.makeText(context, getString(R.string.track_remove), Toast.LENGTH_LONG).show()
             } else {
-                Toast.makeText(context, serverRes.value?.err, Toast.LENGTH_LONG).show()
+                Toast.makeText(context, it.err, Toast.LENGTH_LONG).show()
             }
-        }
+        })
     }
 }

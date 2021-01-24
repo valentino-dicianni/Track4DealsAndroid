@@ -80,6 +80,7 @@
     <string name="msg_token_fmt">"TOKEN FCM: "</string>
     <string name="notOnOffer">Non in offerta</string>
     <string name="goToProduct">Vai al Prodotto</string>
+    <string name="errorText">Inserisci un link valido</string>
 
 
 </resources>
