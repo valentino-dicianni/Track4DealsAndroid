@@ -78,6 +78,8 @@
     <string name="warning">ATTENZIONE:</string>
     <string name="closeBtn">Chiudi</string>
     <string name="msg_token_fmt">"TOKEN FCM: "</string>
+    <string name="notOnOffer">Non in offerta</string>
+    <string name="goToProduct">Vai al Prodotto</string>
 
 
 </resources>

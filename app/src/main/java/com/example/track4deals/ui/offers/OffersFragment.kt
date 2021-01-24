@@ -15,13 +15,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.track4deals.R
 import com.example.track4deals.data.constants.AppConstants.Companion.SERVER_OK
 import com.example.track4deals.data.database.entity.ProductEntity
-import com.example.track4deals.data.models.ServerResponse
 import com.example.track4deals.internal.ScopedFragment
 import com.example.track4deals.internal.UserProvider
+import com.example.track4deals.ui.offers.recyclerView.ExpandableHeaderItem
 import com.example.track4deals.ui.offers.recyclerView.OnProductListener
 import com.example.track4deals.ui.offers.recyclerView.ProductListItem
 import com.example.track4deals.ui.offers.recyclerView.TopSpacingItemDecoration
+import com.xwray.groupie.ExpandableGroup
 import com.xwray.groupie.GroupAdapter
+import com.xwray.groupie.Section
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.fragment_offers.*
 import kotlinx.coroutines.Dispatchers
@@ -30,11 +32,14 @@ import org.kodein.di.KodeinAware
 import org.kodein.di.android.x.closestKodein
 import org.kodein.di.generic.instance
 
+
 class OffersFragment : ScopedFragment(), KodeinAware, OnProductListener {
     override val kodein by closestKodein()
     private lateinit var offersViewModel: OffersViewModel
     private val offersViewModelFactory: OffersViewModelFactory by instance()
     private val userProvider: UserProvider by instance()
+
+    private lateinit var groupAdapter: GroupAdapter<ViewHolder>
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -46,7 +51,16 @@ class OffersFragment : ScopedFragment(), KodeinAware, OnProductListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        offersViewModel = ViewModelProvider(this, offersViewModelFactory).get(OffersViewModel::class.java)
+        offersViewModel =
+            ViewModelProvider(this, offersViewModelFactory).get(OffersViewModel::class.java)
+
+        groupAdapter = GroupAdapter()
+        items_linear_rv.apply {
+            addItemDecoration(TopSpacingItemDecoration(30))
+            layoutManager = LinearLayoutManager(context)
+            adapter = groupAdapter
+            setHasFixedSize(true)
+        }
         bindUI(this)
         swipeContainer.setOnRefreshListener {
             bindUI(this)
@@ -55,19 +69,24 @@ class OffersFragment : ScopedFragment(), KodeinAware, OnProductListener {
     }
 
     private fun bindUI(listener: OnProductListener) = launch(Dispatchers.Main) {
-        if (userProvider.getToken() != "") {
-            val tracking = offersViewModel.trackings.await()
-            tracking.observe(viewLifecycleOwner, Observer {
-                userProvider.setNumTracking(it.size)
-            })
-        }
         val offers = offersViewModel.offers.await()
         offers.observe(viewLifecycleOwner, Observer {
-            if (it == null) return@Observer
-            group_loading.visibility = View.GONE
-            initRecyclerView(it.toItemsList(listener))
+            if (it == null) return@Observer // gestrire null
+            if (!userProvider.isLoggedIn()) {
+                group_loading.visibility = View.GONE
+            }
+            addOffersRecyclerView(it.toItemsList(listener))
         })
-
+        Log.d("TEST", "bindUI: ${userProvider.isLoggedIn()}")
+        if (userProvider.isLoggedIn()) {
+            val trackings = offersViewModel.trackings.await()
+            trackings.observe(viewLifecycleOwner, Observer {
+                if (it == null) return@Observer // gestrire null
+                userProvider.setNumTracking(it.size)
+                group_loading.visibility = View.GONE
+                addTrackingRecyclerView(it.toItemsList(listener))
+            })
+        }
     }
 
     private fun List<ProductEntity>.toItemsList(listener: OnProductListener): List<ProductListItem> {
@@ -76,17 +95,27 @@ class OffersFragment : ScopedFragment(), KodeinAware, OnProductListener {
         }
     }
 
-    private fun initRecyclerView(items: List<ProductListItem>) {
-        val groupAdapter = GroupAdapter<ViewHolder>().apply {
-            addAll(items)
+    private fun addOffersRecyclerView(
+        itemsOffers: List<ProductListItem>,
+    ) {
+        ExpandableGroup(
+            context?.let { ExpandableHeaderItem(it.getString(R.string.title_offers)) },
+            true
+        ).apply {
+            add(Section(itemsOffers))
+            groupAdapter.add(this)
         }
-        items_linear_rv.apply {
-            addItemDecoration(TopSpacingItemDecoration(30))
-            layoutManager = LinearLayoutManager(context)
-            adapter = groupAdapter
-            setHasFixedSize(true)
-        }
+    }
 
+    private fun addTrackingRecyclerView(
+        itemsTracking: List<ProductListItem>
+    ) {
+        val group = ExpandableGroup(
+            context?.let { ExpandableHeaderItem(it.getString(R.string.title_tracking)) }, false
+        ).apply {
+            add(Section(itemsTracking))
+        }
+        groupAdapter.add(group)
     }
 
     override fun onUrlClick(url: String) {

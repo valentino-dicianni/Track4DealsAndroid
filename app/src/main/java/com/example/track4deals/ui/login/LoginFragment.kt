@@ -8,17 +8,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.example.track4deals.MainActivity
 import com.example.track4deals.R
 import com.example.track4deals.data.models.LoggedInUserView
-import com.example.track4deals.firebase.MyFirebaseMessagingService
 import com.example.track4deals.internal.ScopedFragment
 import com.example.track4deals.ui.profile.ProfileFragment
 import com.example.track4deals.ui.register.RegisterFragment
@@ -93,6 +88,7 @@ class LoginFragment : ScopedFragment(), KodeinAware {
                     username.text.toString(),
                     password.text.toString()
                 )
+
             }
         }
         username.addTextChangedListener(afterTextChangedListener)

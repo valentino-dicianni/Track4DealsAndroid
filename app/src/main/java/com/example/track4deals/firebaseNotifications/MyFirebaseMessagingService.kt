@@ -1,4 +1,4 @@
-package com.example.track4deals.firebase
+package com.example.track4deals.firebaseNotifications
 
 import android.app.NotificationChannel
 import android.app.NotificationManager

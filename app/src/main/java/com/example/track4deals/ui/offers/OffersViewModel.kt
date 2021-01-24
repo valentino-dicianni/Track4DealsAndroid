@@ -1,6 +1,8 @@
 package com.example.track4deals.ui.offers
 
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.track4deals.data.ProductRepository
 import com.example.track4deals.data.database.entity.ProductEntity
@@ -13,6 +15,8 @@ class OffersViewModel(
 
     lateinit var addTrackingProduct : ProductEntity
     lateinit var removeTrackingProduct : ProductEntity
+
+
 
     val offers by lazyDeferred {
         productRepository.getOffers()

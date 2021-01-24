@@ -31,15 +31,21 @@ class ProductListItem(
             viewHolder.itemView.productName.text = productEntity.title
             viewHolder.itemView.productDescription.text = productEntity.description
             viewHolder.itemView.brand.text = productEntity.brand
-            viewHolder.itemView.oldPrice.setText(
-                "${productEntity.normal_price} €",
-                TextView.BufferType.SPANNABLE
-            )
-            val text = viewHolder.itemView.oldPrice.text as Spannable
-            text.setSpan(STRIKE_THROUGH_SPAN, 0, text.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            if (productEntity.normal_price != productEntity.offer_price) {
+                viewHolder.itemView.oldPrice.setText(
+                    "${productEntity.normal_price} €",
+                    TextView.BufferType.SPANNABLE
+                )
+                val text = viewHolder.itemView.oldPrice.text as Spannable
+                text.setSpan(STRIKE_THROUGH_SPAN, 0, text.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
 
-            viewHolder.itemView.newPrice.text = "${productEntity.offer_price} €"
-            if (userProvider.getToken() != "") {
+                viewHolder.itemView.newPrice.text = "${productEntity.offer_price} €"
+            } else {
+                viewHolder.itemView.oldPrice.text = "${productEntity.normal_price} €"
+                viewHolder.itemView.newPrice.text = context.getString(R.string.notOnOffer)
+                viewHolder.itemView.goToOfferBtn.text = context.getString(R.string.goToProduct)
+            }
+            if (userProvider.isLoggedIn()) {
                 if (productEntity.is_tracking == 1)
                     viewHolder.itemView.addTrackingBtn.text =
                         context.getString(R.string.remove_tracking)
@@ -58,7 +64,7 @@ class ProductListItem(
         }
 
         viewHolder.itemView.addTrackingBtn.setOnClickListener {
-            if (userProvider.getToken() != "") {
+            if (userProvider.isLoggedIn()) {
                 if (viewHolder.itemView.addTrackingBtn.text == context.getString(R.string.add_tracking)) {
                     viewHolder.itemView.addTrackingBtn.text =
                         context.getString(R.string.remove_tracking)
