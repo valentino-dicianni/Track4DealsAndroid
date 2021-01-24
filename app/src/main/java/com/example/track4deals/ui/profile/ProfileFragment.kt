@@ -32,14 +32,6 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
 
     private lateinit var viewModel: ProfileViewModel
 
-    private fun makeVisible(textInput: TextInputEditText){
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            textInput.focusable = 1
-        }
-        textInput.isClickable = true
-        textInput.isCursorVisible = true
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
