@@ -18,7 +18,14 @@ class OffersViewModel(
     private val addTrack = MutableLiveData<ProductEntity>()
     private val remTrack = MutableLiveData<ProductEntity>()
 
+    // LAZY!! chiamate solo all'occorrenza per la recycler view
+    val offers by lazyDeferred {
+        productRepository.getOffers()
+    }
 
+    val trackings by lazyDeferred {
+        productRepository.getTrackingProducts()
+    }
 
     fun setAddT(p: ProductEntity) {
         this.addTrack.postValue(p)
@@ -26,14 +33,6 @@ class OffersViewModel(
 
     fun setRemT(p: ProductEntity) {
         this.remTrack.postValue(p)
-    }
-
-    val offers by lazyDeferred {
-        productRepository.getOffers()
-    }
-
-    val trackings by lazyDeferred {
-        productRepository.getTrackingProducts()
     }
 
     // switchMap starts a coroutine whenever the value of a LiveData changes.

@@ -13,8 +13,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Track4Deals"
-        android:usesCleartextTraffic="true"
-        >
+        android:usesCleartextTraffic="true">
 
         <activity
             android:name=".MainActivity"
@@ -27,8 +26,8 @@
 
         <activity
             android:name=".ui.offers.recyclerView.FullScreenImageViewActivity"
-            android:label="@string/app_name">
-        </activity>
+            android:label="@string/app_name" />
+
         <service
             android:name=".firebaseNotifications.MyFirebaseMessagingService"
             android:exported="false">
@@ -37,5 +36,4 @@
             </intent-filter>
         </service>
     </application>
-
 </manifest>

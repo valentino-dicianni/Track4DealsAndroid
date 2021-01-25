@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import android.widget.ToggleButton
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
@@ -14,6 +16,7 @@ import com.google.firebase.auth.FirebaseAuth
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.x.closestKodein
 import org.kodein.di.generic.instance
+import kotlin.math.log
 
 
 class SettingsFragment : PreferenceFragmentCompat(), KodeinAware {
@@ -36,14 +39,25 @@ class SettingsFragment : PreferenceFragmentCompat(), KodeinAware {
 
     override fun onPreferenceTreeClick(preference: Preference?): Boolean {
         if (preference != null) {
-            if( preference.key == context?.getString(R.string.logoutDesc)) {
+            if (preference.key == context?.getString(R.string.logoutDesc)) {
                 FirebaseAuth.getInstance().signOut()
                 userProvider.flush()
-                Toast.makeText(context, getString(R.string.logoutExecuted), Toast.LENGTH_LONG).show()
+                Toast.makeText(context, getString(R.string.logoutExecuted), Toast.LENGTH_LONG)
+                    .show()
                 return true
             }
-            if( preference.key == context?.getString(R.string.GetToken)) {
+            if (preference.key == context?.getString(R.string.GetToken)) {
                 Log.d("TEST: ", "onPreferenceTreeClick: ${userProvider.getToken()}")
+            }
+            if (preference.key == getString(R.string.Theme)) {
+                if (preference.isEnabled) {
+                    if(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES)
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                    else
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+
+
+                }
             }
         }
         return false

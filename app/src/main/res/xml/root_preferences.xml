@@ -3,14 +3,16 @@
 
     <PreferenceCategory app:title="@string/notifications">
         <SwitchPreferenceCompat
-            app:key="sync"
+            app:key="@string/notifications"
             app:title="@string/enableNotifications" />
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/Theme">
         <SwitchPreferenceCompat
-            app:key="sync"
-            app:title="@string/enableDarkTheme" />
+            app:key="@string/Theme"
+            app:title="@string/enableDarkTheme"
+            android:defaultValue="false"
+            />
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/mainSettings">

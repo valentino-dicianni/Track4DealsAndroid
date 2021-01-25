@@ -13,6 +13,7 @@ import com.example.track4deals.R
 import com.example.track4deals.services.AuthService
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.kodein.di.KodeinAware
@@ -30,7 +31,7 @@ class MyFirebaseMessagingService() : FirebaseMessagingService(), KodeinAware {
     }
 
     private fun registerToken(token: String) {
-        GlobalScope.launch() {
+        GlobalScope.launch(Dispatchers.IO) {
             authService.registerFirebaseToken(token)
             Log.d("MyFirebaseMessagingService", "Sent token to Track4Deals Server")
         }
