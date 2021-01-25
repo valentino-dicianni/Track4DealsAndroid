@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
+import android.widget.Toast.makeText
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -15,6 +16,7 @@ import com.example.track4deals.R
 import com.example.track4deals.data.models.ServerResponseUser
 import com.example.track4deals.internal.ScopedFragment
 import com.example.track4deals.internal.UserProvider
+import com.example.track4deals.ui.login.LoginFragment
 import com.example.track4deals.ui.offers.recyclerView.OnProductListener
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
@@ -92,21 +94,27 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
     }
 
     private fun bindUI() = launch(Dispatchers.Main) {
-
-        val user = viewModel.user.await()
-        user.observe(viewLifecycleOwner, Observer {
-            if (it == null) return@Observer // gestrire null
-            if (!userProvider.isLoggedIn()) {
-                group_loading.visibility = View.GONE
-            }else if (userProvider.isLoggedIn()){
-                if(it!=null){
-                    if(it.response!=null)
-                        Toast.makeText(context, "UserID:" + it.response.user_id,Toast.LENGTH_LONG).show()
-                }
+        if (!userProvider.isLoggedIn()) {
+            parentFragmentManager.apply {
+                beginTransaction()
+                    .replace(R.id.nav_host_fragment, LoginFragment.newInstance())
+                    .addToBackStack(TAG)
+                    .commit()
             }
-        })
+
+        }else {
+
+            val user = viewModel.user.await()
+            user.observe(viewLifecycleOwner, Observer {
+                if (it == null) return@Observer // gestrire null
+                if (it.response != null)
+                    makeText(context, "UserID:" + it.response.user_id, Toast.LENGTH_LONG).show()
+            })
+        }
+
 
     }
+
 
     //INPUT: Map of  EditText component and respective key listener to be enabled
     //OUTPUT: none
