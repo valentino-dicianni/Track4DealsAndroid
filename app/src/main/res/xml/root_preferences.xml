@@ -4,7 +4,8 @@
     <PreferenceCategory app:title="@string/notifications">
         <SwitchPreferenceCompat
             app:key="@string/notifications"
-            app:title="@string/enableNotifications" />
+            app:title="@string/enableNotifications"
+            android:defaultValue="true"/>
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/Theme">

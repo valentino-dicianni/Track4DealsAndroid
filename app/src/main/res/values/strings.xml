@@ -56,7 +56,10 @@
 
     <!-- Sync Preferences -->
     <string name="enableNotifications">Abilita le Notifiche</string>
+    <string name="notificationsOFF">Notfiche abilitate</string>
+    <string name="notificationsON">Notifiche Disabilitate</string>
     <string name="enableDarkTheme">Dark Theme</string>
+    <string name="enableLightTheme">Light Theme</string>
     <string name="attachment_title">Download incoming attachments</string>
     <string name="attachment_summary_on">Automatically download attachments for incoming emails
     </string>
