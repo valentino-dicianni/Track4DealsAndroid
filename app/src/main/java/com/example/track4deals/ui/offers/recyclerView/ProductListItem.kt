@@ -20,7 +20,7 @@ import kotlinx.android.synthetic.main.element_row_rv.view.*
 class ProductListItem(
     var productEntity: ProductEntity,
     var context: Context,
-    var onProductl: OnProductListener,
+    var productListener: OnProductListener,
     var userProvider: UserProvider
 ) : Item() {
     private val STRIKE_THROUGH_SPAN = StrikethroughSpan()
@@ -60,7 +60,7 @@ class ProductListItem(
         }
 
         viewHolder.itemView.goToOfferBtn.setOnClickListener {
-            onProductl.onUrlClick(productEntity.product_url)
+            productListener.onUrlClick(productEntity.product_url)
         }
 
         viewHolder.itemView.addTrackingBtn.setOnClickListener {
@@ -68,17 +68,20 @@ class ProductListItem(
                 if (viewHolder.itemView.addTrackingBtn.text == context.getString(R.string.add_tracking)) {
                     viewHolder.itemView.addTrackingBtn.text =
                         context.getString(R.string.remove_tracking)
-                    onProductl.onAddTracking(productEntity)
+                    productListener.onAddTracking(productEntity)
                 } else {
                     viewHolder.itemView.addTrackingBtn.text =
                         context.getString(R.string.add_tracking)
-                    onProductl.onRemoveTracking(productEntity)
+                    productListener.onRemoveTracking(productEntity)
                 }
             } else {
                 Toast.makeText(context, context.getString(R.string.errorToast), Toast.LENGTH_LONG)
                     .show()
             }
         }
+       viewHolder.itemView.productImage.setOnClickListener{
+           productListener.onClickImage(productEntity.imageUrl_large)
+       }
     }
 
 

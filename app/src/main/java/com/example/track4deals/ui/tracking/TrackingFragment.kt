@@ -1,11 +1,9 @@
 package com.example.track4deals.ui.tracking
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.text.Html
 import android.util.Log
-import android.view.ContextMenu
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,14 +15,11 @@ import com.example.track4deals.R
 import com.example.track4deals.data.constants.AppConstants.Companion.SERVER_OK
 import com.example.track4deals.data.database.entity.ProductEntity
 import com.example.track4deals.data.models.Product
-import com.example.track4deals.data.models.ServerResponse
 import com.example.track4deals.internal.ScopedFragment
 import com.example.track4deals.internal.UserProvider
 import com.example.track4deals.ui.login.LoginFragment.Companion.TAG
 import kotlinx.android.synthetic.main.fragment_offers.group_loading
 import kotlinx.android.synthetic.main.fragment_tracking.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.x.closestKodein
 import org.kodein.di.generic.instance
@@ -45,7 +40,6 @@ class TrackingFragment : ScopedFragment(), KodeinAware {
         return inflater.inflate(R.layout.fragment_tracking, container, false)
     }
 
-    @SuppressLint("ShowToast")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         group_loading.visibility = View.GONE

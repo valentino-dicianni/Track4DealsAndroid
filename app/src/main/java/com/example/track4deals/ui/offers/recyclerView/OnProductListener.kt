@@ -6,4 +6,5 @@ interface OnProductListener {
     fun onUrlClick(url : String)
     fun onAddTracking(product : ProductEntity)
     fun onRemoveTracking(product : ProductEntity)
+    fun onClickImage(url: String)
 }

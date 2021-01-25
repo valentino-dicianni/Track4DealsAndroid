@@ -16,10 +16,7 @@ import com.example.track4deals.data.constants.AppConstants.Companion.SERVER_OK
 import com.example.track4deals.data.database.entity.ProductEntity
 import com.example.track4deals.internal.ScopedFragment
 import com.example.track4deals.internal.UserProvider
-import com.example.track4deals.ui.offers.recyclerView.ExpandableHeaderItem
-import com.example.track4deals.ui.offers.recyclerView.OnProductListener
-import com.example.track4deals.ui.offers.recyclerView.ProductListItem
-import com.example.track4deals.ui.offers.recyclerView.TopSpacingItemDecoration
+import com.example.track4deals.ui.offers.recyclerView.*
 import com.xwray.groupie.*
 import kotlinx.android.synthetic.main.fragment_offers.*
 import kotlinx.coroutines.Dispatchers
@@ -185,5 +182,11 @@ class OffersFragment : ScopedFragment(), KodeinAware, OnProductListener {
 
     override fun onRemoveTracking(product: ProductEntity) {
         offersViewModel.setRemT(product)
+    }
+
+    override fun onClickImage(url: String) {
+        val fullImageIntent = Intent( context, FullScreenImageViewActivity::class.java)
+        fullImageIntent.putExtra("url", url)
+        startActivity(fullImageIntent)
     }
 }
