@@ -2,10 +2,10 @@ package com.example.track4deals.ui.offers
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.track4deals.data.ProductRepository
+import com.example.track4deals.data.repository.ProductRepository
 
 class OffersViewModelFactory(
-    private val productRepository: ProductRepository,
+        private val productRepository: ProductRepository,
 ) : ViewModelProvider.NewInstanceFactory() {
 
     @Suppress("UNCHECKED_CAST")

@@ -2,7 +2,7 @@ package com.example.track4deals.ui.tracking
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.track4deals.data.ProductRepository
+import com.example.track4deals.data.repository.ProductRepository
 
 class TrackingViewModelFactory(
     private val productRepository: ProductRepository

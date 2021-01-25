@@ -1,4 +1,4 @@
-package com.example.track4deals.data
+package com.example.track4deals.data.repository
 
 
 import androidx.lifecycle.LiveData

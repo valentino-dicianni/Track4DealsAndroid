@@ -2,18 +2,26 @@ package com.example.track4deals.ui.profile
 
 import android.os.Bundle
 import android.text.method.KeyListener
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.Toast
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.track4deals.R
+import com.example.track4deals.data.models.ServerResponseUser
 import com.example.track4deals.internal.ScopedFragment
 import com.example.track4deals.internal.UserProvider
+import com.example.track4deals.ui.offers.recyclerView.OnProductListener
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.android.synthetic.main.fragment_offers.*
 import kotlinx.android.synthetic.main.fragment_profile.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.x.closestKodein
 import org.kodein.di.generic.instance
@@ -46,6 +54,9 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
         val formFieldList : List<EditText> = listOf(name_profile, email_profile, phone_profile)
         val mapOfFields = createEditTextListenersMap(formFieldList)
 
+       bindUI()
+
+
         disableAllTextField(formFieldList)
 
         if (userProvider.isLoggedIn()) {
@@ -70,13 +81,30 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
             parentFragmentManager.apply {
                 beginTransaction()
                         .replace(R.id.nav_host_fragment, ChangePasswordFragment.newInstance())
-                        //.addToBackStack(ChangePasswordFragment.TAG)
+                        .addToBackStack(ChangePasswordFragment.TAG)
                         .commit()
             }
         }
 
 
 
+
+    }
+
+    private fun bindUI() = launch(Dispatchers.Main) {
+
+        val user = viewModel.user.await()
+        user.observe(viewLifecycleOwner, Observer {
+            if (it == null) return@Observer // gestrire null
+            if (!userProvider.isLoggedIn()) {
+                group_loading.visibility = View.GONE
+            }else if (userProvider.isLoggedIn()){
+                if(it!=null){
+                    if(it.response!=null)
+                        Toast.makeText(context, "UserID:" + it.response.user_id,Toast.LENGTH_LONG).show()
+                }
+            }
+        })
 
     }
 

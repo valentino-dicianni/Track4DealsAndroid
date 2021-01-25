@@ -4,8 +4,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import androidx.lifecycle.switchMap
-import com.example.track4deals.data.ProductRepository
 import com.example.track4deals.data.database.entity.ProductEntity
+import com.example.track4deals.data.repository.ProductRepository
 import com.example.track4deals.internal.lazyDeferred
 
 class TrackingViewModel(

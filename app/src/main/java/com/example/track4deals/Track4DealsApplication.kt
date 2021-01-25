@@ -1,15 +1,18 @@
 package com.example.track4deals
 
 import android.app.Application
-import com.example.track4deals.data.LoginRepository
-import com.example.track4deals.data.ProductRepository
+import com.example.track4deals.data.repository.LoginRepository
+import com.example.track4deals.data.repository.ProductRepository
 import com.example.track4deals.data.database.ProductDB
+import com.example.track4deals.data.repository.UserRepository
 import com.example.track4deals.internal.UserProvider
 import com.example.track4deals.services.AuthService
 import com.example.track4deals.services.utils.ConnectivityInterceptor
 import com.example.track4deals.services.ProductDataService
 import com.example.track4deals.services.OffersService
+import com.example.track4deals.services.ProfileService
 import com.example.track4deals.services.utils.JWTinterceptor
+import com.example.track4deals.services.utils.UserDataService
 import com.example.track4deals.ui.login.LoginViewModelFactory
 import com.example.track4deals.ui.offers.OffersViewModelFactory
 import com.example.track4deals.ui.profile.ProfileViewModelFactory
@@ -28,12 +31,15 @@ class Track4DealsApplication : Application(), KodeinAware {
         bind() from singleton { instance<ProductDB>().productDAO() }
         bind() from singleton { ConnectivityInterceptor(instance()) }
         bind() from singleton { JWTinterceptor(instance()) }
-        bind() from singleton { UserProvider() }
         bind() from singleton { OffersService(instance(), instance()) }
+        bind() from singleton { ProfileService(instance(), instance()) }
+        bind() from singleton { UserProvider() }
         bind() from singleton { AuthService(instance()) }
         bind() from singleton { ProductDataService(instance()) }
+        bind() from singleton { UserDataService(instance()) }
         bind() from singleton { ProductRepository(instance(), instance()) }
         bind() from singleton { LoginRepository(instance(), instance()) }
+        bind() from singleton { UserRepository(instance()) }
 
         bind() from provider { RegisterViewModelFactory(instance()) }
         bind() from provider { LoginViewModelFactory(instance()) }

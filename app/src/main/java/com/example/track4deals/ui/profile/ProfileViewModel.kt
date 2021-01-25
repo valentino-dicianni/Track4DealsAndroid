@@ -1,21 +1,25 @@
 package com.example.track4deals.ui.profile
 
-import android.text.method.KeyListener
-import android.widget.EditText
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.track4deals.R
-import com.example.track4deals.data.LoginRepository
+import com.example.track4deals.data.repository.LoginRepository
 import com.example.track4deals.data.models.ChangePasswordFormState
-import kotlinx.android.synthetic.main.fragment_profile.*
+import com.example.track4deals.data.repository.UserRepository
+import com.example.track4deals.internal.lazyDeferred
 
 class ProfileViewModel(
-    private  val loginRepository: LoginRepository
+    private  val userRepository: UserRepository
 ) : ViewModel() {
 
     private val changeForm = MutableLiveData<ChangePasswordFormState>()
     val changeFormState: LiveData<ChangePasswordFormState> = changeForm
+
+
+    val user by lazyDeferred {
+        userRepository.getUser()
+    }
 
 
     //INPUT:    String value from change password text field
