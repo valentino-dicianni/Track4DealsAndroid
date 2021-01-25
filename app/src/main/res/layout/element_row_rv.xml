@@ -89,6 +89,15 @@
                     android:textStyle="bold"/>
             </LinearLayout>
 
+            <TextView
+                android:id="@+id/percDiscount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/perc_risparmio"
+                android:textSize="15sp"
+                android:layout_marginTop="10dp"
+                android:textStyle="bold" />
+
             <Button
                 android:id="@+id/goToOfferBtn"
                 android:layout_width="match_parent"

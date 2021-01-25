@@ -82,6 +82,7 @@
     <string name="goToProduct">Vai al Prodotto</string>
     <string name="errorText">Inserisci un link valido</string>
     <string name="largeImageTitle">Dettagli</string>
+    <string name="perc_risparmio">perc risparmio</string>
 
 
 </resources>
