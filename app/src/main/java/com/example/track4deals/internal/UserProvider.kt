@@ -7,6 +7,7 @@ class UserProvider {
     private var username: String = ""
     private var email: String = ""
     private var profilePic : String = ""
+    private lateinit var caregoty_list:  Array<String?>
     private var phone : String = ""
     private var numTracking : Int = 0
 

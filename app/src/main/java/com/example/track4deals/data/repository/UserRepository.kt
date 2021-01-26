@@ -24,18 +24,17 @@ class UserRepository (
     val userResponse : LiveData<ServerResponseUser>
         get() = _userResponse
 
-    init {
-        /*
-        userProvider.downloadedUser.observeForever{
-            _userResponse.postValue(it)
-        }*/
-
-    }
-
 
     suspend fun getUser(): LiveData<ServerResponseUser> {
         return withContext(Dispatchers.IO) {
             userDataService.getUser()
+            return@withContext userDataService.downloadedUser
+        }
+    }
+
+    suspend fun modifyUser(user : UserInfo): LiveData<ServerResponseUser> {
+        return withContext(Dispatchers.IO) {
+            userDataService.modifyUser(user)
             return@withContext userDataService.downloadedUser
         }
     }

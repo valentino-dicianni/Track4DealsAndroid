@@ -1,11 +1,11 @@
 package com.example.track4deals.ui.profile
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
 import com.example.track4deals.R
+import com.example.track4deals.data.database.entity.ProductEntity
 import com.example.track4deals.data.repository.LoginRepository
 import com.example.track4deals.data.models.ChangePasswordFormState
+import com.example.track4deals.data.models.UserInfo
 import com.example.track4deals.data.repository.UserRepository
 import com.example.track4deals.internal.lazyDeferred
 
@@ -15,12 +15,22 @@ class ProfileViewModel(
 
     private val changeForm = MutableLiveData<ChangePasswordFormState>()
     val changeFormState: LiveData<ChangePasswordFormState> = changeForm
+    private val modifiedUser = MutableLiveData<UserInfo>()
 
 
     val user by lazyDeferred {
         userRepository.getUser()
     }
 
+    /*
+    val modifyUser by lazyDeferred {
+        userRepository.modifyUser(profilePhoto, caregoty_list)
+    }*/
+
+    fun modifyUser(u: UserInfo) {
+
+        this.modifiedUser.postValue(u)
+    }
 
     //INPUT:    String value from change password text field
     //OUTPUT:   No returned value.
@@ -46,6 +56,11 @@ class ProfileViewModel(
         return password.length > 5
     }
 
-
+    // switchMap starts a coroutine whenever the value of a LiveData changes.
+    val addUserRes = modifiedUser.switchMap {
+        liveData {
+            userRepository.modifyUser(it).value?.let { emit(it) }
+        }
+    }
 
 }

@@ -16,6 +16,7 @@ import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import com.example.track4deals.R
+import com.example.track4deals.data.database.entity.ProductEntity
 import com.example.track4deals.data.models.ServerResponseUser
 import com.example.track4deals.internal.ScopedFragment
 import com.example.track4deals.internal.UserProvider
@@ -23,6 +24,7 @@ import com.example.track4deals.ui.login.LoginFragment
 import com.example.track4deals.ui.offers.recyclerView.OnProductListener
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.UserInfo
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.fragment_offers.*
@@ -63,8 +65,6 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
         val mapOfFields = createEditTextListenersMap(formFieldList)
 
 
-
-
         disableAllTextField(formFieldList)
 
         if (userProvider.isLoggedIn()) {
@@ -79,10 +79,17 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
         }
 
         modify_profile_btn.setOnClickListener {
-            enableAllTextField(mapOfFields)
 
-            //TODO API communication
-            modify_profile_btn.text = getString(R.string.Save)
+            if(email_field.keyListener!=null){
+                modify_profile_btn.text = getString(R.string.Save)
+                disableAllTextField(formFieldList)
+
+            }else{
+                enableAllTextField(mapOfFields)
+                //TODO API communication
+                modify_profile_btn.text = getString(R.string.edit_button_it)
+            }
+
         }
 
         change_password_btn.setOnClickListener {
@@ -94,17 +101,13 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
             }
         }
 
-        bindUI(this)
+        bindUI()
 
     }
 
-    private fun bindUI(frag: Fragment) = launch(Dispatchers.Main) {
+    private fun bindUI() = launch(Dispatchers.Main) {
 
         if (userProvider.isLoggedIn()) {
-            // NavHostFragment.findNavController(frag).navigate(R.id.action_navigation_profile_to_navigation_login)
-
-
-            if (frag.view != null) {
 
                 val user = viewModel.user.await()
                 user.observe(viewLifecycleOwner, Observer {
@@ -112,9 +115,30 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
                     if (it.response != null)
                         makeText(context, "UserID:" + it.response.user_id, Toast.LENGTH_LONG).show()
                 })
-            }
+
         }
     }
+
+
+    private fun modifyProfile(frag: Fragment) = launch(Dispatchers.Main) {
+
+        if (userProvider.isLoggedIn()) {
+
+
+            val user = com.example.track4deals.data.models.UserInfo("","", Array<String?>(1){""})
+            viewModel.modifyUser(user)
+
+        }
+    }
+
+    private fun modifyProfileFirebase(frag: Fragment) = launch(Dispatchers.Main) {
+
+        if (userProvider.isLoggedIn()) {
+
+            //TODO change firebase user data
+        }
+    }
+
 
 
     //INPUT: Map of  EditText component and respective key listener to be enabled
@@ -150,6 +174,7 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
 
         return listeners
     }
+
 
 
 }
