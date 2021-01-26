@@ -9,8 +9,11 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
 import android.widget.Toast.makeText
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.Navigation
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import com.example.track4deals.R
 import com.example.track4deals.data.models.ServerResponseUser
@@ -20,6 +23,8 @@ import com.example.track4deals.ui.login.LoginFragment
 import com.example.track4deals.ui.offers.recyclerView.OnProductListener
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
+import com.xwray.groupie.GroupAdapter
+import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.fragment_offers.*
 import kotlinx.android.synthetic.main.fragment_profile.*
 import kotlinx.coroutines.Dispatchers
@@ -32,6 +37,7 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
     override val kodein by closestKodein()
     private val profileViewModelFactory: ProfileViewModelFactory by instance()
     private val userProvider : UserProvider by instance()
+    private lateinit var groupAdapter: GroupAdapter<ViewHolder>
 
 
     companion object {
@@ -56,7 +62,7 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
         val formFieldList : List<EditText> = listOf(name_profile, email_profile, phone_profile)
         val mapOfFields = createEditTextListenersMap(formFieldList)
 
-       bindUI()
+
 
 
         disableAllTextField(formFieldList)
@@ -89,31 +95,39 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
         }
 
 
+        bindUI(this)
 
+        // On refresh UI
+        /*
+        swipeContainer.setOnRefreshListener {
+            groupAdapter = GroupAdapter<ViewHolder>()
+            items_linear_rv.adapter = groupAdapter
+            val bindUI = bindUI(this)
+            swipeContainer.isRefreshing = false
+        } */
 
     }
 
-    private fun bindUI() = launch(Dispatchers.Main) {
-        if (!userProvider.isLoggedIn()) {
-            parentFragmentManager.apply {
-                beginTransaction()
-                    .replace(R.id.nav_host_fragment, LoginFragment.newInstance())
-                    .addToBackStack(TAG)
-                    .commit()
-            }
+    private fun bindUI(frag : Fragment) = launch(Dispatchers.Main) {
 
-        }else {
+        if (userProvider.isLoggedIn()) {
+            // NavHostFragment.findNavController(frag).navigate(R.id.action_navigation_profile_to_navigation_login)
 
-            val user = viewModel.user.await()
-            user.observe(viewLifecycleOwner, Observer {
-                if (it == null) return@Observer // gestrire null
-                if (it.response != null)
-                    makeText(context, "UserID:" + it.response.user_id, Toast.LENGTH_LONG).show()
-            })
+
+
+                if(frag.view!=null) {
+
+                    val user = viewModel.user.await()
+                    user.observe(viewLifecycleOwner, Observer {
+                        if (it == null) return@Observer // gestrire null
+                        if (it.response != null)
+                            makeText(context, "UserID:" + it.response.user_id, Toast.LENGTH_LONG).show()
+                    })
+                }
         }
-
-
     }
+
+
 
 
     //INPUT: Map of  EditText component and respective key listener to be enabled

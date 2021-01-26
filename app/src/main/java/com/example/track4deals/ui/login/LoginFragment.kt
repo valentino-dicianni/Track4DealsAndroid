@@ -10,9 +10,13 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.annotation.StringRes
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.NavHostFragment
 import com.example.track4deals.R
+import com.example.track4deals.R.id.action_navigation_login_to_navigation_profile
+import com.example.track4deals.R.id.action_navigation_profile_to_navigation_login
 import com.example.track4deals.data.models.LoggedInUserView
 import com.example.track4deals.internal.ScopedFragment
 import com.example.track4deals.ui.profile.ProfileFragment
@@ -69,7 +73,7 @@ class LoginFragment : ScopedFragment(), KodeinAware {
                     showLoginFailed(it)
                 }
                 loginResult.success?.let {
-                    updateUiWithUser(it)
+                    updateUiWithUser(it,this)
                 }
             })
 
@@ -121,16 +125,20 @@ class LoginFragment : ScopedFragment(), KodeinAware {
         }
     }
 
-    private fun updateUiWithUser(model: LoggedInUserView) {
+    private fun updateUiWithUser(model: LoggedInUserView,frag:Fragment) {
         val welcome = getString(R.string.welcome) + model.displayName
         registerFirebaseToken()
         val appContext = context?.applicationContext ?: return
         Toast.makeText(appContext, welcome, Toast.LENGTH_LONG).show()
+
         parentFragmentManager.apply {
             beginTransaction()
                 .replace(R.id.nav_host_fragment, ProfileFragment.newInstance())
                 .commit()
         }
+
+        //NavHostFragment.findNavController(frag).navigate(action_navigation_login_to_navigation_profile)
+
     }
 
     private fun showLoginFailed(@StringRes errorString: Int) {

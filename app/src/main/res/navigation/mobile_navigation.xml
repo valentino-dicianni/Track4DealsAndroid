@@ -37,6 +37,10 @@
         android:id="@+id/navigation_login"
         android:name="com.example.track4deals.ui.login.LoginFragment"
         android:label="@string/title_profile"
-        tools:layout="@layout/fragment_profile" />
+        tools:layout="@layout/fragment_login" >
+        <action
+            android:id="@+id/action_navigation_login_to_navigation_profile"
+            app:destination="@id/navigation_profile" />
+    </fragment>
 
 </navigation>
