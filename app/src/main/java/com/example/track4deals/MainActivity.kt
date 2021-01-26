@@ -15,7 +15,6 @@ import org.kodein.di.generic.instance
 
 class MainActivity : AppCompatActivity(), KodeinAware {
     override val kodein by closestKodein()
-    private val userProvider by instance<UserProvider>()
 
     companion object{
         private const val TAG = "MainActivity"
@@ -23,7 +22,6 @@ class MainActivity : AppCompatActivity(), KodeinAware {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         FirebaseApp.initializeApp(this)
-        userProvider.loadToken()
         setContentView(R.layout.activity_main)
         val navView: BottomNavigationView = findViewById(R.id.nav_view)
         val navHostFragment =

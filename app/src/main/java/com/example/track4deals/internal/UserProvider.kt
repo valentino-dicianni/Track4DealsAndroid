@@ -18,10 +18,8 @@ class UserProvider {
 
     fun getToken() = token
 
-    fun loadToken() {
-        getToken {
-            token = it
-        }
+    fun loadToken(token: String) {
+        this.token = token
     }
 
     fun getUserName(): String {

@@ -10,16 +10,12 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.annotation.StringRes
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import com.example.track4deals.R
-import com.example.track4deals.R.id.action_navigation_login_to_navigation_profile
-import com.example.track4deals.R.id.action_navigation_profile_to_navigation_login
 import com.example.track4deals.data.models.LoggedInUserView
 import com.example.track4deals.internal.ScopedFragment
-import com.example.track4deals.ui.profile.ProfileFragment
 import com.example.track4deals.ui.register.RegisterFragment
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
@@ -73,7 +69,7 @@ class LoginFragment : ScopedFragment(), KodeinAware {
                     showLoginFailed(it)
                 }
                 loginResult.success?.let {
-                    updateUiWithUser(it,this)
+                    updateUiWithUser(it)
                 }
             })
 
@@ -125,19 +121,20 @@ class LoginFragment : ScopedFragment(), KodeinAware {
         }
     }
 
-    private fun updateUiWithUser(model: LoggedInUserView,frag:Fragment) {
+    private fun updateUiWithUser(model: LoggedInUserView) {
         val welcome = getString(R.string.welcome) + model.displayName
         registerFirebaseToken()
         val appContext = context?.applicationContext ?: return
         Toast.makeText(appContext, welcome, Toast.LENGTH_LONG).show()
 
-        parentFragmentManager.apply {
+        /*parentFragmentManager.apply {
             beginTransaction()
                 .replace(R.id.nav_host_fragment, ProfileFragment.newInstance())
                 .commit()
-        }
+        }*/
+        findNavController().navigate(R.id.navigation_profile)
 
-        //NavHostFragment.findNavController(frag).navigate(action_navigation_login_to_navigation_profile)
+
 
     }
 

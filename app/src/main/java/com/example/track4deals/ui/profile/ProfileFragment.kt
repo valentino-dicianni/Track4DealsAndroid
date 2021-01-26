@@ -36,7 +36,7 @@ import org.kodein.di.generic.instance
 class ProfileFragment : ScopedFragment(), KodeinAware {
     override val kodein by closestKodein()
     private val profileViewModelFactory: ProfileViewModelFactory by instance()
-    private val userProvider : UserProvider by instance()
+    private val userProvider: UserProvider by instance()
     private lateinit var groupAdapter: GroupAdapter<ViewHolder>
 
 
@@ -52,14 +52,15 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewModel = ViewModelProvider(this, profileViewModelFactory).get(ProfileViewModel::class.java)
+        viewModel =
+            ViewModelProvider(this, profileViewModelFactory).get(ProfileViewModel::class.java)
         return inflater.inflate(R.layout.fragment_profile, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val navController = findNavController()
-        val formFieldList : List<EditText> = listOf(name_profile, email_profile, phone_profile)
+        val formFieldList: List<EditText> = listOf(name_profile, email_profile, phone_profile)
         val mapOfFields = createEditTextListenersMap(formFieldList)
 
 
@@ -78,7 +79,7 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
             navController.navigate(R.id.navigation_login)
         }
 
-        modify_profile_btn.setOnClickListener{
+        modify_profile_btn.setOnClickListener {
             enableAllTextField(mapOfFields)
 
             //TODO API communication
@@ -88,52 +89,39 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
         change_password_btn.setOnClickListener {
             parentFragmentManager.apply {
                 beginTransaction()
-                        .replace(R.id.nav_host_fragment, ChangePasswordFragment.newInstance())
-                        .addToBackStack(ChangePasswordFragment.TAG)
-                        .commit()
+                    .replace(R.id.nav_host_fragment, ChangePasswordFragment.newInstance())
+                    .addToBackStack(ChangePasswordFragment.TAG)
+                    .commit()
             }
         }
 
-
         bindUI(this)
-
-        // On refresh UI
-        /*
-        swipeContainer.setOnRefreshListener {
-            groupAdapter = GroupAdapter<ViewHolder>()
-            items_linear_rv.adapter = groupAdapter
-            val bindUI = bindUI(this)
-            swipeContainer.isRefreshing = false
-        } */
 
     }
 
-    private fun bindUI(frag : Fragment) = launch(Dispatchers.Main) {
+    private fun bindUI(frag: Fragment) = launch(Dispatchers.Main) {
 
         if (userProvider.isLoggedIn()) {
             // NavHostFragment.findNavController(frag).navigate(R.id.action_navigation_profile_to_navigation_login)
 
 
+            if (frag.view != null) {
 
-                if(frag.view!=null) {
-
-                    val user = viewModel.user.await()
-                    user.observe(viewLifecycleOwner, Observer {
-                        if (it == null) return@Observer // gestrire null
-                        if (it.response != null)
-                            makeText(context, "UserID:" + it.response.user_id, Toast.LENGTH_LONG).show()
-                    })
-                }
+                val user = viewModel.user.await()
+                user.observe(viewLifecycleOwner, Observer {
+                    if (it == null) return@Observer // gestrire null
+                    if (it.response != null)
+                        makeText(context, "UserID:" + it.response.user_id, Toast.LENGTH_LONG).show()
+                })
+            }
         }
     }
-
-
 
 
     //INPUT: Map of  EditText component and respective key listener to be enabled
     //OUTPUT: none
     //Makes text view focusable and editable
-    private fun enableAllTextField(fieldsMap: MutableMap<EditText, KeyListener>){
+    private fun enableAllTextField(fieldsMap: MutableMap<EditText, KeyListener>) {
 
         fieldsMap.forEach {
             it.key.keyListener = it.value
@@ -144,7 +132,7 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
     //INPUT: EditText component to be disabled
     //OUTPUT: none
     //Makes text view not focusable and editable anymore
-    private fun disableAllTextField(fields: List<EditText>){
+    private fun disableAllTextField(fields: List<EditText>) {
 
         fields.forEach {
             it.keyListener = null
@@ -163,9 +151,6 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
 
         return listeners
     }
-
-
-
 
 
 }

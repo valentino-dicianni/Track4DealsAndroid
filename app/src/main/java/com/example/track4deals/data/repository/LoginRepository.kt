@@ -43,7 +43,7 @@ class LoginRepository(
                         val currentUser = auth.currentUser
                         if (currentUser != null) {
                             currentUser.getIdToken(false).result?.token?.let {
-                                userProvider.loadToken()
+                                userProvider.loadToken(it)
                             }
                             setLoggedInUser(
                                 LoggedInUser(
@@ -63,9 +63,6 @@ class LoginRepository(
         }
     }
 
-    suspend fun updateTracking() {
-        productDataService.getTracking()
-    }
 
     private fun setLoggedInUser(loggedInUser: LoggedInUser) {
         this.user = loggedInUser
