@@ -1,13 +1,20 @@
 package com.example.track4deals.data.repository
 
+import android.provider.Settings.Global.getString
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
-import com.example.track4deals.data.models.LoggedInUser
+import com.example.track4deals.R
 import com.example.track4deals.data.models.LoggedInUserView
 import com.example.track4deals.data.models.LoginResult
 import com.example.track4deals.internal.UserProvider
-import com.example.track4deals.services.ProductDataService
+import com.example.track4deals.services.AuthService
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.messaging.FirebaseMessaging
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 /**
  * Class that requests authentication and user information from the remote data source and
@@ -16,17 +23,13 @@ import com.google.firebase.auth.FirebaseAuth
 
 class LoginRepository(
     private val userProvider: UserProvider,
-    private val productDataService: ProductDataService
+    private val authService: AuthService
 
 ) {
     private lateinit var auth: FirebaseAuth
 
-    // in-memory cache of the loggedInUser object
-    var user: LoggedInUser? = null
-        private set
-
-    init {
-        user = null
+    companion object {
+        const val TAG = "LoginRepository"
     }
 
     fun login(
@@ -45,15 +48,11 @@ class LoginRepository(
                             currentUser.getIdToken(false).result?.token?.let {
                                 userProvider.loadToken(it)
                             }
-                            setLoggedInUser(
-                                LoggedInUser(
-                                    currentUser.uid,
-                                    currentUser.displayName!!
-                                )
-                            )
+
                             result.value = LoginResult(success = currentUser.displayName?.let {
                                 LoggedInUserView(displayName = it)
                             })
+                            registerFirebaseToken()
                         }
                     }
                 }
@@ -63,9 +62,21 @@ class LoginRepository(
         }
     }
 
+    private fun registerFirebaseToken() {
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.w(TAG, "Fetching FCM registration token failed", task.exception)
+                return@OnCompleteListener
+            }
+            val token = task.result
+            Log.w(TAG, "Fetching FCM registration token: $token", task.exception)
+            GlobalScope.launch(Dispatchers.IO) {
+                if (token != null) {
+                    authService.registerFirebaseToken(token)
+                }
+                Log.d("MyFirebaseMessagingService", "Sent token to Track4Deals Server")
 
-    private fun setLoggedInUser(loggedInUser: LoggedInUser) {
-        this.user = loggedInUser
+            }
+        })
     }
-
 }

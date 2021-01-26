@@ -68,6 +68,7 @@ class UserProvider {
         }
     }
 
+
     fun flush() {
         token = ""
     }

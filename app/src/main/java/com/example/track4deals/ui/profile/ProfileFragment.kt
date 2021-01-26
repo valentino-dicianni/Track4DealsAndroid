@@ -37,7 +37,6 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
     override val kodein by closestKodein()
     private val profileViewModelFactory: ProfileViewModelFactory by instance()
     private val userProvider: UserProvider by instance()
-    private lateinit var groupAdapter: GroupAdapter<ViewHolder>
 
 
     companion object {

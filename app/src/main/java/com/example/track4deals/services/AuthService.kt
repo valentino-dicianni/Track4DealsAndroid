@@ -5,17 +5,13 @@ import com.example.track4deals.data.models.ServerResponse
 import com.example.track4deals.data.models.UserInfo
 import com.example.track4deals.services.utils.ConnectivityInterceptor
 import com.example.track4deals.services.utils.JWTinterceptor
-import com.google.firebase.inject.Deferred
-import com.google.gson.Gson
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.*
 import java.util.concurrent.TimeUnit
-
 
 interface AuthService {
 
@@ -40,11 +36,12 @@ interface AuthService {
     @POST("/auth/register_firebaseToken")
     suspend fun registerFirebaseToken(
         @Field("firebaseToken") token: String
-    ): Deferred<ServerResponse>
+    ): retrofit2.Response<ServerResponse>
 
     companion object {
         operator fun invoke(
             connectivityInterceptor: ConnectivityInterceptor,
+            jwTinterceptor: JWTinterceptor
         ): AuthService {
             val requestInterceptor = Interceptor { chain ->
                 val url = chain.request().url
@@ -58,6 +55,7 @@ interface AuthService {
             val okHttpClient = OkHttpClient.Builder()
                 .callTimeout(20, TimeUnit.SECONDS)
                 .addInterceptor(requestInterceptor)
+                .addInterceptor(jwTinterceptor)
                 .addInterceptor(connectivityInterceptor)
                 .addInterceptor(Interceptor { chain ->
                     val r = chain.request()

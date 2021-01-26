@@ -123,15 +123,10 @@ class LoginFragment : ScopedFragment(), KodeinAware {
 
     private fun updateUiWithUser(model: LoggedInUserView) {
         val welcome = getString(R.string.welcome) + model.displayName
-        registerFirebaseToken()
         val appContext = context?.applicationContext ?: return
         Toast.makeText(appContext, welcome, Toast.LENGTH_LONG).show()
 
-        /*parentFragmentManager.apply {
-            beginTransaction()
-                .replace(R.id.nav_host_fragment, ProfileFragment.newInstance())
-                .commit()
-        }*/
+
         findNavController().navigate(R.id.navigation_profile)
 
 
@@ -141,22 +136,5 @@ class LoginFragment : ScopedFragment(), KodeinAware {
     private fun showLoginFailed(@StringRes errorString: Int) {
         val appContext = context?.applicationContext ?: return
         Toast.makeText(appContext, errorString, Toast.LENGTH_LONG).show()
-    }
-
-    private fun registerFirebaseToken(){
-        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
-            if (!task.isSuccessful) {
-                Log.w(TAG, "Fetching FCM registration token failed", task.exception)
-                return@OnCompleteListener
-            }
-
-            // Get new FCM registration token
-            val token = task.result
-
-            // Log and toast
-            val msg = getString(R.string.msg_token_fmt) + token
-            Log.d(TAG, msg)
-            Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
-        })
     }
 }

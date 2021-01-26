@@ -10,7 +10,9 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.example.track4deals.MainActivity
 import com.example.track4deals.R
+import com.example.track4deals.internal.UserProvider
 import com.example.track4deals.services.AuthService
+import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import kotlinx.coroutines.Dispatchers
@@ -24,10 +26,12 @@ import org.kodein.di.generic.instance
 class MyFirebaseMessagingService() : FirebaseMessagingService(), KodeinAware {
     override val kodein by closestKodein()
     private val authService: AuthService by instance()
+    private val userProvider :UserProvider by instance()
 
     override fun onNewToken(token: String) {
         Log.d("MyFirebaseMessagingService", "Refreshed token: $token")
-        registerToken(token)
+        if(userProvider.isLoggedIn())
+            registerToken(token)
     }
 
     private fun registerToken(token: String) {
@@ -47,7 +51,7 @@ class MyFirebaseMessagingService() : FirebaseMessagingService(), KodeinAware {
             Log.d("MyFirebaseMessagingService", "Message Notification Body: ${it.body}")
         }
 
-        // Also if you intend on generating your own notifications as a result of a received FCM
+        // Also if you intend on generating your own notifications as a result of a received
         // message, here is where that should be initiated. See sendNotification method below.
         remoteMessage.notification?.let {
             sendNotification(it);

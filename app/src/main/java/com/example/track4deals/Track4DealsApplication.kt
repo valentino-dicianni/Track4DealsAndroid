@@ -34,7 +34,7 @@ class Track4DealsApplication : Application(), KodeinAware {
         bind() from singleton { OffersService(instance(), instance()) }
         bind() from singleton { ProfileService(instance(), instance()) }
         bind() from singleton { UserProvider() }
-        bind() from singleton { AuthService(instance()) }
+        bind() from singleton { AuthService(instance(), instance()) }
         bind() from singleton { ProductDataService(instance()) }
         bind() from singleton { UserDataService(instance()) }
         bind() from singleton { ProductRepository(instance(), instance()) }

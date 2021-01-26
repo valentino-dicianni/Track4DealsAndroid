@@ -86,6 +86,7 @@
     <string name="errorText">Inserisci un link valido</string>
     <string name="largeImageTitle">Dettagli</string>
     <string name="perc_risparmio">perc risparmio</string>
+    <string name="registrationTokenMsg">"Registrazione Firebase token FMC: "</string>
 
 
 </resources>
