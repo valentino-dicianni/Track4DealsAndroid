@@ -4,6 +4,7 @@ package com.example.track4deals.ui.offers
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -104,7 +105,6 @@ class OffersFragment : ScopedFragment(), KodeinAware, OnProductListener {
             if (it == null) return@Observer // gestrire null
             if (numOffers < 1)
                 addOffersRecyclerView(it.toItemsList(listener))
-
         })
         if (userProvider.isLoggedIn()) {
             val trackings = offersViewModel.trackings.await()
@@ -115,6 +115,7 @@ class OffersFragment : ScopedFragment(), KodeinAware, OnProductListener {
                     addTrackingRecyclerView(it.toItemsList(listener))
             })
         }
+
     }
 
     /**
@@ -140,6 +141,7 @@ class OffersFragment : ScopedFragment(), KodeinAware, OnProductListener {
             add(Section(itemsOffers))
             groupAdapter.add(this)
         }
+        Log.d("TEST", "addOffersRecyclerView: SIZE: ${itemsOffers.size}")
         numOffers++
         if (!userProvider.isLoggedIn()) {
             group_loading.visibility = View.GONE
@@ -160,6 +162,7 @@ class OffersFragment : ScopedFragment(), KodeinAware, OnProductListener {
             add(Section(itemsTracking))
             groupAdapter.add(this)
         }
+        Log.d("TEST", "addOffersRecyclerView: SIZE: ${itemsTracking.size}")
         numTracking++
         group_loading.visibility = View.GONE
     }

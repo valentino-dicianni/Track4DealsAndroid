@@ -1,6 +1,7 @@
 package com.example.track4deals.internal
 
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.liveData
 import androidx.lifecycle.switchMap
@@ -11,10 +12,10 @@ class UserProvider {
     private var token: String = ""
     private var username: String = ""
     private var email: String = ""
-    private var profilePic : Uri = Uri.EMPTY
-    private lateinit var caregoty_list:  Array<String?>
-    private var phone : String = ""
-    private var numTracking : Int = 0
+    private var profilePic: Uri = Uri.EMPTY
+    private lateinit var caregoty_list: Array<String?>
+    private var phone: String = ""
+    private var numTracking: Int = 0
     private var loading = MutableLiveData<Boolean>()
 
     init {
@@ -29,19 +30,22 @@ class UserProvider {
             emit(it)
         }
     }
+
     fun getToken() = token
 
     fun loadToken(token: String) {
         this.token = token
     }
 
-    fun setUsername(username: String){
+    fun setUsername(username: String) {
         this.username = username
     }
-    fun setProfilePic(url: Uri){
+
+    fun setProfilePic(url: Uri) {
         this.profilePic = url
     }
-    fun getProfilePic(): Uri{
+
+    fun getProfilePic(): Uri {
         return this.profilePic
     }
 
@@ -57,11 +61,11 @@ class UserProvider {
         return this.phone
     }
 
-    fun getNumTracking() : Int {
+    fun getNumTracking(): Int {
         return this.numTracking
     }
 
-    fun setNumTracking(numT : Int) {
+    fun setNumTracking(numT: Int) {
         this.numTracking = numT
     }
 
@@ -86,77 +90,85 @@ class UserProvider {
 
 
     private fun getToken(callback: (String) -> Unit) {
-        FirebaseAuth.getInstance().currentUser?.getIdToken(true)?.addOnCompleteListener {
-            if (it.isSuccessful) {
-                FirebaseAuth.getInstance().currentUser?.displayName?.let { it1 -> setUserName(it1) }
-                FirebaseAuth.getInstance().currentUser?.email?.let { it1 -> setEmail(it1) }
-                FirebaseAuth.getInstance().currentUser?.photoUrl?.let { it1 -> setPic(it1) }
-                callback(it.result?.token!!)
+        val user = FirebaseAuth.getInstance().currentUser
+        if (user != null) {
+            user.getIdToken(false).addOnCompleteListener {
+                if (it.isSuccessful) {
+                    user.displayName?.let { it1 ->setUserName(it1) }
+                    user.email?.let { it1 -> setEmail(it1) }
+                    user.photoUrl?.let { it1 -> setPic(it1) }
+                    callback(it.result?.token!!)
+                } else {
+                    loading.postValue(true)
+                }
             }
+        } else {
+            loading.postValue(true)
         }
+
     }
 
-    private fun updateUsername(callback: (Boolean) -> Unit, username:String) {
+    private fun updateUsername(callback: (Boolean) -> Unit, username: String) {
         val profileUpdates = userProfileChangeRequest {
             displayName = username
         }
 
         FirebaseAuth.getInstance().currentUser!!.updateProfile(profileUpdates)
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) callback(true) else callback(false)
-                }
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) callback(true) else callback(false)
+            }
     }
 
 
-    private fun updatePicture(callback: (Boolean) -> Unit, pic:Uri) {
+    private fun updatePicture(callback: (Boolean) -> Unit, pic: Uri) {
         val profileUpdates = userProfileChangeRequest {
             photoUri = pic
         }
 
         FirebaseAuth.getInstance().currentUser!!.updateProfile(profileUpdates)
-                .addOnCompleteListener { task ->
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) callback(true) else callback(false)
+            }
+    }
+
+
+    private fun updateEmail(callback: (Boolean) -> Unit, email: String) {
+        FirebaseAuth.getInstance().currentUser!!.updateEmail(email)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
                     if (task.isSuccessful) callback(true) else callback(false)
                 }
+            }
     }
 
 
-    private fun updateEmail(callback: (Boolean) -> Unit, email:String) {
-        FirebaseAuth.getInstance().currentUser!!.updateEmail(email)
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        if (task.isSuccessful) callback(true) else callback(false)
-                    }
-                }
-    }
-
-
-    private fun updatePassword(callback: (Boolean) -> Unit, pass:String) {
+    private fun updatePassword(callback: (Boolean) -> Unit, pass: String) {
         FirebaseAuth.getInstance().currentUser!!.updatePassword(pass)
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        if (task.isSuccessful) callback(true) else callback(false)
-                    }
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    if (task.isSuccessful) callback(true) else callback(false)
                 }
+            }
     }
 
 
-    private fun resetPassword(callback: (Boolean) -> Unit, email:String) {
+    private fun resetPassword(callback: (Boolean) -> Unit, email: String) {
         FirebaseAuth.getInstance().sendPasswordResetEmail(email)
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        if (task.isSuccessful) callback(true) else callback(false)
-                    }
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    if (task.isSuccessful) callback(true) else callback(false)
                 }
+            }
     }
 
 
     private fun delete(callback: (Boolean) -> Unit) {
         FirebaseAuth.getInstance().currentUser!!.delete()
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        if (task.isSuccessful) callback(true) else callback(false)
-                    }
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    if (task.isSuccessful) callback(true) else callback(false)
                 }
+            }
     }
 
 
