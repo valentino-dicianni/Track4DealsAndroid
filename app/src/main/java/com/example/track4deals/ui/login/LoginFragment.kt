@@ -31,7 +31,6 @@ class LoginFragment : ScopedFragment(), KodeinAware {
 
     companion object {
         const val TAG = "LoginFragment"
-        fun newInstance() = LoginFragment()
     }
 
     override fun onCreateView(
@@ -126,15 +125,11 @@ class LoginFragment : ScopedFragment(), KodeinAware {
         val appContext = context?.applicationContext ?: return
         Toast.makeText(appContext, welcome, Toast.LENGTH_LONG).show()
 
-
         findNavController().navigate(R.id.navigation_profile)
-
-
-
     }
 
     private fun showLoginFailed(@StringRes errorString: Int) {
         val appContext = context?.applicationContext ?: return
-        Toast.makeText(appContext, errorString, Toast.LENGTH_LONG).show()
+        Toast.makeText(appContext, getString(errorString), Toast.LENGTH_LONG).show()
     }
 }

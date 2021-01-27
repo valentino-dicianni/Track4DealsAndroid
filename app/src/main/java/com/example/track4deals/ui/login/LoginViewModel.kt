@@ -1,14 +1,13 @@
 package com.example.track4deals.ui.login
 
+import android.util.Patterns
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import android.util.Patterns
-import com.example.track4deals.data.repository.LoginRepository
-
 import com.example.track4deals.R
 import com.example.track4deals.data.models.LoginFormState
 import com.example.track4deals.data.models.LoginResult
+import com.example.track4deals.data.repository.LoginRepository
 
 class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel() {
 

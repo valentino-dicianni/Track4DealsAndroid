@@ -2,6 +2,7 @@ package com.example.track4deals.data.repository
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
+import com.example.track4deals.R
 import com.example.track4deals.data.models.LoggedInUserView
 import com.example.track4deals.data.models.LoginResult
 import com.example.track4deals.internal.NoConnectivityException
@@ -47,14 +48,23 @@ class LoginRepository(
                             currentUser.getIdToken(false).result?.token?.let {
                                 userProvider.loadToken(it)
                             }
+                            currentUser.displayName?.let { userProvider.setUsername(it) }
+                            currentUser.photoUrl?.let { userProvider.setProfilePic(it) }
 
-                            result.value = LoginResult(success = currentUser.displayName?.let {
-                                LoggedInUserView(displayName = it)
-                            })
+                            result.value = LoginResult(
+                                LoggedInUserView(
+                                    userProvider.getUserName(),
+                                    userProvider.getProfilePic()
+                                )
+                            )
                             registerFirebaseToken()
                         }
                     }
+                    else -> {
+                        result.value = LoginResult(error = R.string.login_failed)
+                    }
                 }
+
             }
         } catch (e: Throwable) {
             Log.d("Error", e.toString())

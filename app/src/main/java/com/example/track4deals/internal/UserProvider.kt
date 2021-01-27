@@ -25,6 +25,16 @@ class UserProvider {
         this.token = token
     }
 
+    fun setUsername(username: String){
+        this.username = username
+    }
+    fun setProfilePic(url: Uri){
+        this.profilePic = url
+    }
+    fun getProfilePic(): Uri{
+        return this.profilePic
+    }
+
     fun getUserName(): String {
         return this.username
     }
