@@ -2,6 +2,7 @@ package com.example.track4deals.internal
 
 import android.net.Uri
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.userProfileChangeRequest
 
 class UserProvider {
     private var token: String = ""
@@ -73,6 +74,69 @@ class UserProvider {
                 callback(it.result?.token!!)
             }
         }
+    }
+
+    private fun updateUsername(callback: (Boolean) -> Unit, username:String) {
+        val profileUpdates = userProfileChangeRequest {
+            displayName = username
+        }
+
+        FirebaseAuth.getInstance().currentUser!!.updateProfile(profileUpdates)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) callback(true) else callback(false)
+                }
+    }
+
+
+    private fun updatePicture(callback: (Boolean) -> Unit, pic:Uri) {
+        val profileUpdates = userProfileChangeRequest {
+            photoUri = pic
+        }
+
+        FirebaseAuth.getInstance().currentUser!!.updateProfile(profileUpdates)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) callback(true) else callback(false)
+                }
+    }
+
+
+    private fun updateEmail(callback: (Boolean) -> Unit, email:String) {
+        FirebaseAuth.getInstance().currentUser!!.updateEmail(email)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        if (task.isSuccessful) callback(true) else callback(false)
+                    }
+                }
+    }
+
+
+    private fun updatePassword(callback: (Boolean) -> Unit, pass:String) {
+        FirebaseAuth.getInstance().currentUser!!.updatePassword(pass)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        if (task.isSuccessful) callback(true) else callback(false)
+                    }
+                }
+    }
+
+
+    private fun resetPassword(callback: (Boolean) -> Unit, email:String) {
+        FirebaseAuth.getInstance().sendPasswordResetEmail(email)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        if (task.isSuccessful) callback(true) else callback(false)
+                    }
+                }
+    }
+
+
+    private fun delete(callback: (Boolean) -> Unit) {
+        FirebaseAuth.getInstance().currentUser!!.delete()
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        if (task.isSuccessful) callback(true) else callback(false)
+                    }
+                }
     }
 
 
