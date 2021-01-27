@@ -1,12 +1,10 @@
 package com.example.track4deals.data.repository
 
-import android.provider.Settings.Global.getString
 import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
-import com.example.track4deals.R
 import com.example.track4deals.data.models.LoggedInUserView
 import com.example.track4deals.data.models.LoginResult
+import com.example.track4deals.internal.NoConnectivityException
 import com.example.track4deals.internal.UserProvider
 import com.example.track4deals.services.AuthService
 import com.google.android.gms.tasks.OnCompleteListener
@@ -15,6 +13,7 @@ import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.net.SocketTimeoutException
 
 /**
  * Class that requests authentication and user information from the remote data source and
@@ -26,7 +25,8 @@ class LoginRepository(
     private val authService: AuthService
 
 ) {
-    private lateinit var auth: FirebaseAuth
+    private var auth: FirebaseAuth = FirebaseAuth.getInstance()
+    private var messaging: FirebaseMessaging = FirebaseMessaging.getInstance()
 
     companion object {
         const val TAG = "LoginRepository"
@@ -39,7 +39,6 @@ class LoginRepository(
     ) {
         // handle login
         try {
-            auth = FirebaseAuth.getInstance()
             auth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
                 when {
                     task.isSuccessful -> {
@@ -63,19 +62,24 @@ class LoginRepository(
     }
 
     private fun registerFirebaseToken() {
-        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+        messaging.token.addOnCompleteListener(OnCompleteListener { task ->
             if (!task.isSuccessful) {
                 Log.w(TAG, "Fetching FCM registration token failed", task.exception)
                 return@OnCompleteListener
             }
             val token = task.result
             Log.w(TAG, "Fetching FCM registration token: $token", task.exception)
-            GlobalScope.launch(Dispatchers.IO) {
-                if (token != null) {
-                    authService.registerFirebaseToken(token)
+            try {
+                GlobalScope.launch(Dispatchers.IO) {
+                    if (token != null) {
+                        authService.registerFirebaseToken(token)
+                    }
+                    Log.d("MyFirebaseMessagingService", "Sent token to Track4Deals Server")
                 }
-                Log.d("MyFirebaseMessagingService", "Sent token to Track4Deals Server")
-
+            } catch (e: NoConnectivityException) {
+                Log.e("Connectivity", "NO internet connection", e)
+            } catch (e: SocketTimeoutException) {
+                Log.e("Connectivity", "TimeOut exception", e)
             }
         })
     }
