@@ -1,6 +1,9 @@
 package com.example.track4deals.internal
 
 import android.net.Uri
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.liveData
+import androidx.lifecycle.switchMap
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 
@@ -12,13 +15,20 @@ class UserProvider {
     private lateinit var caregoty_list:  Array<String?>
     private var phone : String = ""
     private var numTracking : Int = 0
+    private var loading = MutableLiveData<Boolean>()
 
     init {
         getToken {
             token = it
+            loading.postValue(true)
         }
     }
 
+    val loadingComplete = loading.switchMap {
+        liveData {
+            emit(it)
+        }
+    }
     fun getToken() = token
 
     fun loadToken(token: String) {

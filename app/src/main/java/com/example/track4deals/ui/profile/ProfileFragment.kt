@@ -101,7 +101,10 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
             }
         }
 
-        bindUI()
+        userProvider.loadingComplete.observe(viewLifecycleOwner, Observer {
+            // Bind recycler view
+            bindUI()
+        })
 
     }
 

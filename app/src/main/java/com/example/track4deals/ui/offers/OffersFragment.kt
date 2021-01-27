@@ -57,8 +57,6 @@ class OffersFragment : ScopedFragment(), KodeinAware, OnProductListener {
             setHasFixedSize(true)
         }
 
-        // Bind recycler view
-        bindUI(this)
 
 
         // On refresh UI
@@ -86,6 +84,11 @@ class OffersFragment : ScopedFragment(), KodeinAware, OnProductListener {
                 Toast.makeText(context, it.err, Toast.LENGTH_LONG).show()
             }
         })
+
+        userProvider.loadingComplete.observe(viewLifecycleOwner, Observer {
+            // Bind recycler view
+            bindUI(this)
+        })
     }
 
     /**
@@ -99,18 +102,15 @@ class OffersFragment : ScopedFragment(), KodeinAware, OnProductListener {
         val offers = offersViewModel.offers.await()
         offers.observe(viewLifecycleOwner, Observer {
             if (it == null) return@Observer // gestrire null
-            if (!userProvider.isLoggedIn()) {
-                group_loading.visibility = View.GONE
-            }
             if (numOffers < 1)
                 addOffersRecyclerView(it.toItemsList(listener))
+
         })
         if (userProvider.isLoggedIn()) {
             val trackings = offersViewModel.trackings.await()
             trackings.observe(viewLifecycleOwner, Observer {
                 if (it == null) return@Observer // gestrire null
                 userProvider.setNumTracking(it.size)
-                group_loading.visibility = View.GONE
                 if (numTracking < 1)
                     addTrackingRecyclerView(it.toItemsList(listener))
             })
@@ -141,6 +141,9 @@ class OffersFragment : ScopedFragment(), KodeinAware, OnProductListener {
             groupAdapter.add(this)
         }
         numOffers++
+        if (!userProvider.isLoggedIn()) {
+            group_loading.visibility = View.GONE
+        }
     }
 
     /**
@@ -158,6 +161,7 @@ class OffersFragment : ScopedFragment(), KodeinAware, OnProductListener {
             groupAdapter.add(this)
         }
         numTracking++
+        group_loading.visibility = View.GONE
     }
 
 
@@ -185,7 +189,7 @@ class OffersFragment : ScopedFragment(), KodeinAware, OnProductListener {
     }
 
     override fun onClickImage(url: String) {
-        val fullImageIntent = Intent( context, FullScreenImageViewActivity::class.java)
+        val fullImageIntent = Intent(context, FullScreenImageViewActivity::class.java)
         fullImageIntent.putExtra("url", url)
         startActivity(fullImageIntent)
     }
