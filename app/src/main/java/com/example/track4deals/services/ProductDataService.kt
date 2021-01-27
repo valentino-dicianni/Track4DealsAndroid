@@ -8,6 +8,7 @@ import com.example.track4deals.data.models.Product
 import com.example.track4deals.data.models.ServerResponse
 import com.example.track4deals.internal.NoConnectivityException
 import com.example.track4deals.internal.TimeOutException
+import retrofit2.HttpException
 import java.net.SocketTimeoutException
 
 
@@ -43,6 +44,8 @@ class ProductDataService(
             Log.e("Connectivity", "NO internet connection", e)
         } catch (e: SocketTimeoutException) {
             Log.e("Connectivity", "TimeOut exception", e)
+        } catch (e: HttpException) {
+            Log.e("Http", "Exception", e)
         }
     }
 
@@ -54,6 +57,8 @@ class ProductDataService(
             Log.e("Connectivity", "NO internet connection", e)
         } catch (e: SocketTimeoutException) {
             Log.e("Connectivity", "TimeOut exception", e)
+        } catch (e: HttpException) {
+            Log.e("Http", "Exception", e)
         }
     }
 
@@ -65,6 +70,8 @@ class ProductDataService(
             Log.e("Connectivity", "NO internet connection", e)
         } catch (e: SocketTimeoutException) {
             Log.e("Connectivity", "TimeOut exception", e)
+        } catch (e: HttpException) {
+            Log.e("Http", "Exception", e)
         }
         return fetchedProduct
     }
@@ -92,6 +99,8 @@ class ProductDataService(
             Log.e("Connectivity", "NO internet connection", e)
         } catch (e: SocketTimeoutException) {
             Log.e("Connectivity", "TimeOut exception", e)
+        } catch (e: HttpException) {
+            Log.e("Http", "Exception", e)
         }
         return addTrackingRes
     }
@@ -119,6 +128,8 @@ class ProductDataService(
             Log.e("Connectivity", "NO internet connection", e)
         } catch (e: SocketTimeoutException) {
             Log.e("Connectivity", "TimeOut exception", e)
+        } catch (e: HttpException) {
+            Log.e("Http", "Exception", e)
         }
         return removeTrackingRes
     }
