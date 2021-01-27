@@ -1,12 +1,13 @@
 package com.example.track4deals.internal
 
+import android.net.Uri
 import com.google.firebase.auth.FirebaseAuth
 
 class UserProvider {
     private var token: String = ""
     private var username: String = ""
     private var email: String = ""
-    private var profilePic : String = ""
+    private var profilePic : Uri = Uri.EMPTY
     private lateinit var caregoty_list:  Array<String?>
     private var phone : String = ""
     private var numTracking : Int = 0
@@ -58,12 +59,17 @@ class UserProvider {
         this.email = psw
     }
 
+    private fun setPic(pic: Uri) {
+        this.profilePic = pic
+    }
+
 
     private fun getToken(callback: (String) -> Unit) {
         FirebaseAuth.getInstance().currentUser?.getIdToken(true)?.addOnCompleteListener {
             if (it.isSuccessful) {
                 FirebaseAuth.getInstance().currentUser?.displayName?.let { it1 -> setUserName(it1) }
                 FirebaseAuth.getInstance().currentUser?.email?.let { it1 -> setEmail(it1) }
+                FirebaseAuth.getInstance().currentUser?.photoUrl?.let { it1 -> setPic(it1) }
                 callback(it.result?.token!!)
             }
         }

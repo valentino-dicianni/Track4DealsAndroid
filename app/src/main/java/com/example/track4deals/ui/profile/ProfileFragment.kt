@@ -120,13 +120,18 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
     }
 
 
-    private fun modifyProfile(frag: Fragment) = launch(Dispatchers.Main) {
+    private fun modifyProfile() {
 
         if (userProvider.isLoggedIn()) {
 
-
             val user = com.example.track4deals.data.models.UserInfo("","", Array<String?>(1){""})
             viewModel.modifyUser(user)
+
+            user.observe(viewLifecycleOwner, Observer {
+                if (it == null) return@Observer // gestrire null
+                if (it.response != null)
+                    makeText(context, "Result:" + it.response.profile_image, Toast.LENGTH_LONG).show()
+            })
 
         }
     }
