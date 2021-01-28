@@ -30,7 +30,7 @@ class ProductListItem(
         viewHolder.apply {
             viewHolder.itemView.productName.text = productEntity.title
             viewHolder.itemView.productDescription.text = productEntity.description
-            viewHolder.itemView.brand.text = productEntity.brand
+            viewHolder.itemView.brand.text = "${productEntity.brand} - ${productEntity.category}"
             viewHolder.itemView.percDiscount.text = "Risparmi ${productEntity.discount_perc}%"
 
             if (productEntity.normal_price != productEntity.offer_price) { // Se il prodotto è in offerta

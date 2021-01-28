@@ -141,7 +141,6 @@ class OffersFragment : ScopedFragment(), KodeinAware, OnProductListener {
             add(Section(itemsOffers))
             groupAdapter.add(this)
         }
-        Log.d("TEST", "addOffersRecyclerView: SIZE: ${itemsOffers.size}")
         numOffers++
         if (!userProvider.isLoggedIn()) {
             group_loading.visibility = View.GONE
@@ -162,7 +161,6 @@ class OffersFragment : ScopedFragment(), KodeinAware, OnProductListener {
             add(Section(itemsTracking))
             groupAdapter.add(this)
         }
-        Log.d("TEST", "addOffersRecyclerView: SIZE: ${itemsTracking.size}")
         numTracking++
         group_loading.visibility = View.GONE
     }
