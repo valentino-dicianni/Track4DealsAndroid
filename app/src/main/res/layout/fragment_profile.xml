@@ -1,168 +1,215 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/container_profile"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.profile.ProfileFragment">
+    android:background="@color/design_default_color_background"
+    android:orientation="vertical"
+    tools:context=".ui.offers.OffersFragment">
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/group_loading"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_marginEnd="8dp"
+        app:constraint_referenced_ids="progressBar_loading, textView_loading"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:background="@color/cardview_dark_background"
-            android:padding="20dp">
+    <ProgressBar
+        android:id="@+id/progressBar_loading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:indeterminate="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageView
-                android:id="@+id/profile_image"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_centerVertical="true"
-                android:contentDescription="@string/title_profile"
-                android:src="@drawable/ic_user_profile" />
+    <TextView
+        android:id="@+id/textView_loading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="@string/loading"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/progressBar_loading"
+        app:layout_constraintVertical_bias="0.0" />
 
-            <TextView
-                android:id="@+id/fullname_field"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="10dp"
-                android:layout_toEndOf="@+id/profile_image"
-                android:includeFontPadding="false"
-                android:text="Mario Rossi"
-                android:textColor="@color/white"
-                android:textSize="20sp" />
-
-            <TextView
-                android:id="@+id/email_field"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/fullname_field"
-                android:layout_marginStart="10dp"
-                android:layout_toEndOf="@+id/profile_image"
-                android:includeFontPadding="false"
-                android:text="mario.rossi@email.com"
-                android:textColor="@color/white"
-                android:textSize="14sp" />
-        </RelativeLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="-100dp"
-            android:padding="20dp">
-
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="0dp"
-                android:layout_height="125dp"
-                android:layout_margin="10dp"
-                android:layout_weight="1"
-                app:cardBackgroundColor="#fece2f"
-                app:cardElevation="10dp">
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:padding="15dp">
-
-                    <ImageView
-                        android:layout_width="35dp"
-                        android:layout_height="35dp"
-                        android:layout_centerHorizontal="true"
-                        android:contentDescription="@string/title_tracking"
-                        android:src="@drawable/ic_resource_track" />
-
-                    <TextView
-                        android:id="@+id/item_tracked_label"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerInParent="true"
-                        android:includeFontPadding="false"
-                        android:text="30"
-                        android:textSize="20sp" />
-
-                    <TextView
-                        android:id="@+id/payment_desc"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/item_tracked_label"
-                        android:layout_centerHorizontal="true"
-                        android:includeFontPadding="false"
-                        android:text="@string/tracked_it"
-                        android:textSize="20sp" />
-
-                </RelativeLayout>
-
-            </com.google.android.material.card.MaterialCardView>
-        </LinearLayout>
+    <ScrollView
+        android:id="@+id/container_profile"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ui.profile.ProfileFragment">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="20dp">
+            android:orientation="vertical">
 
-            <com.google.android.material.textfield.TextInputLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:hint="@string/name_surename_it">
+                android:layout_height="300dp"
+                android:background="@color/cardview_dark_background"
+                android:padding="20dp">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/name_profile"
-                    android:layout_width="match_parent"
+                <ImageView
+                    android:id="@+id/profile_image"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_centerVertical="true"
+                    android:contentDescription="@string/title_profile"
+                    android:src="@drawable/ic_user_profile" />
+
+                <TextView
+                    android:id="@+id/fullname_field"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:drawableStart="@drawable/ic_user_field"
-                    android:drawablePadding="10dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="10dp"
+                    android:layout_toEndOf="@+id/profile_image"
+                    android:includeFontPadding="false"
                     android:text="Mario Rossi"
-                    android:maxLines = "1"
-                    android:lines="1"
-                    android:singleLine="true" />
+                    android:textColor="@color/white"
+                    android:textSize="20sp" />
 
-            </com.google.android.material.textfield.TextInputLayout>
+                <TextView
+                    android:id="@+id/email_field"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/fullname_field"
+                    android:layout_marginStart="10dp"
+                    android:layout_toEndOf="@+id/profile_image"
+                    android:includeFontPadding="false"
+                    android:text="mario.rossi@email.com"
+                    android:textColor="@color/white"
+                    android:textSize="14sp" />
+            </RelativeLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:hint="@string/prompt_email">
+                android:layout_marginTop="-100dp"
+                android:padding="20dp">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/email_profile"
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
+                    android:layout_height="125dp"
+                    android:layout_margin="10dp"
+                    android:layout_weight="1"
+                    app:cardBackgroundColor="#fece2f"
+                    app:cardElevation="10dp">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:padding="15dp">
+
+                        <ImageView
+                            android:layout_width="35dp"
+                            android:layout_height="35dp"
+                            android:layout_centerHorizontal="true"
+                            android:contentDescription="@string/title_tracking"
+                            android:src="@drawable/ic_resource_track" />
+
+                        <TextView
+                            android:id="@+id/item_tracked_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:includeFontPadding="false"
+                            android:text="30"
+                            android:textSize="20sp" />
+
+                        <TextView
+                            android:id="@+id/payment_desc"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/item_tracked_label"
+                            android:layout_centerHorizontal="true"
+                            android:includeFontPadding="false"
+                            android:text="@string/tracked_it"
+                            android:textSize="20sp" />
+
+                    </RelativeLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:drawableStart="@drawable/ic_email"
-                    android:drawablePadding="10dp"
-                    android:text="mario.rossi@email.com"
-                    android:inputType="textEmailAddress"
-                    android:maxLines = "1"
-                    android:lines="1"
-                    android:singleLine="true"/>
+                    android:layout_marginBottom="10dp"
+                    android:hint="@string/name_surename_it">
 
-            </com.google.android.material.textfield.TextInputLayout>
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/name_profile"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:drawableStart="@drawable/ic_user_field"
+                        android:drawablePadding="10dp"
+                        android:lines="1"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:text="Mario Rossi" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:hint="@string/prompt_email">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/email_profile"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:drawableStart="@drawable/ic_email"
+                        android:drawablePadding="10dp"
+                        android:inputType="textEmailAddress"
+                        android:lines="1"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:text="mario.rossi@email.com" />
+
+                </com.google.android.material.textfield.TextInputLayout>
 
 
+                <Button
+                    android:id="@+id/modify_profile_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="30dp"
+                    android:background="#fece2f"
+                    android:text="@string/edit_button_it" />
 
-            <Button
-                android:id="@+id/modify_profile_btn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
-                android:background="#fece2f"
-                android:text="@string/edit_button_it" />
-
-            <Button
-                android:id="@+id/change_password_btn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:background="#fece2f"
-                android:text="@string/edit_password_button_it" />
+                <Button
+                    android:id="@+id/change_password_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:background="#fece2f"
+                    android:text="@string/edit_password_button_it" />
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
-</ScrollView>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

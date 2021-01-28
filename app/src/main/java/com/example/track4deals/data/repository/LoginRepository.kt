@@ -52,7 +52,7 @@ class LoginRepository(
                                 userProvider.loadToken(it)
                             }
                             currentUser.displayName?.let { userProvider.setUsername(it) }
-                            currentUser.photoUrl?.let { userProvider.setProfilePic(it) }
+                            //currentUser.photoUrl?.let { userProvider.setProfilePic(it) }
 
                             result.value = LoginResult(
                                 LoggedInUserView(
@@ -98,10 +98,9 @@ class LoginRepository(
     }
 
 
-    suspend fun updateUsername(username:String): LiveData<FirebaseOperationResponse> {
+    suspend fun updateUsername(username: String): LiveData<FirebaseOperationResponse> {
         return withContext(Dispatchers.IO) {
-
-          userProvider.updateUsername(username)
+            userProvider.updateUsername(username)
             return@withContext userProvider.firebaseRespone
         }
     }
@@ -120,14 +119,14 @@ class LoginRepository(
         }
     }
 
-    suspend fun updatePassword(pass:String): LiveData<FirebaseOperationResponse> {
+    suspend fun updatePassword(pass: String): LiveData<FirebaseOperationResponse> {
         return withContext(Dispatchers.IO) {
             userProvider.updatePassword(pass)
             return@withContext userProvider.firebaseRespone
         }
     }
 
-    suspend fun resetPassword(email:String): LiveData<FirebaseOperationResponse> {
+    suspend fun resetPassword(email: String): LiveData<FirebaseOperationResponse> {
         return withContext(Dispatchers.IO) {
             userProvider.resetPassword(email)
             return@withContext userProvider.firebaseRespone

@@ -16,12 +16,12 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.threeten.bp.ZonedDateTime
 
-class UserRepository (
-        private val userDataService: UserDataService
-        ){
+class UserRepository(
+    private val userDataService: UserDataService
+) {
 
     private val _userResponse = MutableLiveData<ServerResponseUser>()
-    val userResponse : LiveData<ServerResponseUser>
+    val userResponse: LiveData<ServerResponseUser>
         get() = _userResponse
 
 
@@ -32,7 +32,7 @@ class UserRepository (
         }
     }
 
-    suspend fun modifyUser(user : UserInfo): LiveData<ServerResponseUser> {
+    suspend fun modifyUser(user: UserInfo): LiveData<ServerResponseUser> {
         return withContext(Dispatchers.IO) {
             userDataService.modifyUser(user)
             return@withContext userDataService.downloadedUser

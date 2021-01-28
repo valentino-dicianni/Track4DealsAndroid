@@ -9,12 +9,12 @@ import com.example.track4deals.internal.NoConnectivityException
 import com.example.track4deals.services.ProfileService
 import java.net.SocketTimeoutException
 
-class UserDataService (
+class UserDataService(
     private val profileService: ProfileService
-    ){
+) {
 
     private val _downloadedUser = MutableLiveData<ServerResponseUser>()
-    val downloadedUser : LiveData<ServerResponseUser>
+    val downloadedUser: LiveData<ServerResponseUser>
         get() = _downloadedUser
 
 
@@ -30,10 +30,11 @@ class UserDataService (
     }
 
 
-    suspend fun modifyUser(user : UserInfo) {
+    suspend fun modifyUser(user: UserInfo) {
         try {
-            val user = profileService.updateProfile(user.profilePhoto, user.category_list).await()
-            _downloadedUser.postValue(user)
+            val userRes =
+                profileService.updateProfile(user.profilePhoto, user.category_list).await()
+            _downloadedUser.postValue(userRes)
         } catch (e: NoConnectivityException) {
             Log.e("Connectivity", "NO internet connection", e)
         } catch (e: SocketTimeoutException) {

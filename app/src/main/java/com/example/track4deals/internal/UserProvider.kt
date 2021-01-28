@@ -20,8 +20,11 @@ class UserProvider {
     private var phone: String = ""
     private var numTracking: Int = 0
     private var loading = MutableLiveData<Boolean>()
+
     private var _firebaseResponse = MutableLiveData<FirebaseOperationResponse>()
-    val firebaseRespone : LiveData<FirebaseOperationResponse> =_firebaseResponse
+    val firebaseRespone: LiveData<FirebaseOperationResponse> = _firebaseResponse
+
+    private var firebase = FirebaseAuth.getInstance()
 
     init {
         getToken {
@@ -85,8 +88,8 @@ class UserProvider {
         this.username = username
     }
 
-    private fun setEmail(psw: String) {
-        this.email = psw
+    private fun setEmail(email: String) {
+        this.email = email
     }
 
     private fun setPic(pic: Uri) {
@@ -95,11 +98,11 @@ class UserProvider {
 
 
     private fun getToken(callback: (String) -> Unit) {
-        val user = FirebaseAuth.getInstance().currentUser
+        val user = firebase.currentUser
         if (user != null) {
             user.getIdToken(false).addOnCompleteListener {
                 if (it.isSuccessful) {
-                    user.displayName?.let { it1 ->setUserName(it1) }
+                    user.displayName?.let { it1 -> setUserName(it1) }
                     user.email?.let { it1 -> setEmail(it1) }
                     user.photoUrl?.let { it1 -> setPic(it1) }
                     callback(it.result?.token!!)
@@ -110,75 +113,133 @@ class UserProvider {
         } else {
             loading.postValue(true)
         }
-
     }
 
-     fun updateUsername( username: String) {
+    fun updateUsername(username: String) {
         val profileUpdates = userProfileChangeRequest {
             displayName = username
         }
-
-
-        FirebaseAuth.getInstance().currentUser!!.updateProfile(profileUpdates)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) _firebaseResponse.postValue(FirebaseOperationResponse(true, FirebaseOperation.UPDATEUSERNAME)) else _firebaseResponse.postValue(FirebaseOperationResponse(true, FirebaseOperation.UPDATEUSERNAME))
+        firebase.currentUser!!.updateProfile(profileUpdates)
+            .addOnCompleteListener {
+                if (it.isSuccessful) {
+                    this.username = username
+                }
             }
-
-
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    _firebaseResponse.postValue(
+                        FirebaseOperationResponse(
+                            true,
+                            FirebaseOperation.UPDATEUSERNAME
+                        )
+                    )
+                } else _firebaseResponse.postValue(
+                    FirebaseOperationResponse(
+                        false,
+                        FirebaseOperation.UPDATEUSERNAME
+                    )
+                )
+            }
     }
 
 
-     fun updatePicture( pic: Uri) {
+    fun updatePicture(pic: Uri) {
         val profileUpdates = userProfileChangeRequest {
             photoUri = pic
         }
 
-        FirebaseAuth.getInstance().currentUser!!.updateProfile(profileUpdates)
+        firebase.currentUser!!.updateProfile(profileUpdates)
             .addOnCompleteListener { task ->
-                if (task.isSuccessful) _firebaseResponse.postValue(FirebaseOperationResponse(true, FirebaseOperation.UPDATEPIC)) else _firebaseResponse.postValue(FirebaseOperationResponse(true, FirebaseOperation.UPDATEPIC))
+                if (task.isSuccessful) _firebaseResponse.postValue(
+                    FirebaseOperationResponse(
+                        true,
+                        FirebaseOperation.UPDATEPIC
+                    )
+                ) else _firebaseResponse.postValue(
+                    FirebaseOperationResponse(
+                        true,
+                        FirebaseOperation.UPDATEPIC
+                    )
+                )
             }
     }
 
 
-     fun updateEmail( email: String) {
-        FirebaseAuth.getInstance().currentUser!!.updateEmail(email)
+    fun updateEmail(email: String) {
+        firebase.currentUser!!.updateEmail(email)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    if (task.isSuccessful) _firebaseResponse.postValue(FirebaseOperationResponse(true, FirebaseOperation.UPDATEEMAIL)) else _firebaseResponse.postValue(FirebaseOperationResponse(true, FirebaseOperation.UPDATEEMAIL))
-
+                    if (task.isSuccessful) _firebaseResponse.postValue(
+                        FirebaseOperationResponse(
+                            true,
+                            FirebaseOperation.UPDATEEMAIL
+                        )
+                    ) else _firebaseResponse.postValue(
+                        FirebaseOperationResponse(
+                            true,
+                            FirebaseOperation.UPDATEEMAIL
+                        )
+                    )
                 }
             }
     }
 
 
-     fun updatePassword(pass: String) {
-        FirebaseAuth.getInstance().currentUser!!.updatePassword(pass)
+    fun updatePassword(pass: String) {
+        firebase.currentUser!!.updatePassword(pass)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    if (task.isSuccessful) _firebaseResponse.postValue(FirebaseOperationResponse(true, FirebaseOperation.UPDATEPASSWORD)) else _firebaseResponse.postValue(FirebaseOperationResponse(true, FirebaseOperation.UPDATEPASSWORD))
-
+                    if (task.isSuccessful) _firebaseResponse.postValue(
+                        FirebaseOperationResponse(
+                            true,
+                            FirebaseOperation.UPDATEPASSWORD
+                        )
+                    ) else _firebaseResponse.postValue(
+                        FirebaseOperationResponse(
+                            true,
+                            FirebaseOperation.UPDATEPASSWORD
+                        )
+                    )
                 }
             }
     }
 
 
-     fun resetPassword( email: String) {
-        FirebaseAuth.getInstance().sendPasswordResetEmail(email)
+    fun resetPassword(email: String) {
+        firebase.sendPasswordResetEmail(email)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    if (task.isSuccessful) _firebaseResponse.postValue(FirebaseOperationResponse(true, FirebaseOperation.RESETPASSWORD)) else _firebaseResponse.postValue(FirebaseOperationResponse(true, FirebaseOperation.RESETPASSWORD))
-
+                    if (task.isSuccessful) _firebaseResponse.postValue(
+                        FirebaseOperationResponse(
+                            true,
+                            FirebaseOperation.RESETPASSWORD
+                        )
+                    ) else _firebaseResponse.postValue(
+                        FirebaseOperationResponse(
+                            true,
+                            FirebaseOperation.RESETPASSWORD
+                        )
+                    )
                 }
             }
     }
 
 
-     fun delete() {
-        FirebaseAuth.getInstance().currentUser!!.delete()
+    fun delete() {
+        firebase.currentUser!!.delete()
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    if (task.isSuccessful) _firebaseResponse.postValue(FirebaseOperationResponse(true, FirebaseOperation.DELETE)) else _firebaseResponse.postValue(FirebaseOperationResponse(true, FirebaseOperation.DELETE))
-
+                    if (task.isSuccessful) _firebaseResponse.postValue(
+                        FirebaseOperationResponse(
+                            true,
+                            FirebaseOperation.DELETE
+                        )
+                    ) else _firebaseResponse.postValue(
+                        FirebaseOperationResponse(
+                            true,
+                            FirebaseOperation.DELETE
+                        )
+                    )
                 }
             }
     }

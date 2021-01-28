@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.track4deals.data.repository.LoginRepository
 import com.example.track4deals.data.repository.UserRepository
+import com.example.track4deals.internal.UserProvider
 
 class ProfileViewModelFactory(
         private val userRepository: UserRepository,

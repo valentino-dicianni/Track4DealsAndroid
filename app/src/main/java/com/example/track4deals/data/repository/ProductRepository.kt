@@ -54,7 +54,6 @@ class ProductRepository(
             val products: ArrayList<Product>? = serverResponse?.response
             if (products != null) {
                 for (p: Product in products) {
-                    Log.d("TEST", "persistProductData: "+ p.title+ " : " + p.isDeal +" PRICE: " + p.offer_price )
                     if (customUpsert)
                         productDAO.customUpsert(p.productToEntity(isTracking))
                     else
