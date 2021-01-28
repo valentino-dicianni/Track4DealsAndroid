@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import com.example.track4deals.R
 import com.example.track4deals.ui.login.LoginViewModelFactory
 import kotlinx.android.synthetic.main.change_password_fragment.*
@@ -83,6 +84,20 @@ class ChangePasswordFragment : Fragment(), KodeinAware {
         old_password.addTextChangedListener(afterTextChangedListener)
         new_password.addTextChangedListener(afterTextChangedListener)
         repeat_password.addTextChangedListener(afterTextChangedListener)
+
+
+        changePassButton.setOnClickListener {
+            viewModel.modifyPassword(new_password.text.toString())
+        }
+
+        viewModel.updatePassRes.observe(viewLifecycleOwner, Observer {
+            if (it == null) return@Observer
+           if(it.value?.status == true) {
+               Toast.makeText(context, "Password modificata con successo", Toast.LENGTH_LONG).show()
+           } else
+               Toast.makeText(context, "Impossibile modificare la Password", Toast.LENGTH_LONG).show()
+
+        })
     }
 
 }

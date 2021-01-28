@@ -60,34 +60,32 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val navController = findNavController()
-        val formFieldList: List<EditText> = listOf(name_profile, email_profile, phone_profile)
+        val formFieldList: List<EditText> = listOf(name_profile, email_profile)
         val mapOfFields = createEditTextListenersMap(formFieldList)
 
 
         disableAllTextField(formFieldList)
-
-        if (userProvider.isLoggedIn()) {
-            name_profile.setText(userProvider.getUserName())
-            fullname_field.text = userProvider.getUserName()
-            email_field.text = userProvider.getEmail()
-            email_profile.setText(userProvider.getEmail())
-            phone_profile.setText(userProvider.getPhoneNumber())
-            item_tracked_label.text = userProvider.getNumTracking().toString()
-        } else {
-            navController.navigate(R.id.navigation_login)
-        }
+        requestUser()
 
         modify_profile_btn.setOnClickListener {
 
-            if(email_field.keyListener!=null){
-                modify_profile_btn.text = getString(R.string.Save)
-                disableAllTextField(formFieldList)
+            when (modify_profile_btn.text) {
 
-            }else{
-                enableAllTextField(mapOfFields)
-                //TODO API communication
-                modify_profile_btn.text = getString(R.string.edit_button_it)
+                getString(R.string.edit_button_it) -> {
+                    enableAllTextField(mapOfFields)
+                    modify_profile_btn.text = getString(R.string.Save)
+                }
+
+                getString(R.string.Save) -> {
+                    disableAllTextField(formFieldList)
+                    if(name_profile.text.toString()!=userProvider.getUserName())
+                         viewModel.modifyUsername(name_profile.text.toString())
+                    if(email_profile.text.toString()!=userProvider.getEmail())
+                        viewModel.modifyEmail(email_profile.text.toString())
+
+                    modify_profile_btn.text = getString(R.string.edit_button_it)
+                }
+
             }
 
         }
@@ -106,15 +104,24 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
             bindUI()
         })
 
+
+        viewModel.updateUsernameRes.observe(viewLifecycleOwner, Observer {
+            if (it == null) return@Observer
+            makeText(context, "Operazione:" + it, Toast.LENGTH_LONG).show()
+            requestUser()
+
+        })
+
+
     }
 
-    private fun bindUI() = launch(Dispatchers.Main) {
+    private fun requestUser() = launch(Dispatchers.Main) {
 
         if (userProvider.isLoggedIn()) {
 
                 val user = viewModel.user.await()
                 user.observe(viewLifecycleOwner, Observer {
-                    if (it == null) return@Observer // gestrire null
+                    if (it == null) return@Observer
                     if (it.response != null)
                         makeText(context, "UserID:" + it.response.user_id, Toast.LENGTH_LONG).show()
                 })
@@ -123,31 +130,17 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
     }
 
 
-    private fun modifyProfile() {
+    private fun bindUI(){
+        val navController = findNavController()
 
         if (userProvider.isLoggedIn()) {
-
-
-
-            /*
-
-            val userIn = com.example.track4deals.data.models.UserInfo("","", Array<String?>(1){""})
-            val userout = viewModel.modifyUser(userIn)
-
-            userout.observe(viewLifecycleOwner, Observer {
-                if (it == null) return@Observer // gestrire null
-                if (it.response != null)
-                    makeText(context, "Result:" + it.response.profile_image, Toast.LENGTH_LONG).show()
-            })*/
-
-        }
-    }
-
-    private fun modifyProfileFirebase(frag: Fragment) = launch(Dispatchers.Main) {
-
-        if (userProvider.isLoggedIn()) {
-
-            //TODO change firebase user data
+            name_profile.setText(userProvider.getUserName())
+            fullname_field.text = userProvider.getUserName()
+            email_field.text = userProvider.getEmail()
+            email_profile.setText(userProvider.getEmail())
+            item_tracked_label.text = userProvider.getNumTracking().toString()
+        } else {
+            navController.navigate(R.id.navigation_login)
         }
     }
 

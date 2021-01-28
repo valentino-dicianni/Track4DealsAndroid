@@ -1,10 +1,11 @@
 package com.example.track4deals.data.repository
 
+import android.net.Uri
 import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.track4deals.R
-import com.example.track4deals.data.models.LoggedInUserView
-import com.example.track4deals.data.models.LoginResult
+import com.example.track4deals.data.models.*
 import com.example.track4deals.internal.NoConnectivityException
 import com.example.track4deals.internal.UserProvider
 import com.example.track4deals.services.AuthService
@@ -14,6 +15,7 @@ import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.net.SocketTimeoutException
 
 /**
@@ -28,6 +30,7 @@ class LoginRepository(
 ) {
     private var auth: FirebaseAuth = FirebaseAuth.getInstance()
     private var messaging: FirebaseMessaging = FirebaseMessaging.getInstance()
+
 
     companion object {
         const val TAG = "LoginRepository"
@@ -93,4 +96,49 @@ class LoginRepository(
             }
         })
     }
+
+
+    suspend fun updateUsername(username:String): LiveData<FirebaseOperationResponse> {
+        return withContext(Dispatchers.IO) {
+
+          userProvider.updateUsername(username)
+            return@withContext userProvider.firebaseRespone
+        }
+    }
+
+    suspend fun updatePicture(uri: Uri): LiveData<FirebaseOperationResponse> {
+        return withContext(Dispatchers.IO) {
+            userProvider.updatePicture(uri)
+            return@withContext userProvider.firebaseRespone
+        }
+    }
+
+    suspend fun updateEmail(email: String): LiveData<FirebaseOperationResponse> {
+        return withContext(Dispatchers.IO) {
+            userProvider.updateEmail(email)
+            return@withContext userProvider.firebaseRespone
+        }
+    }
+
+    suspend fun updatePassword(pass:String): LiveData<FirebaseOperationResponse> {
+        return withContext(Dispatchers.IO) {
+            userProvider.updatePassword(pass)
+            return@withContext userProvider.firebaseRespone
+        }
+    }
+
+    suspend fun resetPassword(email:String): LiveData<FirebaseOperationResponse> {
+        return withContext(Dispatchers.IO) {
+            userProvider.resetPassword(email)
+            return@withContext userProvider.firebaseRespone
+        }
+    }
+
+    suspend fun delete(): LiveData<FirebaseOperationResponse> {
+        return withContext(Dispatchers.IO) {
+            userProvider.delete()
+            return@withContext userProvider.firebaseRespone
+        }
+    }
+
 }

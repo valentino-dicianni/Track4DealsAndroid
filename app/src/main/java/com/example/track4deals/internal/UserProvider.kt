@@ -2,9 +2,12 @@ package com.example.track4deals.internal
 
 import android.net.Uri
 import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.liveData
 import androidx.lifecycle.switchMap
+import com.example.track4deals.data.models.FirebaseOperation
+import com.example.track4deals.data.models.FirebaseOperationResponse
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 
@@ -17,6 +20,8 @@ class UserProvider {
     private var phone: String = ""
     private var numTracking: Int = 0
     private var loading = MutableLiveData<Boolean>()
+    private var _firebaseResponse = MutableLiveData<FirebaseOperationResponse>()
+    val firebaseRespone : LiveData<FirebaseOperationResponse> =_firebaseResponse
 
     init {
         getToken {
@@ -108,65 +113,72 @@ class UserProvider {
 
     }
 
-    private fun updateUsername(callback: (Boolean) -> Unit, username: String) {
+     fun updateUsername( username: String) {
         val profileUpdates = userProfileChangeRequest {
             displayName = username
         }
 
+
         FirebaseAuth.getInstance().currentUser!!.updateProfile(profileUpdates)
             .addOnCompleteListener { task ->
-                if (task.isSuccessful) callback(true) else callback(false)
+                if (task.isSuccessful) _firebaseResponse.postValue(FirebaseOperationResponse(true, FirebaseOperation.UPDATEUSERNAME)) else _firebaseResponse.postValue(FirebaseOperationResponse(true, FirebaseOperation.UPDATEUSERNAME))
             }
+
+
     }
 
 
-    private fun updatePicture(callback: (Boolean) -> Unit, pic: Uri) {
+     fun updatePicture( pic: Uri) {
         val profileUpdates = userProfileChangeRequest {
             photoUri = pic
         }
 
         FirebaseAuth.getInstance().currentUser!!.updateProfile(profileUpdates)
             .addOnCompleteListener { task ->
-                if (task.isSuccessful) callback(true) else callback(false)
+                if (task.isSuccessful) _firebaseResponse.postValue(FirebaseOperationResponse(true, FirebaseOperation.UPDATEPIC)) else _firebaseResponse.postValue(FirebaseOperationResponse(true, FirebaseOperation.UPDATEPIC))
             }
     }
 
 
-    private fun updateEmail(callback: (Boolean) -> Unit, email: String) {
+     fun updateEmail( email: String) {
         FirebaseAuth.getInstance().currentUser!!.updateEmail(email)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    if (task.isSuccessful) callback(true) else callback(false)
+                    if (task.isSuccessful) _firebaseResponse.postValue(FirebaseOperationResponse(true, FirebaseOperation.UPDATEEMAIL)) else _firebaseResponse.postValue(FirebaseOperationResponse(true, FirebaseOperation.UPDATEEMAIL))
+
                 }
             }
     }
 
 
-    private fun updatePassword(callback: (Boolean) -> Unit, pass: String) {
+     fun updatePassword(pass: String) {
         FirebaseAuth.getInstance().currentUser!!.updatePassword(pass)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    if (task.isSuccessful) callback(true) else callback(false)
+                    if (task.isSuccessful) _firebaseResponse.postValue(FirebaseOperationResponse(true, FirebaseOperation.UPDATEPASSWORD)) else _firebaseResponse.postValue(FirebaseOperationResponse(true, FirebaseOperation.UPDATEPASSWORD))
+
                 }
             }
     }
 
 
-    private fun resetPassword(callback: (Boolean) -> Unit, email: String) {
+     fun resetPassword( email: String) {
         FirebaseAuth.getInstance().sendPasswordResetEmail(email)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    if (task.isSuccessful) callback(true) else callback(false)
+                    if (task.isSuccessful) _firebaseResponse.postValue(FirebaseOperationResponse(true, FirebaseOperation.RESETPASSWORD)) else _firebaseResponse.postValue(FirebaseOperationResponse(true, FirebaseOperation.RESETPASSWORD))
+
                 }
             }
     }
 
 
-    private fun delete(callback: (Boolean) -> Unit) {
+     fun delete() {
         FirebaseAuth.getInstance().currentUser!!.delete()
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    if (task.isSuccessful) callback(true) else callback(false)
+                    if (task.isSuccessful) _firebaseResponse.postValue(FirebaseOperationResponse(true, FirebaseOperation.DELETE)) else _firebaseResponse.postValue(FirebaseOperationResponse(true, FirebaseOperation.DELETE))
+
                 }
             }
     }

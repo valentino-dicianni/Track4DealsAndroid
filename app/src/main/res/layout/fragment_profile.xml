@@ -146,26 +146,6 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:hint="@string/phone_it">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/phone_profile"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:drawableStart="@drawable/ic_phone"
-                    android:drawablePadding="10dp"
-                    android:inputType="phone"
-                    android:digits="0123456789+"
-                    android:text="+39 3385467084"
-                    android:maxLines = "1"
-                    android:lines="1"
-                    android:singleLine="true"/>
-
-            </com.google.android.material.textfield.TextInputLayout>
 
 
             <Button
@@ -180,7 +160,7 @@
                 android:id="@+id/change_password_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="10dp"
                 android:background="#fece2f"
                 android:text="@string/edit_password_button_it" />
         </LinearLayout>

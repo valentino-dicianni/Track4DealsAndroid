@@ -5,31 +5,50 @@ import com.example.track4deals.R
 import com.example.track4deals.data.database.entity.ProductEntity
 import com.example.track4deals.data.repository.LoginRepository
 import com.example.track4deals.data.models.ChangePasswordFormState
+import com.example.track4deals.data.models.FirebaseOperationResponse
 import com.example.track4deals.data.models.UserInfo
 import com.example.track4deals.data.repository.UserRepository
 import com.example.track4deals.internal.lazyDeferred
 
 class ProfileViewModel(
-    private  val userRepository: UserRepository
+    private  val userRepository: UserRepository,
+    private val loginRepository: LoginRepository
 ) : ViewModel() {
 
     private val changeForm = MutableLiveData<ChangePasswordFormState>()
     val changeFormState: LiveData<ChangePasswordFormState> = changeForm
     private val modifiedUser = MutableLiveData<UserInfo>()
+    private var firebaseResponse = MutableLiveData<FirebaseOperationResponse>()
+    private val modifiedUsername = MutableLiveData<String>()
+    private val modifiedEmail = MutableLiveData<String>()
+    private val modifiedPic = MutableLiveData<String>()
+    private val modifiedPass = MutableLiveData<String>()
 
 
     val user by lazyDeferred {
         userRepository.getUser()
     }
 
-    /*
-    val modifyUser by lazyDeferred {
-        userRepository.modifyUser(profilePhoto, caregoty_list)
-    }*/
 
     fun modifyUser(u: UserInfo) {
 
         this.modifiedUser.postValue(u)
+    }
+
+
+    fun modifyUsername(u: String) {
+
+        this.modifiedUsername.postValue(u)
+    }
+
+    fun modifyEmail(e: String) {
+
+        this.modifiedEmail.postValue(e)
+    }
+
+    fun modifyPassword(p: String) {
+
+        this.modifiedPass.postValue(p)
     }
 
     //INPUT:    String value from change password text field
@@ -60,6 +79,23 @@ class ProfileViewModel(
     val addUserRes = modifiedUser.switchMap {
         liveData {
             userRepository.modifyUser(it).value?.let { emit(it) }
+        }
+    }
+
+
+
+    val updateUsernameRes = modifiedUsername.switchMap {
+        liveData { emit(loginRepository.updateUsername(it))
+        }
+    }
+
+    val updateEmailRes = modifiedEmail.switchMap {
+        liveData { emit(loginRepository.updateEmail(it))
+        }
+    }
+
+    val updatePassRes = modifiedPass.switchMap {
+        liveData { emit(loginRepository.updatePassword(it))
         }
     }
 
