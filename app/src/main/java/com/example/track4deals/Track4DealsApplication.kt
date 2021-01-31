@@ -15,6 +15,7 @@ import com.example.track4deals.services.utils.JWTinterceptor
 import com.example.track4deals.services.utils.UserDataService
 import com.example.track4deals.ui.login.LoginViewModelFactory
 import com.example.track4deals.ui.offers.OffersViewModelFactory
+import com.example.track4deals.ui.profile.EditConfirmationDialogFragment
 import com.example.track4deals.ui.profile.ProfileViewModelFactory
 import com.example.track4deals.ui.register.RegisterViewModelFactory
 import com.example.track4deals.ui.tracking.TrackingViewModelFactory
@@ -46,6 +47,8 @@ class Track4DealsApplication : Application(), KodeinAware {
         bind() from provider { OffersViewModelFactory(instance()) }
         bind() from provider { ProfileViewModelFactory(instance(),instance()) }
         bind() from provider { TrackingViewModelFactory(instance()) }
+        bind() from provider { EditConfirmationDialogFragment(instance()) }
+
     }
 
     override fun onCreate() {

@@ -61,6 +61,7 @@ class LoginRepository(
                                 )
                             )
                             registerFirebaseToken()
+
                         }
                     }
                     else -> {
@@ -112,9 +113,9 @@ class LoginRepository(
         }
     }
 
-    suspend fun updateEmail(email: String): LiveData<FirebaseOperationResponse> {
+    suspend fun updateEmail(email: String, password: String): LiveData<FirebaseOperationResponse> {
         return withContext(Dispatchers.IO) {
-            userProvider.updateEmail(email)
+            userProvider.updateEmail(email, password)
             return@withContext userProvider.firebaseRespone
         }
     }

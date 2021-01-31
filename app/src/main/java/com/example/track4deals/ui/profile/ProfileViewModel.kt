@@ -24,6 +24,7 @@ class ProfileViewModel(
     private val modifiedEmail = MutableLiveData<String>()
     private val modifiedPic = MutableLiveData<String>()
     private val modifiedPass = MutableLiveData<String>()
+    private val password = MutableLiveData<String>()
 
 
     val user by lazyDeferred {
@@ -47,6 +48,9 @@ class ProfileViewModel(
         this.modifiedPass.postValue(p)
     }
 
+    fun sendPassword(p: String) {
+        this.password.postValue(p)
+    }
 
     // switchMap starts a coroutine whenever the value of a LiveData changes.
     val addUserRes = modifiedUser.switchMap {
@@ -62,11 +66,13 @@ class ProfileViewModel(
         }
     }
 
-    val updateEmailRes = modifiedEmail.switchMap {
+
+    val updateEmailRes = password.switchMap {
         liveData {
-            emit(loginRepository.updateEmail(it))
+            emit(loginRepository.updateEmail(modifiedEmail.value.toString(), it))
         }
     }
+
 
     val updatePassRes = modifiedPass.switchMap {
         liveData {

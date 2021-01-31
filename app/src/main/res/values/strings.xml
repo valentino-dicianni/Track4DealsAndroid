@@ -87,6 +87,8 @@
     <string name="largeImageTitle">Dettagli</string>
     <string name="perc_risparmio">perc risparmio</string>
     <string name="registrationTokenMsg">"Registrazione Firebase token FMC: "</string>
-
+    <!-- Confirmation Dialog -->
+    <string name="dialog_message">Per modificare l\'email è necessario reinserire la password:</string>
+    <string name="caps_edit">MODIFICA</string>
 
 </resources>

@@ -65,12 +65,19 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
                 }
 
                 getString(R.string.Save) -> {
+                    // EditConfirmationDialogFragment().show(childFragmentManager, EditConfirmationDialogFragment.TAG)
                     group_loading.visibility = View.VISIBLE
                     disableAllTextField(formFieldList)
                     if (name_profile.text.toString() != userProvider.getUserName())
                         viewModel.modifyUsername(name_profile.text.toString())
-                    if (email_profile.text.toString() != userProvider.getEmail())
+                    if (email_profile.text.toString() != userProvider.getEmail()) {
                         viewModel.modifyEmail(email_profile.text.toString())
+                        EditConfirmationDialogFragment(viewModel).show(
+                            parentFragmentManager,
+                            EditConfirmationDialogFragment.TAG
+                        )
+                    }
+
                     modify_profile_btn.text = getString(R.string.edit_button_it)
                 }
             }
@@ -92,13 +99,29 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
 
         viewModel.updateUsernameRes.observe(viewLifecycleOwner, Observer {
             if (it == null) return@Observer
-            makeText(context, "Operazione:$it", Toast.LENGTH_LONG).show()
+
+            if (it.value != null) makeText(
+                context,
+                "Operazione: ${it.value!!.response.toString()} ${it.value!!.status.toString()}",
+                Toast.LENGTH_LONG
+            ).show()
+            bindUI()
+        })
+
+        viewModel.updateEmailRes.observe(viewLifecycleOwner, Observer {
+            if (it == null) return@Observer
+
+            if (it.value != null) makeText(
+                context,
+                "Operazione: ${it.value!!.response.toString()} ${it.value!!.status.toString()}",
+                Toast.LENGTH_LONG
+            ).show()
             bindUI()
         })
     }
 
 
-    private fun bindUI() = launch(Dispatchers.Main){
+    private fun bindUI() = launch(Dispatchers.Main) {
         val navController = findNavController()
         if (userProvider.isLoggedIn()) {
             val user = viewModel.user.await()
@@ -161,4 +184,6 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
         }
         return listeners
     }
+
+
 }

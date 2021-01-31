@@ -8,8 +8,12 @@ import androidx.lifecycle.liveData
 import androidx.lifecycle.switchMap
 import com.example.track4deals.data.models.FirebaseOperation
 import com.example.track4deals.data.models.FirebaseOperationResponse
+import com.google.firebase.auth.AuthCredential
+import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.userProfileChangeRequest
+import java.security.AuthProvider
 
 class UserProvider {
     private var token: String = ""
@@ -52,6 +56,7 @@ class UserProvider {
     fun setProfilePic(url: Uri) {
         this.profilePic = url
     }
+
 
     fun getProfilePic(): Uri {
         return this.profilePic
@@ -157,7 +162,7 @@ class UserProvider {
                     )
                 ) else _firebaseResponse.postValue(
                     FirebaseOperationResponse(
-                        true,
+                        false,
                         FirebaseOperation.UPDATEPIC
                     )
                 )
@@ -165,23 +170,38 @@ class UserProvider {
     }
 
 
-    fun updateEmail(email: String) {
-        firebase.currentUser!!.updateEmail(email)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    if (task.isSuccessful) _firebaseResponse.postValue(
-                        FirebaseOperationResponse(
-                            true,
-                            FirebaseOperation.UPDATEEMAIL
+    fun updateEmail(email: String, password: String) {
+
+        val credential: AuthCredential = EmailAuthProvider.getCredential(this.email, password)
+
+
+        firebase.currentUser!!.reauthenticate(credential).addOnCompleteListener() {
+
+            if (it.isSuccessful) {
+                firebase.currentUser!!.updateEmail(email)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            _firebaseResponse.postValue(
+                                FirebaseOperationResponse(
+                                    true,
+                                    FirebaseOperation.UPDATEEMAIL
+                                )
+                            )
+                        } else _firebaseResponse.postValue(
+                            FirebaseOperationResponse(
+                                false,
+                                FirebaseOperation.UPDATEEMAIL
+                            )
                         )
-                    ) else _firebaseResponse.postValue(
-                        FirebaseOperationResponse(
-                            true,
-                            FirebaseOperation.UPDATEEMAIL
-                        )
-                    )
-                }
-            }
+                    }
+            } else _firebaseResponse.postValue(
+                FirebaseOperationResponse(
+                    false,
+                    FirebaseOperation.UPDATEEMAIL
+                )
+            )
+        }
+
     }
 
 
@@ -196,7 +216,7 @@ class UserProvider {
                         )
                     ) else _firebaseResponse.postValue(
                         FirebaseOperationResponse(
-                            true,
+                            false,
                             FirebaseOperation.UPDATEPASSWORD
                         )
                     )
@@ -216,7 +236,7 @@ class UserProvider {
                         )
                     ) else _firebaseResponse.postValue(
                         FirebaseOperationResponse(
-                            true,
+                            false,
                             FirebaseOperation.RESETPASSWORD
                         )
                     )
@@ -236,7 +256,7 @@ class UserProvider {
                         )
                     ) else _firebaseResponse.postValue(
                         FirebaseOperationResponse(
-                            true,
+                            false,
                             FirebaseOperation.DELETE
                         )
                     )
