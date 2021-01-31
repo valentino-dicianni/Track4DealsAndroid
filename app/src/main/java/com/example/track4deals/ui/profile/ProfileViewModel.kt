@@ -25,6 +25,7 @@ class ProfileViewModel(
     private val modifiedPic = MutableLiveData<String>()
     private val modifiedPass = MutableLiveData<Array<String>>()
     private val password = MutableLiveData<String>()
+    private val delete = MutableLiveData<Boolean>()
 
 
     val user by lazyDeferred {
@@ -77,6 +78,13 @@ class ProfileViewModel(
     val updatePassRes = modifiedPass.switchMap {
         liveData {
             emit(loginRepository.updatePassword(it[0],it[1]))
+        }
+    }
+
+
+    val deleteRes = delete.switchMap {
+        liveData {
+            emit(loginRepository.delete(password.value.toString()))
         }
     }
 

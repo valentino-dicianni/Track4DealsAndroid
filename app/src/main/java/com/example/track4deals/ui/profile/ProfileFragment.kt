@@ -17,6 +17,8 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.track4deals.R
 import com.example.track4deals.internal.ScopedFragment
 import com.example.track4deals.internal.UserProvider
+import com.example.track4deals.ui.login.LoginFragment
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.element_row_rv.view.*
 import kotlinx.android.synthetic.main.fragment_profile.*
 import kotlinx.coroutines.Dispatchers
@@ -87,6 +89,16 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
             )
         }
 
+
+        delete_btn.setOnClickListener {
+            ChangePasswordFragment(viewModel).show(
+                parentFragmentManager,
+                ChangePasswordFragment.TAG
+            )
+
+
+        }
+
         userProvider.loadingComplete.observe(viewLifecycleOwner, Observer {
             bindUI()
         })
@@ -117,16 +129,40 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
             if (it.value == null) return@Observer
 
             if (it.value?.status == true) {
-                Toast.makeText(context, "Password modificata con successo", Toast.LENGTH_LONG)
+                makeText(context, "Password modificata con successo", Toast.LENGTH_LONG)
                     .show()
             } else
                 if (it.value!!.message != null && it.value!!.message != "")
-                    Toast.makeText(context, it.value!!.message, Toast.LENGTH_LONG).show()
+                    makeText(context, it.value!!.message, Toast.LENGTH_LONG).show()
                 else
-                    Toast.makeText(context, "Errore sconosciuto", Toast.LENGTH_LONG).show()
-
+                    makeText(context, "Errore sconosciuto", Toast.LENGTH_LONG).show()
 
         })
+
+
+
+        viewModel.deleteRes.observe(viewLifecycleOwner, Observer {
+            if (it == null) return@Observer
+
+            if (it.value == null) return@Observer
+
+            if (it.value?.status == true) {
+                makeText(context, "Account eliminato", Toast.LENGTH_LONG)
+                    .show()
+
+                FirebaseAuth.getInstance().signOut()
+                userProvider.flush()
+
+                navigateLogin()
+
+            } else
+                if (it.value!!.message != null && it.value!!.message != "")
+                    makeText(context, it.value!!.message, Toast.LENGTH_LONG).show()
+                else
+                    makeText(context, "Errore sconosciuto", Toast.LENGTH_LONG).show()
+
+        })
+
 
     }
 
@@ -195,11 +231,11 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
         return listeners
     }
 
-    private fun refresh() {
+    private fun navigateLogin() {
         parentFragmentManager.apply {
             beginTransaction()
-                .replace(R.id.nav_host_fragment, newInstance())
-                .addToBackStack(ProfileFragment.TAG)
+                .replace(R.id.nav_host_fragment, LoginFragment())
+                .addToBackStack(LoginFragment.TAG)
                 .commit()
         }
     }

@@ -209,6 +209,13 @@
                     android:layout_marginTop="10dp"
                     android:background="#fece2f"
                     android:text="@string/edit_password_button_it" />
+                <Button
+                    android:id="@+id/delete_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:background="#fece2f"
+                    android:text="@string/delete_button_it" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

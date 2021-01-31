@@ -25,6 +25,7 @@
     <string name="tracked_it">Prodotti tracciati</string>
     <string name="edit_button_it">MODIFICA PROFILO</string>
     <string name="edit_password_button_it">CAMBIA PASSWORD</string>
+    <string name="delete_button_it">ELIMINA PROFILO</string>
     <string name="price">Price</string>
     <string name="Brand">Brand</string>
     <string name="Save">SALVA</string>

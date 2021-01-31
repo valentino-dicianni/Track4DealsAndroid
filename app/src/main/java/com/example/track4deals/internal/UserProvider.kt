@@ -267,25 +267,38 @@ class UserProvider {
     }
 
 
-    fun delete() {
-        firebase.currentUser!!.delete()
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    if (task.isSuccessful) _firebaseResponse.postValue(
-                        FirebaseOperationResponse(
-                            true,
-                            FirebaseOperation.DELETE,
-                            ""
-                        )
-                    ) else _firebaseResponse.postValue(
-                        FirebaseOperationResponse(
-                            false,
-                            FirebaseOperation.DELETE,
-                            task.exception?.message.toString()
-                        )
-                    )
-                }
-            }
+    fun delete(password: String) {
+        val credential: AuthCredential = EmailAuthProvider.getCredential(this.email, password)
+
+        firebase.currentUser!!.reauthenticate(credential).addOnCompleteListener() {
+
+            if (it.isSuccessful) {
+                firebase.currentUser!!.delete()
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            if (task.isSuccessful) _firebaseResponse.postValue(
+                                FirebaseOperationResponse(
+                                    true,
+                                    FirebaseOperation.DELETE,
+                                    ""
+                                )
+                            ) else _firebaseResponse.postValue(
+                                FirebaseOperationResponse(
+                                    false,
+                                    FirebaseOperation.DELETE,
+                                    task.exception?.message.toString()
+                                )
+                            )
+                        }
+                    }
+            }else _firebaseResponse.postValue(
+                FirebaseOperationResponse(
+                    false,
+                    FirebaseOperation.DELETE,
+                    it.exception?.message.toString()
+                )
+            )
+        }
     }
 
 

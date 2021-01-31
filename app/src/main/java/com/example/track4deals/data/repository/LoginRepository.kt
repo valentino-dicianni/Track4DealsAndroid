@@ -134,9 +134,9 @@ class LoginRepository(
         }
     }
 
-    suspend fun delete(): LiveData<FirebaseOperationResponse> {
+    suspend fun delete(password: String): LiveData<FirebaseOperationResponse> {
         return withContext(Dispatchers.IO) {
-            userProvider.delete()
+            userProvider.delete(password)
             return@withContext userProvider.firebaseRespone
         }
     }
