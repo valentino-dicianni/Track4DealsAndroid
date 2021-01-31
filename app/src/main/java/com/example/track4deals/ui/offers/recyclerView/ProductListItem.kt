@@ -78,7 +78,7 @@ class ProductListItem(
                     productListener.onRemoveTracking(productEntity)
                 }
             } else {
-                Toast.makeText(context, context.getString(R.string.errorToast), Toast.LENGTH_LONG)
+                Toast.makeText(context, context.getString(R.string.errorAuthToast), Toast.LENGTH_LONG)
                     .show()
             }
         }

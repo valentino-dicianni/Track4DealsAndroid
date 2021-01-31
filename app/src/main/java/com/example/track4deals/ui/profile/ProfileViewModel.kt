@@ -2,18 +2,16 @@ package com.example.track4deals.ui.profile
 
 import androidx.lifecycle.*
 import com.example.track4deals.R
-import com.example.track4deals.data.database.entity.ProductEntity
-import com.example.track4deals.data.repository.LoginRepository
+import com.example.track4deals.data.repository.AuthRepository
 import com.example.track4deals.data.models.ChangePasswordFormState
 import com.example.track4deals.data.models.FirebaseOperationResponse
 import com.example.track4deals.data.models.UserInfo
 import com.example.track4deals.data.repository.UserRepository
-import com.example.track4deals.internal.UserProvider
 import com.example.track4deals.internal.lazyDeferred
 
 class ProfileViewModel(
     private val userRepository: UserRepository,
-    private val loginRepository: LoginRepository
+    private val authRepository: AuthRepository
 ) : ViewModel() {
 
     private val changeForm = MutableLiveData<ChangePasswordFormState>()
@@ -63,28 +61,28 @@ class ProfileViewModel(
 
     val updateUsernameRes = modifiedUsername.switchMap {
         liveData {
-            emit(loginRepository.updateUsername(it))
+            emit(authRepository.updateUsername(it))
         }
     }
 
 
     val updateEmailRes = password.switchMap {
         liveData {
-            emit(loginRepository.updateEmail(modifiedEmail.value.toString(), it))
+            emit(authRepository.updateEmail(modifiedEmail.value.toString(), it))
         }
     }
 
 
     val updatePassRes = modifiedPass.switchMap {
         liveData {
-            emit(loginRepository.updatePassword(it[0],it[1]))
+            emit(authRepository.updatePassword(it[0],it[1]))
         }
     }
 
 
     val deleteRes = delete.switchMap {
         liveData {
-            emit(loginRepository.delete(password.value.toString()))
+            emit(authRepository.delete(password.value.toString()))
         }
     }
 

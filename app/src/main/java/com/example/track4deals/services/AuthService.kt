@@ -2,9 +2,9 @@ package com.example.track4deals.services
 
 import com.example.track4deals.data.constants.AppConstants
 import com.example.track4deals.data.models.ServerResponse
-import com.example.track4deals.data.models.UserInfo
 import com.example.track4deals.services.utils.ConnectivityInterceptor
 import com.example.track4deals.services.utils.JWTinterceptor
+import kotlinx.coroutines.Deferred
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -16,27 +16,27 @@ import java.util.concurrent.TimeUnit
 interface AuthService {
 
     @FormUrlEncoded
-    @POST("/auth/creat_account")
-    suspend fun registerNewUser(
+    @POST("/auth/create_account")
+    fun registerNewUserAsync(
         @Field("displayName") displayName: String,
         @Field("password") password: String,
         @Field("email") email: String
-    ): retrofit2.Response<UserInfo>
+    ): Deferred<ServerResponse>
 
     @FormUrlEncoded
     @POST("/auth/create_google_account")
-    suspend fun registerNewUserGoogle(
+    fun registerNewUserGoogleAsync(
         @Field("displayName") displayName: String,
         @Field("password") password: String,
         @Field("email") email: String,
         @Field("uid") uid: String
-    ): retrofit2.Response<UserInfo>
+    ): Deferred<ServerResponse>
 
     @FormUrlEncoded
     @POST("/auth/register_firebaseToken")
-    suspend fun registerFirebaseToken(
+    fun registerFirebaseTokenAsync(
         @Field("firebaseToken") token: String
-    ): retrofit2.Response<ServerResponse>
+    ): Deferred<ServerResponse>
 
     companion object {
         operator fun invoke(

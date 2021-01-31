@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.track4deals.R
+import com.example.track4deals.data.constants.AppConstants.Companion.SERVER_OK
 import com.example.track4deals.data.models.*
 import com.example.track4deals.internal.NoConnectivityException
 import com.example.track4deals.internal.UserProvider
@@ -16,6 +17,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import retrofit2.HttpException
 import java.net.SocketTimeoutException
 
 /**
@@ -23,7 +25,7 @@ import java.net.SocketTimeoutException
  * maintains an in-memory cache of login status and user credentials information.
  */
 
-class LoginRepository(
+class AuthRepository(
     private val userProvider: UserProvider,
     private val authService: AuthService
 
@@ -75,6 +77,32 @@ class LoginRepository(
         }
     }
 
+
+    suspend fun registerUser(
+        username: String,
+        email: String,
+        password: String,
+        result: MutableLiveData<RegisterResult>
+    ) {
+        try {
+            val serverRes = withContext(Dispatchers.IO) {
+                authService.registerNewUserAsync(username, password, email)
+            }.await()
+            if (serverRes.ok == SERVER_OK) {
+                result.value = RegisterResult(success = true)
+            } else result.value = RegisterResult(error = R.string.register_failed)
+
+        } catch (e: NoConnectivityException) {
+            Log.e("Connectivity", "NO internet connection", e)
+        } catch (e: SocketTimeoutException) {
+            Log.e("Connectivity", "TimeOut exception", e)
+        }catch (e: HttpException){
+            if(e.code() == 500) {
+                result.value = RegisterResult( error = R.string.emailRegError)
+            }
+        }
+    }
+
     private fun registerFirebaseToken() {
         messaging.token.addOnCompleteListener(OnCompleteListener { task ->
             if (!task.isSuccessful) {
@@ -86,9 +114,9 @@ class LoginRepository(
             try {
                 GlobalScope.launch(Dispatchers.IO) {
                     if (token != null) {
-                        authService.registerFirebaseToken(token)
+                        authService.registerFirebaseTokenAsync(token).await()
+                        Log.d("MyFirebaseMessagingService", "Sent token to Track4Deals Server")
                     }
-                    Log.d("MyFirebaseMessagingService", "Sent token to Track4Deals Server")
                 }
             } catch (e: NoConnectivityException) {
                 Log.e("Connectivity", "NO internet connection", e)
@@ -120,9 +148,12 @@ class LoginRepository(
         }
     }
 
-    suspend fun updatePassword(oldpass: String, newpass: String): LiveData<FirebaseOperationResponse> {
+    suspend fun updatePassword(
+        oldpass: String,
+        newpass: String
+    ): LiveData<FirebaseOperationResponse> {
         return withContext(Dispatchers.IO) {
-            userProvider.updatePassword(oldpass,newpass)
+            userProvider.updatePassword(oldpass, newpass)
             return@withContext userProvider.firebaseRespone
         }
     }

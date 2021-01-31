@@ -54,6 +54,7 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
         super.onViewCreated(view, savedInstanceState)
         val formFieldList: List<EditText> = listOf(name_profile, email_profile)
         val mapOfFields = createEditTextListenersMap(formFieldList)
+        group_loading.visibility = View.VISIBLE
 
         disableAllTextField(formFieldList)
 
@@ -132,7 +133,7 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
                 makeText(context, "Password modificata con successo", Toast.LENGTH_LONG)
                     .show()
             } else
-                if (it.value!!.message != null && it.value!!.message != "")
+                if (it.value!!.message != "")
                     makeText(context, it.value!!.message, Toast.LENGTH_LONG).show()
                 else
                     makeText(context, "Errore sconosciuto", Toast.LENGTH_LONG).show()
@@ -156,7 +157,7 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
                 navigateLogin()
 
             } else
-                if (it.value!!.message != null && it.value!!.message != "")
+                if (it.value!!.message != "")
                     makeText(context, it.value!!.message, Toast.LENGTH_LONG).show()
                 else
                     makeText(context, "Errore sconosciuto", Toast.LENGTH_LONG).show()

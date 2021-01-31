@@ -7,9 +7,9 @@ import androidx.lifecycle.ViewModel
 import com.example.track4deals.R
 import com.example.track4deals.data.models.LoginFormState
 import com.example.track4deals.data.models.LoginResult
-import com.example.track4deals.data.repository.LoginRepository
+import com.example.track4deals.data.repository.AuthRepository
 
-class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel() {
+class LoginViewModel(private val authRepository: AuthRepository) : ViewModel() {
 
     private val _loginForm = MutableLiveData<LoginFormState>()
     val loginFormState: LiveData<LoginFormState> = _loginForm
@@ -18,7 +18,7 @@ class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel()
     val loginResult: LiveData<LoginResult> = _loginResult
 
     fun login(username: String, password: String) {
-        loginRepository.login(username, password, _loginResult)
+        authRepository.login(username, password, _loginResult)
     }
 
 

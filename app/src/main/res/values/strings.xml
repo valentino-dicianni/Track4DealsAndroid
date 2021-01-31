@@ -8,6 +8,7 @@
     <string name="title_login">Login</string>
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
+    <string name="prompt_username">Username</string>
     <string name="prompt_password">Password</string>
     <string name="prompt_repeat_password">Ripeti la  Password</string>
     <string name="action_register">Registrati</string>
@@ -17,6 +18,7 @@
     <string name="invalid_username">Non è unsername valido</string>
     <string name="invalid_password">La password deve essere maggiore di 5 caratteri</string>
     <string name="login_failed">Login fallito</string>
+    <string name="register_failed">Registrazione fallita</string>
     <string name="invalid_email">Email non valida</string>
     <string name="loading">Caricamento…</string>
     <!-- Strings related to profile -->
@@ -65,7 +67,7 @@
     <string name="attachment_summary_on">Automatically download attachments for incoming emails
     </string>
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
-    <string name="errorToast">Devi prima autenticarti!</string>
+    <string name="errorAuthToast">Devi prima autenticarti!</string>
     <string name="logout">Esci</string>
     <string name="logoutDesc">Esegui il log out</string>
     <string name="logoutExecuted">"Logout Eseguito! "</string>
@@ -91,5 +93,8 @@
     <!-- Confirmation Dialog -->
     <string name="dialog_message">Per modificare l\'email è necessario reinserire la password:</string>
     <string name="caps_edit">MODIFICA</string>
+    <string name="notSamePsw">Le password non coincidono</string>
+    <string name="registrationSucceded">Registrazione effettuata</string>
+    <string name="emailRegError">Email già registrata</string>
 
 </resources>

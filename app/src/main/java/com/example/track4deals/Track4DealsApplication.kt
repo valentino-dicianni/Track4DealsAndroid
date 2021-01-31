@@ -1,7 +1,7 @@
 package com.example.track4deals
 
 import android.app.Application
-import com.example.track4deals.data.repository.LoginRepository
+import com.example.track4deals.data.repository.AuthRepository
 import com.example.track4deals.data.repository.ProductRepository
 import com.example.track4deals.data.database.ProductDB
 import com.example.track4deals.data.repository.UserRepository
@@ -40,7 +40,7 @@ class Track4DealsApplication : Application(), KodeinAware {
         bind() from singleton { ProductDataService(instance()) }
         bind() from singleton { UserDataService(instance()) }
         bind() from singleton { ProductRepository(instance(), instance()) }
-        bind() from singleton { LoginRepository(instance(), instance()) }
+        bind() from singleton { AuthRepository(instance(), instance()) }
         bind() from singleton { UserRepository(instance()) }
 
         bind() from provider { RegisterViewModelFactory(instance()) }
