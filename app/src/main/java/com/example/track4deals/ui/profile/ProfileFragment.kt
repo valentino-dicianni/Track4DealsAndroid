@@ -65,8 +65,6 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
                 }
 
                 getString(R.string.Save) -> {
-                    // EditConfirmationDialogFragment().show(childFragmentManager, EditConfirmationDialogFragment.TAG)
-                    group_loading.visibility = View.VISIBLE
                     disableAllTextField(formFieldList)
                     if (name_profile.text.toString() != userProvider.getUserName())
                         viewModel.modifyUsername(name_profile.text.toString())
@@ -105,18 +103,18 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
                 "Operazione: ${it.value!!.response.toString()} ${it.value!!.status.toString()}",
                 Toast.LENGTH_LONG
             ).show()
-            bindUI()
+
         })
 
         viewModel.updateEmailRes.observe(viewLifecycleOwner, Observer {
             if (it == null) return@Observer
-
+            
             if (it.value != null) makeText(
                 context,
                 "Operazione: ${it.value!!.response.toString()} ${it.value!!.status.toString()}",
                 Toast.LENGTH_LONG
             ).show()
-            bindUI()
+
         })
     }
 
@@ -183,6 +181,15 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
             listeners[it] = it.keyListener
         }
         return listeners
+    }
+
+    private fun refresh() {
+        parentFragmentManager.apply {
+            beginTransaction()
+                .replace(R.id.nav_host_fragment, newInstance())
+                .addToBackStack(ProfileFragment.TAG)
+                .commit()
+        }
     }
 
 

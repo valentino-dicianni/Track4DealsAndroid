@@ -181,6 +181,7 @@ class UserProvider {
                 firebase.currentUser!!.updateEmail(email)
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
+                            this.email = email
                             _firebaseResponse.postValue(
                                 FirebaseOperationResponse(
                                     true,
