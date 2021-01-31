@@ -8,7 +8,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.Toast
+import androidx.fragment.app.DialogFragment
 import com.example.track4deals.R
 import com.example.track4deals.ui.login.LoginViewModelFactory
 import kotlinx.android.synthetic.main.change_password_fragment.*
@@ -18,20 +20,19 @@ import org.kodein.di.android.x.closestKodein
 import org.kodein.di.generic.instance
 import androidx.lifecycle.Observer
 
-class ChangePasswordFragment : Fragment(), KodeinAware {
-    override val kodein by closestKodein()
-    private val profileViewModelFactory: ProfileViewModelFactory by instance()
+class ChangePasswordFragment(
+    private var viewModel: ProfileViewModel
+) : DialogFragment() {
+
 
     companion object {
-        fun newInstance() = ChangePasswordFragment()
+
         const val TAG = "ChangePasswordFragment"
     }
 
-    private lateinit var viewModel: ProfileViewModel
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        viewModel = ViewModelProvider(this, profileViewModelFactory).get(ProfileViewModel::class.java)
         return inflater.inflate(R.layout.change_password_fragment, container, false)
     }
 
@@ -100,4 +101,12 @@ class ChangePasswordFragment : Fragment(), KodeinAware {
         })
     }
 
+
+    override fun onStart() {
+        super.onStart()
+        dialog?.window?.setLayout(
+            WindowManager.LayoutParams.MATCH_PARENT,
+            WindowManager.LayoutParams.WRAP_CONTENT
+        )
+    }
 }

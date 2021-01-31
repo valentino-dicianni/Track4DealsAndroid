@@ -82,12 +82,10 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
         }
 
         change_password_btn.setOnClickListener {
-            parentFragmentManager.apply {
-                beginTransaction()
-                    .replace(R.id.nav_host_fragment, ChangePasswordFragment.newInstance())
-                    .addToBackStack(ChangePasswordFragment.TAG)
-                    .commit()
-            }
+            ChangePasswordFragment(viewModel).show(
+                parentFragmentManager,
+                ChangePasswordFragment.TAG
+            )
         }
 
         userProvider.loadingComplete.observe(viewLifecycleOwner, Observer {
