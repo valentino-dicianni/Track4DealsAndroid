@@ -2,17 +2,17 @@ package com.example.track4deals.internal
 
 import android.net.Uri
 import android.util.Log
+import android.util.LogPrinter
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.liveData
 import androidx.lifecycle.switchMap
 import com.example.track4deals.data.models.FirebaseOperation
 import com.example.track4deals.data.models.FirebaseOperationResponse
-import com.google.firebase.auth.AuthCredential
-import com.google.firebase.auth.EmailAuthProvider
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.FirebaseException
+import com.google.firebase.auth.*
 import com.google.firebase.auth.ktx.userProfileChangeRequest
+import java.lang.Exception
 import java.security.AuthProvider
 
 class UserProvider {
@@ -125,23 +125,21 @@ class UserProvider {
             displayName = username
         }
         firebase.currentUser!!.updateProfile(profileUpdates)
-            .addOnCompleteListener {
-                if (it.isSuccessful) {
-                    this.username = username
-                }
-            }
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
+                    this.username = username
                     _firebaseResponse.postValue(
                         FirebaseOperationResponse(
                             true,
-                            FirebaseOperation.UPDATEUSERNAME
+                            FirebaseOperation.UPDATEUSERNAME,
+                            ""
                         )
                     )
                 } else _firebaseResponse.postValue(
                     FirebaseOperationResponse(
                         false,
-                        FirebaseOperation.UPDATEUSERNAME
+                        FirebaseOperation.UPDATEUSERNAME,
+                        task.exception?.message.toString()
                     )
                 )
             }
@@ -158,12 +156,14 @@ class UserProvider {
                 if (task.isSuccessful) _firebaseResponse.postValue(
                     FirebaseOperationResponse(
                         true,
-                        FirebaseOperation.UPDATEPIC
+                        FirebaseOperation.UPDATEPIC,
+                        ""
                     )
                 ) else _firebaseResponse.postValue(
                     FirebaseOperationResponse(
                         false,
-                        FirebaseOperation.UPDATEPIC
+                        FirebaseOperation.UPDATEPIC,
+                        task.exception?.message.toString()
                     )
                 )
             }
@@ -185,20 +185,23 @@ class UserProvider {
                             _firebaseResponse.postValue(
                                 FirebaseOperationResponse(
                                     true,
-                                    FirebaseOperation.UPDATEEMAIL
+                                    FirebaseOperation.UPDATEEMAIL,
+                                    ""
                                 )
                             )
                         } else _firebaseResponse.postValue(
                             FirebaseOperationResponse(
                                 false,
-                                FirebaseOperation.UPDATEEMAIL
+                                FirebaseOperation.UPDATEEMAIL,
+                                task.exception?.message.toString()
                             )
                         )
                     }
             } else _firebaseResponse.postValue(
                 FirebaseOperationResponse(
                     false,
-                    FirebaseOperation.UPDATEEMAIL
+                    FirebaseOperation.UPDATEEMAIL,
+                    it.exception?.message.toString()
                 )
             )
         }
@@ -206,25 +209,41 @@ class UserProvider {
     }
 
 
-    fun updatePassword(pass: String) {
-        firebase.currentUser!!.updatePassword(pass)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    if (task.isSuccessful) _firebaseResponse.postValue(
-                        FirebaseOperationResponse(
-                            true,
-                            FirebaseOperation.UPDATEPASSWORD
-                        )
-                    ) else _firebaseResponse.postValue(
-                        FirebaseOperationResponse(
-                            false,
-                            FirebaseOperation.UPDATEPASSWORD
-                        )
-                    )
-                }
-            }
-    }
+    fun updatePassword(oldpass: String, newpass: String) {
 
+        val credential: AuthCredential = EmailAuthProvider.getCredential(this.email, oldpass)
+
+        firebase.currentUser!!.reauthenticate(credential).addOnCompleteListener() {
+
+            if (it.isSuccessful) {
+                firebase.currentUser!!.updatePassword(newpass)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful)
+                            _firebaseResponse.postValue(
+                                FirebaseOperationResponse(
+                                    true,
+                                    FirebaseOperation.UPDATEPASSWORD,
+                                    ""
+                                )
+                            ) else _firebaseResponse.postValue(
+                            FirebaseOperationResponse(
+                                false,
+                                FirebaseOperation.UPDATEPASSWORD,
+                                task.exception?.message.toString()
+                            )
+                        )
+
+                    }
+            } else _firebaseResponse.postValue(
+                FirebaseOperationResponse(
+                    false,
+                    FirebaseOperation.UPDATEPASSWORD,
+                    it.exception?.message.toString()
+                )
+            )
+        }
+
+    }
 
     fun resetPassword(email: String) {
         firebase.sendPasswordResetEmail(email)
@@ -233,12 +252,14 @@ class UserProvider {
                     if (task.isSuccessful) _firebaseResponse.postValue(
                         FirebaseOperationResponse(
                             true,
-                            FirebaseOperation.RESETPASSWORD
+                            FirebaseOperation.RESETPASSWORD,
+                            ""
                         )
                     ) else _firebaseResponse.postValue(
                         FirebaseOperationResponse(
                             false,
-                            FirebaseOperation.RESETPASSWORD
+                            FirebaseOperation.RESETPASSWORD,
+                            task.exception?.message.toString()
                         )
                     )
                 }
@@ -253,12 +274,14 @@ class UserProvider {
                     if (task.isSuccessful) _firebaseResponse.postValue(
                         FirebaseOperationResponse(
                             true,
-                            FirebaseOperation.DELETE
+                            FirebaseOperation.DELETE,
+                            ""
                         )
                     ) else _firebaseResponse.postValue(
                         FirebaseOperationResponse(
                             false,
-                            FirebaseOperation.DELETE
+                            FirebaseOperation.DELETE,
+                            task.exception?.message.toString()
                         )
                     )
                 }

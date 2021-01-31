@@ -23,7 +23,7 @@ class ProfileViewModel(
     private val modifiedUsername = MutableLiveData<String>()
     private val modifiedEmail = MutableLiveData<String>()
     private val modifiedPic = MutableLiveData<String>()
-    private val modifiedPass = MutableLiveData<String>()
+    private val modifiedPass = MutableLiveData<Array<String>>()
     private val password = MutableLiveData<String>()
 
 
@@ -44,8 +44,8 @@ class ProfileViewModel(
         this.modifiedEmail.postValue(e)
     }
 
-    fun modifyPassword(p: String) {
-        this.modifiedPass.postValue(p)
+    fun modifyPassword(op: String,np:String) {
+        this.modifiedPass.postValue(arrayOf(op,np))
     }
 
     fun sendPassword(p: String) {
@@ -76,7 +76,7 @@ class ProfileViewModel(
 
     val updatePassRes = modifiedPass.switchMap {
         liveData {
-            emit(loginRepository.updatePassword(it))
+            emit(loginRepository.updatePassword(it[0],it[1]))
         }
     }
 

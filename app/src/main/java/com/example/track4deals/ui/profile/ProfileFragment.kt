@@ -3,7 +3,6 @@ package com.example.track4deals.ui.profile
 import android.net.Uri
 import android.os.Bundle
 import android.text.method.KeyListener
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -96,24 +95,39 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
         viewModel.updateUsernameRes.observe(viewLifecycleOwner, Observer {
             if (it == null) return@Observer
 
-            if (it.value != null) makeText(
-                context,
-                "Operazione: ${it.value!!.response.toString()} ${it.value!!.status.toString()}",
-                Toast.LENGTH_LONG
-            ).show()
-
+            if (it.value?.status == true) {
+                makeText(context, "Username modificato con successo", Toast.LENGTH_LONG).show()
+            } else
+                makeText(context, it.value!!.message, Toast.LENGTH_LONG).show()
         })
 
         viewModel.updateEmailRes.observe(viewLifecycleOwner, Observer {
             if (it == null) return@Observer
-            
-            if (it.value != null) makeText(
-                context,
-                "Operazione: ${it.value!!.response.toString()} ${it.value!!.status.toString()}",
-                Toast.LENGTH_LONG
-            ).show()
+
+            if (it.value?.status == true) {
+                makeText(context, "Email modificata con successo", Toast.LENGTH_LONG).show()
+            } else
+                makeText(context, it.value!!.message, Toast.LENGTH_LONG).show()
 
         })
+
+        viewModel.updatePassRes.observe(viewLifecycleOwner, Observer {
+            if (it == null) return@Observer
+
+            if (it.value == null) return@Observer
+
+            if (it.value?.status == true) {
+                Toast.makeText(context, "Password modificata con successo", Toast.LENGTH_LONG)
+                    .show()
+            } else
+                if (it.value!!.message != null && it.value!!.message != "")
+                    Toast.makeText(context, it.value!!.message, Toast.LENGTH_LONG).show()
+                else
+                    Toast.makeText(context, "Errore sconosciuto", Toast.LENGTH_LONG).show()
+
+
+        })
+
     }
 
 

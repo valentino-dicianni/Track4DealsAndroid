@@ -1,8 +1,9 @@
 package com.example.track4deals.data.models
 
 data class FirebaseOperationResponse(
-        val status : Boolean,
-        val response: FirebaseOperation,
+    val status : Boolean,
+    val type: FirebaseOperation,
+    val message : String,
 )
 
 enum class FirebaseOperation {

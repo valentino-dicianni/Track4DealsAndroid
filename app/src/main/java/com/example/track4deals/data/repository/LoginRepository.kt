@@ -120,9 +120,9 @@ class LoginRepository(
         }
     }
 
-    suspend fun updatePassword(pass: String): LiveData<FirebaseOperationResponse> {
+    suspend fun updatePassword(oldpass: String, newpass: String): LiveData<FirebaseOperationResponse> {
         return withContext(Dispatchers.IO) {
-            userProvider.updatePassword(pass)
+            userProvider.updatePassword(oldpass,newpass)
             return@withContext userProvider.firebaseRespone
         }
     }
