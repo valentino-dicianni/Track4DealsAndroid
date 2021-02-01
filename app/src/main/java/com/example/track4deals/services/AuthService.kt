@@ -26,9 +26,6 @@ interface AuthService {
     @FormUrlEncoded
     @POST("/auth/create_google_account")
     fun registerNewUserGoogleAsync(
-        @Field("displayName") displayName: String,
-        @Field("password") password: String,
-        @Field("email") email: String,
         @Field("uid") uid: String
     ): Deferred<ServerResponse>
 

@@ -7,7 +7,9 @@ import androidx.lifecycle.ViewModel
 import com.example.track4deals.R
 import com.example.track4deals.data.models.LoginFormState
 import com.example.track4deals.data.models.LoginResult
+import com.example.track4deals.data.models.RegisterResult
 import com.example.track4deals.data.repository.AuthRepository
+
 
 class LoginViewModel(private val authRepository: AuthRepository) : ViewModel() {
 
@@ -17,10 +19,19 @@ class LoginViewModel(private val authRepository: AuthRepository) : ViewModel() {
     private val _loginResult = MutableLiveData<LoginResult>()
     val loginResult: LiveData<LoginResult> = _loginResult
 
+    private val _registerResult = MutableLiveData<RegisterResult>()
+    val registerResult: LiveData<RegisterResult> = _registerResult
+
+
+
     fun login(username: String, password: String) {
         authRepository.login(username, password, _loginResult)
     }
 
+
+    fun loginWithGoogle(idToken : String) {
+        authRepository.loginWithGoogle(idToken, _loginResult)
+    }
 
     fun loginDataChanged(username: String, password: String) {
         if (!isUserNameValid(username)) {
@@ -45,5 +56,7 @@ class LoginViewModel(private val authRepository: AuthRepository) : ViewModel() {
     private fun isPasswordValid(password: String): Boolean {
         return password.length > 5
     }
+
+
 
 }

@@ -96,5 +96,7 @@
     <string name="notSamePsw">Le password non coincidono</string>
     <string name="registrationSucceded">Registrazione effettuata</string>
     <string name="emailRegError">Email già registrata</string>
+    <string name="errorGLogin">Login Google Fallito</string>
+    <string name="server_client_id">379014634580-3n25lbq8tto0bialld9no5go73rgjgsq.apps.googleusercontent.com</string>
 
 </resources>

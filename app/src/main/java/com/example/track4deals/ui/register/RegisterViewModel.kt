@@ -6,7 +6,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.track4deals.R
-import com.example.track4deals.data.models.LoginFormState
 import com.example.track4deals.data.models.RegisterFormState
 import com.example.track4deals.data.models.RegisterResult
 import com.example.track4deals.data.repository.AuthRepository

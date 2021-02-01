@@ -6,12 +6,10 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import com.example.track4deals.internal.UserProvider
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.FirebaseApp
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
-import org.kodein.di.generic.instance
 
 class MainActivity : AppCompatActivity(), KodeinAware {
     override val kodein by closestKodein()
@@ -39,7 +37,6 @@ class MainActivity : AppCompatActivity(), KodeinAware {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
-
 
 
     }

@@ -1,5 +1,6 @@
 package com.example.track4deals.ui.login
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -14,15 +15,20 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.track4deals.R
+import com.example.track4deals.data.constants.AppConstants.Companion.RC_SIGN_IN
 import com.example.track4deals.data.models.LoggedInUserView
 import com.example.track4deals.internal.ScopedFragment
 import com.example.track4deals.ui.register.RegisterFragment
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.firebase.messaging.FirebaseMessaging
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.tasks.Task
+import kotlinx.android.synthetic.main.fragment_login.*
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.x.closestKodein
 import org.kodein.di.generic.instance
-import kotlinx.android.synthetic.main.fragment_login.*
+
 
 class LoginFragment : ScopedFragment(), KodeinAware {
     override val kodein by closestKodein()
@@ -118,6 +124,10 @@ class LoginFragment : ScopedFragment(), KodeinAware {
                     .commit()
             }
         }
+
+        google_button.setOnClickListener {
+            signInGoogle()
+        }
     }
 
     private fun updateUiWithUser(model: LoggedInUserView) {
@@ -132,4 +142,38 @@ class LoginFragment : ScopedFragment(), KodeinAware {
         val appContext = context?.applicationContext ?: return
         Toast.makeText(appContext, getString(errorString), Toast.LENGTH_LONG).show()
     }
+
+
+    fun signInGoogle() {
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(getString(R.string.server_client_id))
+            .requestEmail()
+            .build()
+        val mGoogleSignInClient = activity?.let { GoogleSignIn.getClient(it, gso) }
+        val signInIntent = mGoogleSignInClient!!.signInIntent
+        startActivityForResult(signInIntent, RC_SIGN_IN)
+
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == RC_SIGN_IN) {
+            // The Task returned from this call is always completed, no need to attach
+            // a listener.
+            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+            handleSignInResult(task)
+        }
+    }
+
+    private fun handleSignInResult(task: Task<GoogleSignInAccount>) {
+        try {
+            val account = task.getResult(ApiException::class.java)!!
+            Log.d(TAG, "firebaseAuthWithGoogle: ${account.id}")
+            loginViewModel.loginWithGoogle(account.idToken!!)
+        } catch (e: ApiException) {
+            Log.w(TAG, "signInResult:failed code=" + e.statusCode)
+            showLoginFailed(R.string.errorGLogin)
+        }
+    }
+
 }
