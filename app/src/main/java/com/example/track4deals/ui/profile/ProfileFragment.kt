@@ -54,8 +54,6 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
         super.onViewCreated(view, savedInstanceState)
         val formFieldList: List<EditText> = listOf(name_profile, email_profile)
         val mapOfFields = createEditTextListenersMap(formFieldList)
-        group_loading.visibility = View.VISIBLE
-
         disableAllTextField(formFieldList)
 
         modify_profile_btn.setOnClickListener {
@@ -77,7 +75,6 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
                         )
                         viewModel.modifyEmail(email_profile.text.toString())
                     }
-
                     modify_profile_btn.text = getString(R.string.edit_button_it)
                 }
             }
@@ -96,8 +93,6 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
                 parentFragmentManager,
                 ChangePasswordDialogFragment.TAG
             )
-
-
         }
 
         userProvider.loadingComplete.observe(viewLifecycleOwner, Observer {
@@ -107,7 +102,6 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
 
         viewModel.updateUsernameRes.observe(viewLifecycleOwner, Observer {
             if (it == null) return@Observer
-
             if (it.value?.status == true) {
                 makeText(context, "Username modificato con successo", Toast.LENGTH_LONG).show()
             } else
@@ -126,17 +120,16 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
 
         viewModel.updatePassRes.observe(viewLifecycleOwner, Observer {
             if (it == null) return@Observer
-
             if (it.value == null) return@Observer
 
-            if (it.value?.status == true) {
-                makeText(context, "Password modificata con successo", Toast.LENGTH_LONG)
-                    .show()
-            } else
-                if (it.value!!.message != "")
-                    makeText(context, "Errore", Toast.LENGTH_LONG).show()
-                else
-                    makeText(context, "Errore sconosciuto", Toast.LENGTH_LONG).show()
+            when {
+                it.value?.status == true -> {
+                    makeText(context, "Password modificata con successo", Toast.LENGTH_LONG)
+                        .show()
+                }
+                it.value!!.message != "" -> makeText(context, "Errore", Toast.LENGTH_LONG).show()
+                else -> makeText(context, "Errore sconosciuto", Toast.LENGTH_LONG).show()
+            }
 
         })
 
@@ -144,27 +137,23 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
 
         viewModel.deleteRes.observe(viewLifecycleOwner, Observer {
             if (it == null) return@Observer
-
             if (it.value == null) return@Observer
+            when {
+                it.value?.status == true -> {
+                    makeText(context, "Account eliminato", Toast.LENGTH_LONG)
+                        .show()
 
-            if (it.value?.status == true) {
-                makeText(context, "Account eliminato", Toast.LENGTH_LONG)
-                    .show()
+                    FirebaseAuth.getInstance().signOut()
+                    userProvider.flush()
 
-                FirebaseAuth.getInstance().signOut()
-                userProvider.flush()
+                    navigateLogin()
 
-                navigateLogin()
-
-            } else
-                if (it.value!!.message != "")
-                    makeText(context, it.value!!.message, Toast.LENGTH_LONG).show()
-                else
-                    makeText(context, "Errore sconosciuto", Toast.LENGTH_LONG).show()
+                }
+                it.value!!.message != "" -> makeText(context, it.value!!.message, Toast.LENGTH_LONG).show()
+                else -> makeText(context, "Errore sconosciuto", Toast.LENGTH_LONG).show()
+            }
 
         })
-
-
     }
 
 
@@ -183,6 +172,7 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
             email_profile.setText(userProvider.getEmail())
             item_tracked_label.text = userProvider.getNumTracking().toString()
             group_loading.visibility = View.GONE
+            groupProfile.visibility = View.VISIBLE
         } else {
             navController.navigate(R.id.navigation_login)
         }
