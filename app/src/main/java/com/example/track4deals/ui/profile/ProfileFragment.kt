@@ -71,11 +71,11 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
                     if (name_profile.text.toString() != userProvider.getUserName())
                         viewModel.modifyUsername(name_profile.text.toString())
                     if (email_profile.text.toString() != userProvider.getEmail()) {
-                        viewModel.modifyEmail(email_profile.text.toString())
-                        EditConfirmationDialogFragment(viewModel).show(
+                        PasswordConfirmationDialogFragment(viewModel).show(
                             parentFragmentManager,
-                            EditConfirmationDialogFragment.TAG
+                            PasswordConfirmationDialogFragment.TAG
                         )
+                        viewModel.modifyEmail(email_profile.text.toString())
                     }
 
                     modify_profile_btn.text = getString(R.string.edit_button_it)
@@ -84,17 +84,17 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
         }
 
         change_password_btn.setOnClickListener {
-            ChangePasswordFragment(viewModel).show(
+            ChangePasswordDialogFragment(viewModel).show(
                 parentFragmentManager,
-                ChangePasswordFragment.TAG
+                ChangePasswordDialogFragment.TAG
             )
         }
 
 
         delete_btn.setOnClickListener {
-            ChangePasswordFragment(viewModel).show(
+            ChangePasswordDialogFragment(viewModel).show(
                 parentFragmentManager,
-                ChangePasswordFragment.TAG
+                ChangePasswordDialogFragment.TAG
             )
 
 
@@ -111,16 +111,16 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
             if (it.value?.status == true) {
                 makeText(context, "Username modificato con successo", Toast.LENGTH_LONG).show()
             } else
-                makeText(context, it.value!!.message, Toast.LENGTH_LONG).show()
+                makeText(context, "Errore", Toast.LENGTH_LONG).show()
         })
 
         viewModel.updateEmailRes.observe(viewLifecycleOwner, Observer {
             if (it == null) return@Observer
 
-            if (it.value?.status == true) {
+            if (true) {
                 makeText(context, "Email modificata con successo", Toast.LENGTH_LONG).show()
             } else
-                makeText(context, it.value!!.message, Toast.LENGTH_LONG).show()
+                makeText(context, "Errore", Toast.LENGTH_LONG).show()
 
         })
 
@@ -134,7 +134,7 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
                     .show()
             } else
                 if (it.value!!.message != "")
-                    makeText(context, it.value!!.message, Toast.LENGTH_LONG).show()
+                    makeText(context, "Errore", Toast.LENGTH_LONG).show()
                 else
                     makeText(context, "Errore sconosciuto", Toast.LENGTH_LONG).show()
 

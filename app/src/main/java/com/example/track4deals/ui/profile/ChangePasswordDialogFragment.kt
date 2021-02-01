@@ -20,7 +20,7 @@ import org.kodein.di.android.x.closestKodein
 import org.kodein.di.generic.instance
 import androidx.lifecycle.Observer
 
-class ChangePasswordFragment(
+class ChangePasswordDialogFragment(
     private var viewModel: ProfileViewModel
 ) : DialogFragment() {
 

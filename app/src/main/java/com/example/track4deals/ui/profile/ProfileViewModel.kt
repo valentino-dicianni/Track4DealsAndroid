@@ -22,8 +22,24 @@ class ProfileViewModel(
     private val modifiedEmail = MutableLiveData<String>()
     private val modifiedPic = MutableLiveData<String>()
     private val modifiedPass = MutableLiveData<Array<String>>()
-    private val password = MutableLiveData<String>()
+    private val passwordLive = MutableLiveData<String>()
     private val delete = MutableLiveData<Boolean>()
+
+    val emailAndPasswordLiveData: LiveData<Pair<String, String>> =
+            object: MediatorLiveData<Pair<String,String>>() {
+                var password: String? = null
+                var email: String? = null
+                init {
+                    addSource(passwordLive) { passowrd ->
+                        this.password = passowrd
+                        email?.let { value = password!! to it }
+                    }
+                    addSource(modifiedEmail) { email ->
+                        this.email = email
+                        password?.let { value = it to email }
+                    }
+                }
+            }
 
 
     val user by lazyDeferred {
@@ -48,7 +64,7 @@ class ProfileViewModel(
     }
 
     fun sendPassword(p: String) {
-        this.password.postValue(p)
+        this.passwordLive.postValue(p)
     }
 
     // switchMap starts a coroutine whenever the value of a LiveData changes.
@@ -66,9 +82,9 @@ class ProfileViewModel(
     }
 
 
-    val updateEmailRes = password.switchMap {
+    val updateEmailRes = emailAndPasswordLiveData.switchMap {
         liveData {
-            emit(authRepository.updateEmail(modifiedEmail.value.toString(), it))
+            emit(authRepository.updateEmail(it.second, it.first))
         }
     }
 
@@ -82,7 +98,7 @@ class ProfileViewModel(
 
     val deleteRes = delete.switchMap {
         liveData {
-            emit(authRepository.delete(password.value.toString()))
+            emit(authRepository.delete(passwordLive.value.toString()))
         }
     }
 
@@ -111,5 +127,8 @@ class ProfileViewModel(
     private fun isPasswordValid(password: String): Boolean {
         return password.length > 5
     }
+
+
+
 
 }

@@ -26,7 +26,7 @@ class UserProvider {
     private var loading = MutableLiveData<Boolean>()
 
     private var _firebaseResponse = MutableLiveData<FirebaseOperationResponse>()
-    val firebaseRespone: LiveData<FirebaseOperationResponse> = _firebaseResponse
+    val firebaseResponse: LiveData<FirebaseOperationResponse> = _firebaseResponse
 
     private var firebase = FirebaseAuth.getInstance()
 
@@ -170,7 +170,7 @@ class UserProvider {
     }
 
 
-    fun updateEmail(email: String, password: String) {
+    fun updateEmail(email: String, password: String){
 
         val credential: AuthCredential = EmailAuthProvider.getCredential(this.email, password)
 
@@ -189,6 +189,7 @@ class UserProvider {
                                     ""
                                 )
                             )
+
                         } else _firebaseResponse.postValue(
                             FirebaseOperationResponse(
                                 false,
@@ -196,6 +197,7 @@ class UserProvider {
                                 task.exception?.message.toString()
                             )
                         )
+
                     }
             } else _firebaseResponse.postValue(
                 FirebaseOperationResponse(
@@ -204,7 +206,9 @@ class UserProvider {
                     it.exception?.message.toString()
                 )
             )
+
         }
+
 
     }
 
@@ -291,7 +295,7 @@ class UserProvider {
                             )
                         }
                     }
-            }else _firebaseResponse.postValue(
+            } else _firebaseResponse.postValue(
                 FirebaseOperationResponse(
                     false,
                     FirebaseOperation.DELETE,

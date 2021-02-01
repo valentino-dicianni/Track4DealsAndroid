@@ -16,7 +16,7 @@ import org.kodein.di.KodeinAware
 import org.kodein.di.android.x.closestKodein
 import org.kodein.di.generic.instance
 
-class EditConfirmationDialogFragment(
+class PasswordConfirmationDialogFragment(
     private var viewModel: ProfileViewModel
 ) : DialogFragment(){
 

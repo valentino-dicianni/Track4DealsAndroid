@@ -130,21 +130,21 @@ class AuthRepository(
     suspend fun updateUsername(username: String): LiveData<FirebaseOperationResponse> {
         return withContext(Dispatchers.IO) {
             userProvider.updateUsername(username)
-            return@withContext userProvider.firebaseRespone
+            return@withContext userProvider.firebaseResponse
         }
     }
 
     suspend fun updatePicture(uri: Uri): LiveData<FirebaseOperationResponse> {
         return withContext(Dispatchers.IO) {
             userProvider.updatePicture(uri)
-            return@withContext userProvider.firebaseRespone
+            return@withContext userProvider.firebaseResponse
         }
     }
 
     suspend fun updateEmail(email: String, password: String): LiveData<FirebaseOperationResponse> {
         return withContext(Dispatchers.IO) {
             userProvider.updateEmail(email, password)
-            return@withContext userProvider.firebaseRespone
+            return@withContext userProvider.firebaseResponse
         }
     }
 
@@ -154,21 +154,21 @@ class AuthRepository(
     ): LiveData<FirebaseOperationResponse> {
         return withContext(Dispatchers.IO) {
             userProvider.updatePassword(oldpass, newpass)
-            return@withContext userProvider.firebaseRespone
+            return@withContext userProvider.firebaseResponse
         }
     }
 
     suspend fun resetPassword(email: String): LiveData<FirebaseOperationResponse> {
         return withContext(Dispatchers.IO) {
             userProvider.resetPassword(email)
-            return@withContext userProvider.firebaseRespone
+            return@withContext userProvider.firebaseResponse
         }
     }
 
     suspend fun delete(password: String): LiveData<FirebaseOperationResponse> {
         return withContext(Dispatchers.IO) {
             userProvider.delete(password)
-            return@withContext userProvider.firebaseRespone
+            return@withContext userProvider.firebaseResponse
         }
     }
 
