@@ -186,10 +186,9 @@ class AuthRepository(
         }
     }
 
-    suspend fun updateEmail(email: String, password: String): LiveData<FirebaseOperationResponse> {
+    suspend fun updateEmail(email: String, password: String, _emailChangeRes : MutableLiveData<FirebaseOperationResponse>){
         return withContext(Dispatchers.IO) {
-            userProvider.updateEmail(email, password)
-            return@withContext userProvider.firebaseResponse
+            val res = userProvider.updateEmail(email, password,_emailChangeRes)
         }
     }
 

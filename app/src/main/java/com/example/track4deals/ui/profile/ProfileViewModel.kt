@@ -25,6 +25,10 @@ class ProfileViewModel(
     private val passwordLive = MutableLiveData<String>()
     private val delete = MutableLiveData<Boolean>()
 
+    private val _emailChangeRes = MutableLiveData<FirebaseOperationResponse>()
+    val emailChangeRes: LiveData<FirebaseOperationResponse>
+        get() = _emailChangeRes
+
     val emailAndPasswordLiveData: LiveData<Pair<String, String>> =
             object: MediatorLiveData<Pair<String,String>>() {
                 var password: String? = null
@@ -84,7 +88,9 @@ class ProfileViewModel(
 
     val updateEmailRes = emailAndPasswordLiveData.switchMap {
         liveData {
-            emit(authRepository.updateEmail(it.second, it.first))
+            authRepository.updateEmail(it.second, it.first, _emailChangeRes)
+            val res =  emailChangeRes
+            emit(res.value)
         }
     }
 

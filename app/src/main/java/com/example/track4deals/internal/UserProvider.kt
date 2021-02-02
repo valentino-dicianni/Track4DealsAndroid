@@ -9,6 +9,7 @@ import androidx.lifecycle.liveData
 import androidx.lifecycle.switchMap
 import com.example.track4deals.data.models.FirebaseOperation
 import com.example.track4deals.data.models.FirebaseOperationResponse
+import com.example.track4deals.data.models.ServerResponse
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.*
 import com.google.firebase.auth.ktx.userProfileChangeRequest
@@ -28,6 +29,7 @@ class UserProvider {
     private var _firebaseResponse = MutableLiveData<FirebaseOperationResponse>()
     val firebaseResponse: LiveData<FirebaseOperationResponse> = _firebaseResponse
 
+
     private var firebase = FirebaseAuth.getInstance()
 
     init {
@@ -42,6 +44,7 @@ class UserProvider {
             emit(it)
         }
     }
+
 
     fun getToken() = token
 
@@ -170,7 +173,11 @@ class UserProvider {
     }
 
 
-    fun updateEmail(email: String, password: String){
+    fun updateEmail(
+        email: String,
+        password: String,
+        _emailChangeRes: MutableLiveData<FirebaseOperationResponse>
+    ) {
 
         val credential: AuthCredential = EmailAuthProvider.getCredential(this.email, password)
 
@@ -182,34 +189,28 @@ class UserProvider {
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
                             this.email = email
-                            _firebaseResponse.postValue(
+                            _emailChangeRes.postValue(
                                 FirebaseOperationResponse(
                                     true,
                                     FirebaseOperation.UPDATEEMAIL,
                                     ""
-                                )
-                            )
-
-                        } else _firebaseResponse.postValue(
+                                ))
+                        } else _emailChangeRes.postValue(
                             FirebaseOperationResponse(
                                 false,
                                 FirebaseOperation.UPDATEEMAIL,
                                 task.exception?.message.toString()
-                            )
-                        )
-
+                            ))
                     }
-            } else _firebaseResponse.postValue(
+            } else _emailChangeRes.postValue(
                 FirebaseOperationResponse(
                     false,
                     FirebaseOperation.UPDATEEMAIL,
                     it.exception?.message.toString()
-                )
-            )
+                ))
+
 
         }
-
-
     }
 
 

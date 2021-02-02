@@ -108,13 +108,19 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
                 makeText(context, "Errore", Toast.LENGTH_LONG).show()
         })
 
+
+
         viewModel.updateEmailRes.observe(viewLifecycleOwner, Observer {
             if (it == null) return@Observer
+        })
 
-            if (true) {
+        viewModel.emailChangeRes.observe(viewLifecycleOwner, Observer {
+            if (it == null) return@Observer
+
+            if (it.status) {
                 makeText(context, "Email modificata con successo", Toast.LENGTH_LONG).show()
             } else
-                makeText(context, "Errore", Toast.LENGTH_LONG).show()
+                makeText(context, "Errore: ${it.message}" , Toast.LENGTH_LONG).show()
 
         })
 
