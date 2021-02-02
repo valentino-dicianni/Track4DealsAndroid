@@ -3,6 +3,7 @@ package com.example.track4deals.ui.tracking
 import android.content.Context
 import android.os.Bundle
 import android.text.Html
+import android.text.Html.FROM_HTML_MODE_COMPACT
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -46,9 +47,8 @@ class TrackingFragment : ScopedFragment(), KodeinAware {
 
         trackingViewModel.verifyProdResult.observe(viewLifecycleOwner, Observer { response ->
             group_loading.visibility = View.GONE
-            Log.d(TAG, "findProductDetails: ${response.toString()}")
             if (response.ok == SERVER_OK) {
-                context?.let { response.response?.let { it1 -> showDialog(it1.get(0), it) } }
+                context?.let { response.response?.let { it1 -> showDialog(it1[0], it) } }
             } else {
                 context?.let { showDialogError(it) }
             }
@@ -82,7 +82,11 @@ class TrackingFragment : ScopedFragment(), KodeinAware {
                 }
             } else {
                 edit_text_link.setText("")
-                Toast.makeText(context, context?.getString(R.string.errorAuthToast), Toast.LENGTH_LONG)
+                Toast.makeText(
+                    context,
+                    context?.getString(R.string.errorAuthToast),
+                    Toast.LENGTH_LONG
+                )
                     .show()
             }
         }
@@ -101,7 +105,12 @@ class TrackingFragment : ScopedFragment(), KodeinAware {
     private fun showDialog(product: Product, context: Context) {
         val builder = AlertDialog.Builder(context)
         builder.setTitle(R.string.trackingDialogTitle)
-        builder.setMessage(Html.fromHtml("<b>PRODOTTO: </b>" + product.title + "<br><br><b>BRAND: </b> " + product.brand))
+        builder.setMessage(
+            Html.fromHtml(
+                "<b>PRODOTTO: </b>" + product.title + "<br><br><b>BRAND: </b> " + product.brand,
+                FROM_HTML_MODE_COMPACT
+            )
+        )
 
         builder.setPositiveButton(R.string.yes) { _, _ ->
             var isDeal = 0
