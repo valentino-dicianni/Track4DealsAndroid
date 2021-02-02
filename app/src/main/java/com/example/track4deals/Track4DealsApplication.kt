@@ -12,7 +12,7 @@ import com.example.track4deals.services.ProductDataService
 import com.example.track4deals.services.OffersService
 import com.example.track4deals.services.ProfileService
 import com.example.track4deals.services.utils.JWTinterceptor
-import com.example.track4deals.services.utils.UserDataService
+import com.example.track4deals.services.UserDataService
 import com.example.track4deals.ui.login.LoginViewModelFactory
 import com.example.track4deals.ui.offers.OffersViewModelFactory
 import com.example.track4deals.ui.profile.ChangePasswordDialogFragment
