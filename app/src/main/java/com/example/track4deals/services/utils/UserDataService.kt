@@ -5,7 +5,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.track4deals.data.models.ServerResponseUser
 import com.example.track4deals.data.models.UserInfo
-import com.example.track4deals.internal.NoConnectivityException
 import com.example.track4deals.services.ProfileService
 import java.net.SocketTimeoutException
 

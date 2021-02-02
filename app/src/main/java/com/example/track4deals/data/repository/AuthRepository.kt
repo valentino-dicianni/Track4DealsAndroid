@@ -7,9 +7,10 @@ import androidx.lifecycle.MutableLiveData
 import com.example.track4deals.R
 import com.example.track4deals.data.constants.AppConstants.Companion.SERVER_OK
 import com.example.track4deals.data.models.*
-import com.example.track4deals.internal.NoConnectivityException
+import com.example.track4deals.services.utils.NoConnectivityException
 import com.example.track4deals.internal.UserProvider
 import com.example.track4deals.services.AuthService
+import com.example.track4deals.services.utils.NoInternetException
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
@@ -131,7 +132,9 @@ class AuthRepository(
             } else result.value = RegisterResult(error = R.string.register_failed)
 
         } catch (e: NoConnectivityException) {
-            Log.e("Connectivity", "NO internet connection", e)
+            Log.e("Connectivity", e.message)
+        } catch (e: NoInternetException) {
+            Log.e("Connectivity", e.message)
         } catch (e: SocketTimeoutException) {
             Log.e("Connectivity", "TimeOut exception", e)
         } catch (e: HttpException) {
@@ -159,8 +162,10 @@ class AuthRepository(
                         Log.d("MyFirebaseMessagingService", "Sent token to Track4Deals Server")
                     }
                 }
-            } catch (e: NoConnectivityException) {
-                Log.e("Connectivity", "NO internet connection", e)
+            }catch (e: NoConnectivityException) {
+                Log.e("Connectivity", e.message)
+            } catch (e: NoInternetException) {
+                Log.e("Connectivity", e.message)
             } catch (e: SocketTimeoutException) {
                 Log.e("Connectivity", "TimeOut exception", e)
             } catch (e: HttpException) {
