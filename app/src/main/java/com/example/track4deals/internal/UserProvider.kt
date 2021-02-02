@@ -123,7 +123,7 @@ class UserProvider {
         }
     }
 
-    fun updateUsername(username: String) {
+    fun updateUsername(username: String, _usernameChangeRes : MutableLiveData<FirebaseOperationResponse>) {
         val profileUpdates = userProfileChangeRequest {
             displayName = username
         }
@@ -131,14 +131,14 @@ class UserProvider {
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     this.username = username
-                    _firebaseResponse.postValue(
+                    _usernameChangeRes.postValue(
                         FirebaseOperationResponse(
                             true,
                             FirebaseOperation.UPDATEUSERNAME,
                             ""
                         )
                     )
-                } else _firebaseResponse.postValue(
+                } else _usernameChangeRes.postValue(
                     FirebaseOperationResponse(
                         false,
                         FirebaseOperation.UPDATEUSERNAME,
@@ -214,7 +214,7 @@ class UserProvider {
     }
 
 
-    fun updatePassword(oldpass: String, newpass: String) {
+    fun updatePassword(oldpass: String, newpass: String, _passwordChangeRes : MutableLiveData<FirebaseOperationResponse>) {
 
         val credential: AuthCredential = EmailAuthProvider.getCredential(this.email, oldpass)
 
@@ -224,13 +224,13 @@ class UserProvider {
                 firebase.currentUser!!.updatePassword(newpass)
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful)
-                            _firebaseResponse.postValue(
+                            _passwordChangeRes.postValue(
                                 FirebaseOperationResponse(
                                     true,
                                     FirebaseOperation.UPDATEPASSWORD,
                                     ""
                                 )
-                            ) else _firebaseResponse.postValue(
+                            ) else _passwordChangeRes.postValue(
                             FirebaseOperationResponse(
                                 false,
                                 FirebaseOperation.UPDATEPASSWORD,
@@ -239,7 +239,7 @@ class UserProvider {
                         )
 
                     }
-            } else _firebaseResponse.postValue(
+            } else _passwordChangeRes.postValue(
                 FirebaseOperationResponse(
                     false,
                     FirebaseOperation.UPDATEPASSWORD,
@@ -272,7 +272,7 @@ class UserProvider {
     }
 
 
-    fun delete(password: String) {
+    fun delete(password: String,_deleteRes: MutableLiveData<FirebaseOperationResponse>) {
         val credential: AuthCredential = EmailAuthProvider.getCredential(this.email, password)
 
         firebase.currentUser!!.reauthenticate(credential).addOnCompleteListener() {
@@ -281,13 +281,13 @@ class UserProvider {
                 firebase.currentUser!!.delete()
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
-                            if (task.isSuccessful) _firebaseResponse.postValue(
+                            if (task.isSuccessful) _deleteRes.postValue(
                                 FirebaseOperationResponse(
                                     true,
                                     FirebaseOperation.DELETE,
                                     ""
                                 )
-                            ) else _firebaseResponse.postValue(
+                            ) else _deleteRes.postValue(
                                 FirebaseOperationResponse(
                                     false,
                                     FirebaseOperation.DELETE,
@@ -296,7 +296,7 @@ class UserProvider {
                             )
                         }
                     }
-            } else _firebaseResponse.postValue(
+            } else _deleteRes.postValue(
                 FirebaseOperationResponse(
                     false,
                     FirebaseOperation.DELETE,

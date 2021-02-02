@@ -4,7 +4,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.text.method.KeyListener
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +11,6 @@ import android.widget.EditText
 import android.widget.Toast
 import android.widget.Toast.LENGTH_LONG
 import android.widget.Toast.makeText
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -72,7 +70,7 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
                 getString(R.string.Save) -> {
                     disableAllTextField(formFieldList)
                     if (name_profile.text.toString() != userProvider.getUserName())
-                        viewModel.modifyUsername(name_profile.text.toString())
+                        viewModel.updateUsername(name_profile.text.toString())
                     if (email_profile.text.toString() != userProvider.getEmail()) {
                         PasswordConfirmationDialogFragment(viewModel).show(
                             parentFragmentManager,
@@ -94,10 +92,11 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
 
 
         delete_btn.setOnClickListener {
-            ChangePasswordDialogFragment(viewModel).show(
+            PasswordConfirmationDialogFragment(viewModel).show(
                 parentFragmentManager,
-                ChangePasswordDialogFragment.TAG
+                PasswordConfirmationDialogFragment.TAG
             )
+            viewModel.delete(true)
         }
         profile_image.setOnClickListener{
             viewModel.getProfilePic()?.let {
@@ -113,9 +112,9 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
         })
 
 
-        viewModel.updateUsernameRes.observe(viewLifecycleOwner, Observer {
+        viewModel.usernameChangeRes.observe(viewLifecycleOwner, Observer {
             if (it == null) return@Observer
-            if (it.value?.status == true) {
+            if (it?.status) {
                 makeText(context, "Username modificato con successo", Toast.LENGTH_LONG).show()
             } else
                 makeText(context, "Errore", Toast.LENGTH_LONG).show()
@@ -123,56 +122,43 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
 
 
 
-        viewModel.updateEmailRes.observe(viewLifecycleOwner, Observer {
+        viewModel.updateEmailResult.observe(viewLifecycleOwner, Observer {
             if (it == null) return@Observer
+            it.observe(viewLifecycleOwner, Observer {
+                if (it == null) return@Observer
+
+                if (it.status) {
+                    makeText(context, "Email modificata con successo", Toast.LENGTH_LONG).show()
+                } else
+                    makeText(context, "Errore: ${it.message}" , Toast.LENGTH_LONG).show()
+            })
         })
 
-        viewModel.emailChangeRes.observe(viewLifecycleOwner, Observer {
+        viewModel.deleteResult.observe(viewLifecycleOwner, Observer {
+            if (it == null) return@Observer
+            it.observe(viewLifecycleOwner, Observer {
+                if (it == null) return@Observer
+
+                if (it.status) {
+                    makeText(context, "Account eliminato con successo", Toast.LENGTH_LONG).show()
+                    FirebaseAuth.getInstance().signOut()
+                    userProvider.flush()
+                    navigateLogin()
+                } else
+                    makeText(context, "Errore: ${it.message}" , Toast.LENGTH_LONG).show()
+            })
+        })
+
+        viewModel.passwordChangeRes.observe(viewLifecycleOwner, Observer {
             if (it == null) return@Observer
 
             if (it.status) {
-                makeText(context, "Email modificata con successo", Toast.LENGTH_LONG).show()
+                makeText(context, "Password modificata con successo", Toast.LENGTH_LONG).show()
             } else
                 makeText(context, "Errore: ${it.message}" , Toast.LENGTH_LONG).show()
 
         })
 
-        viewModel.updatePassRes.observe(viewLifecycleOwner, Observer {
-            if (it == null) return@Observer
-            if (it.value == null) return@Observer
-
-            when {
-                it.value?.status == true -> {
-                    makeText(context, "Password modificata con successo", Toast.LENGTH_LONG)
-                        .show()
-                }
-                it.value!!.message != "" -> makeText(context, "Errore", Toast.LENGTH_LONG).show()
-                else -> makeText(context, "Errore sconosciuto", Toast.LENGTH_LONG).show()
-            }
-
-        })
-
-
-
-        viewModel.deleteRes.observe(viewLifecycleOwner, Observer {
-            if (it == null) return@Observer
-            if (it.value == null) return@Observer
-            when {
-                it.value?.status == true -> {
-                    makeText(context, "Account eliminato", Toast.LENGTH_LONG)
-                        .show()
-
-                    FirebaseAuth.getInstance().signOut()
-                    userProvider.flush()
-
-                    navigateLogin()
-
-                }
-                it.value!!.message != "" -> makeText(context, it.value!!.message, Toast.LENGTH_LONG).show()
-                else -> makeText(context, "Errore sconosciuto", Toast.LENGTH_LONG).show()
-            }
-
-        })
     }
 
 

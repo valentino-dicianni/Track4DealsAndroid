@@ -142,7 +142,7 @@ class AuthRepository(
     }
 
 
-    private fun registerFirebaseToken(uid: String, withUserRegistration : Boolean) {
+    private fun registerFirebaseToken(uid: String, withUserRegistration: Boolean) {
         messaging.token.addOnCompleteListener(OnCompleteListener { task ->
             if (!task.isSuccessful) {
                 Log.w(TAG, "Fetching FCM registration token failed", task.exception)
@@ -152,7 +152,7 @@ class AuthRepository(
             Log.w(TAG, "Fetching FCM registration token: $token", task.exception)
             try {
                 GlobalScope.launch(Dispatchers.IO) {
-                    if(withUserRegistration)
+                    if (withUserRegistration)
                         authService.registerNewUserGoogleAsync(uid).await()
                     if (token != null) {
                         authService.registerFirebaseTokenAsync(token).await()
@@ -172,11 +172,11 @@ class AuthRepository(
     }
 
 
-    suspend fun updateUsername(username: String): LiveData<FirebaseOperationResponse> {
-        return withContext(Dispatchers.IO) {
-            userProvider.updateUsername(username)
-            return@withContext userProvider.firebaseResponse
-        }
+    fun updateUsername(
+        username: String,
+        _usernameChangeRes: MutableLiveData<FirebaseOperationResponse>
+    ) {
+        userProvider.updateUsername(username, _usernameChangeRes)
     }
 
     suspend fun updatePicture(uri: Uri): LiveData<FirebaseOperationResponse> {
@@ -186,20 +186,22 @@ class AuthRepository(
         }
     }
 
-    suspend fun updateEmail(email: String, password: String, _emailChangeRes : MutableLiveData<FirebaseOperationResponse>){
+    suspend fun updateEmail(
+        email: String,
+        password: String,
+        _emailChangeRes: MutableLiveData<FirebaseOperationResponse>
+    ) {
         return withContext(Dispatchers.IO) {
-            val res = userProvider.updateEmail(email, password,_emailChangeRes)
+            userProvider.updateEmail(email, password, _emailChangeRes)
         }
     }
 
-    suspend fun updatePassword(
+    fun updatePassword(
         oldpass: String,
-        newpass: String
-    ): LiveData<FirebaseOperationResponse> {
-        return withContext(Dispatchers.IO) {
-            userProvider.updatePassword(oldpass, newpass)
-            return@withContext userProvider.firebaseResponse
-        }
+        newpass: String,
+        _passwordChangeRes: MutableLiveData<FirebaseOperationResponse>
+    ) {
+        userProvider.updatePassword(oldpass, newpass, _passwordChangeRes)
     }
 
     suspend fun resetPassword(email: String): LiveData<FirebaseOperationResponse> {
@@ -209,10 +211,9 @@ class AuthRepository(
         }
     }
 
-    suspend fun delete(password: String): LiveData<FirebaseOperationResponse> {
+    suspend fun delete(password: String, _deleteRes: MutableLiveData<FirebaseOperationResponse>) {
         return withContext(Dispatchers.IO) {
-            userProvider.delete(password)
-            return@withContext userProvider.firebaseResponse
+            userProvider.delete(password, _deleteRes)
         }
     }
 

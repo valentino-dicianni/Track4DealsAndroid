@@ -18,35 +18,59 @@ class ProfileViewModel(
     val changeFormState: LiveData<ChangePasswordFormState> = changeForm
     private val modifiedUser = MutableLiveData<UserInfo>()
     private var firebaseResponse = MutableLiveData<FirebaseOperationResponse>()
-    private val modifiedUsername = MutableLiveData<String>()
     private val modifiedEmail = MutableLiveData<String>()
     private val modifiedPic = MutableLiveData<String>()
-    private val modifiedPass = MutableLiveData<Array<String>>()
     private val passwordLive = MutableLiveData<String>()
-    private val delete = MutableLiveData<Boolean>()
+    private val deleteLive = MutableLiveData<Boolean>()
     private val profileImage = MutableLiveData<String>()
 
 
     private val _emailChangeRes = MutableLiveData<FirebaseOperationResponse>()
-    val emailChangeRes: LiveData<FirebaseOperationResponse>
+    private val emailChangeRes: LiveData<FirebaseOperationResponse>
         get() = _emailChangeRes
 
-    val emailAndPasswordLiveData: LiveData<Pair<String, String>> =
-        object : MediatorLiveData<Pair<String, String>>() {
-            var password: String? = null
-            var email: String? = null
+    private val _deleteRes = MutableLiveData<FirebaseOperationResponse>()
+    private val deleteRes: LiveData<FirebaseOperationResponse>
+        get() = _deleteRes
 
-            init {
-                addSource(passwordLive) { passowrd ->
-                    this.password = passowrd
-                    email?.let { value = password!! to it }
-                }
-                addSource(modifiedEmail) { email ->
-                    this.email = email
-                    password?.let { value = it to email }
-                }
+    private val _usernameChangeRes = MutableLiveData<FirebaseOperationResponse>()
+    val usernameChangeRes: LiveData<FirebaseOperationResponse> = _usernameChangeRes
+
+    private val _passwordChangeRes = MutableLiveData<FirebaseOperationResponse>()
+    val passwordChangeRes: LiveData<FirebaseOperationResponse> = _passwordChangeRes
+
+
+    val changeEmailPairLiveData: LiveData<Pair<String, String>> = object : MediatorLiveData<Pair<String, String>>() {
+        var password: String? = null
+        var email: String? = null
+
+        init {
+            addSource(passwordLive) { passowrd ->
+                this.password = passowrd
+                email?.let { value = password!! to it }
+            }
+            addSource(modifiedEmail) { email ->
+                this.email = email
+                password?.let { value = it to email }
             }
         }
+    }
+    val deletePairLiveData: LiveData<Pair<String, Boolean>> = object : MediatorLiveData<Pair<String, Boolean>>() {
+        var password: String? = null
+        var delete: Boolean? = null
+
+        init {
+            addSource(passwordLive) { passwrd ->
+                this.password = passwrd
+                delete?.let { value = password!! to it }
+            }
+            addSource(deleteLive) { delete ->
+                this.delete = delete
+                password?.let { value = it to delete }
+            }
+        }
+    }
+
 
 
     val user by lazyDeferred {
@@ -58,17 +82,14 @@ class ProfileViewModel(
     }
 
 
-    fun modifyUsername(u: String) {
-        this.modifiedUsername.postValue(u)
-    }
-
     fun modifyEmail(e: String) {
         this.modifiedEmail.postValue(e)
     }
 
-    fun modifyPassword(op: String, np: String) {
-        this.modifiedPass.postValue(arrayOf(op, np))
+    fun delete(d:Boolean) {
+        this.deleteLive.postValue(d)
     }
+
 
     fun sendPassword(p: String) {
         this.passwordLive.postValue(p)
@@ -90,32 +111,28 @@ class ProfileViewModel(
     }
 
 
-    val updateUsernameRes = modifiedUsername.switchMap {
-        liveData {
-            emit(authRepository.updateUsername(it))
-        }
+    fun updateUsername(newUsername:String){
+        authRepository.updateUsername(newUsername, _usernameChangeRes)
     }
 
 
-    val updateEmailRes = emailAndPasswordLiveData.switchMap {
+    val updateEmailResult = changeEmailPairLiveData.switchMap {
         liveData {
             authRepository.updateEmail(it.second, it.first, _emailChangeRes)
-            val res =  emailChangeRes
-            emit(res.value)
+            emit(emailChangeRes)
         }
     }
 
 
-    val updatePassRes = modifiedPass.switchMap {
-        liveData {
-            emit(authRepository.updatePassword(it[0], it[1]))
-        }
+    fun changePassword(oldPass:String, newPass:String){
+        authRepository.updatePassword(oldPass,newPass, _passwordChangeRes)
     }
 
 
-    val deleteRes = delete.switchMap {
+    val deleteResult = deletePairLiveData.switchMap {
         liveData {
-            emit(authRepository.delete(passwordLive.value.toString()))
+            authRepository.delete(it.first,_deleteRes)
+            emit(deleteRes)
         }
     }
 

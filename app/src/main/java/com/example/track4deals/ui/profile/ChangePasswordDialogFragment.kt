@@ -90,7 +90,7 @@ class ChangePasswordDialogFragment(
 
 
         changePassButton.setOnClickListener {
-            viewModel.modifyPassword(old_password.text.toString(), new_password.text.toString())
+            viewModel.changePassword(old_password.text.toString(), new_password.text.toString())
             dismiss()
         }
 
