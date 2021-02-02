@@ -2,10 +2,10 @@ package com.example.track4deals.ui.profile
 
 import androidx.lifecycle.*
 import com.example.track4deals.R
-import com.example.track4deals.data.repository.AuthRepository
 import com.example.track4deals.data.models.ChangePasswordFormState
 import com.example.track4deals.data.models.FirebaseOperationResponse
 import com.example.track4deals.data.models.UserInfo
+import com.example.track4deals.data.repository.AuthRepository
 import com.example.track4deals.data.repository.UserRepository
 import com.example.track4deals.internal.lazyDeferred
 
@@ -24,26 +24,29 @@ class ProfileViewModel(
     private val modifiedPass = MutableLiveData<Array<String>>()
     private val passwordLive = MutableLiveData<String>()
     private val delete = MutableLiveData<Boolean>()
+    private val profileImage = MutableLiveData<String>()
+
 
     private val _emailChangeRes = MutableLiveData<FirebaseOperationResponse>()
     val emailChangeRes: LiveData<FirebaseOperationResponse>
         get() = _emailChangeRes
 
     val emailAndPasswordLiveData: LiveData<Pair<String, String>> =
-            object: MediatorLiveData<Pair<String,String>>() {
-                var password: String? = null
-                var email: String? = null
-                init {
-                    addSource(passwordLive) { passowrd ->
-                        this.password = passowrd
-                        email?.let { value = password!! to it }
-                    }
-                    addSource(modifiedEmail) { email ->
-                        this.email = email
-                        password?.let { value = it to email }
-                    }
+        object : MediatorLiveData<Pair<String, String>>() {
+            var password: String? = null
+            var email: String? = null
+
+            init {
+                addSource(passwordLive) { passowrd ->
+                    this.password = passowrd
+                    email?.let { value = password!! to it }
+                }
+                addSource(modifiedEmail) { email ->
+                    this.email = email
+                    password?.let { value = it to email }
                 }
             }
+        }
 
 
     val user by lazyDeferred {
@@ -63,12 +66,20 @@ class ProfileViewModel(
         this.modifiedEmail.postValue(e)
     }
 
-    fun modifyPassword(op: String,np:String) {
-        this.modifiedPass.postValue(arrayOf(op,np))
+    fun modifyPassword(op: String, np: String) {
+        this.modifiedPass.postValue(arrayOf(op, np))
     }
 
     fun sendPassword(p: String) {
         this.passwordLive.postValue(p)
+    }
+
+    fun updateProfilePic(it: String) {
+        profileImage.postValue(it)
+    }
+
+    fun getProfilePic(): String? {
+        return profileImage.value
     }
 
     // switchMap starts a coroutine whenever the value of a LiveData changes.
@@ -97,7 +108,7 @@ class ProfileViewModel(
 
     val updatePassRes = modifiedPass.switchMap {
         liveData {
-            emit(authRepository.updatePassword(it[0],it[1]))
+            emit(authRepository.updatePassword(it[0], it[1]))
         }
     }
 
@@ -133,7 +144,6 @@ class ProfileViewModel(
     private fun isPasswordValid(password: String): Boolean {
         return password.length > 5
     }
-
 
 
 

@@ -98,5 +98,9 @@
     <string name="emailRegError">Email già registrata</string>
     <string name="errorGLogin">Login Google Fallito</string>
     <string name="server_client_id">379014634580-3n25lbq8tto0bialld9no5go73rgjgsq.apps.googleusercontent.com</string>
+    <string name="mario_rossi_email_com">mario.rossi@email.com</string>
+    <string name="mario_rossi">Mario Rossi</string>
+    <string name="trackp_30">30</string>
+    <string name="imageError">Nessuna immaigine caricata</string>
 
 </resources>

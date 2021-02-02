@@ -1,14 +1,18 @@
 package com.example.track4deals.ui.profile
 
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.text.method.KeyListener
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
+import android.widget.Toast.LENGTH_LONG
 import android.widget.Toast.makeText
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -18,6 +22,7 @@ import com.example.track4deals.R
 import com.example.track4deals.internal.ScopedFragment
 import com.example.track4deals.internal.UserProvider
 import com.example.track4deals.ui.login.LoginFragment
+import com.example.track4deals.ui.offers.recyclerView.FullScreenImageViewActivity
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.element_row_rv.view.*
 import kotlinx.android.synthetic.main.fragment_profile.*
@@ -93,6 +98,14 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
                 parentFragmentManager,
                 ChangePasswordDialogFragment.TAG
             )
+        }
+        profile_image.setOnClickListener{
+            viewModel.getProfilePic()?.let {
+                if(it != "")
+                    onClickImage(it)
+                else
+                    Toast.makeText(context, getString(R.string.imageError), LENGTH_LONG).show()
+            }
         }
 
         userProvider.loadingComplete.observe(viewLifecycleOwner, Observer {
@@ -171,7 +184,11 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
                 if (it == null) return@Observer
                 userProvider.setProfilePic(Uri.parse(user.value?.response?.profilePhoto))
             })
-            user.value?.response?.profilePhoto?.let { setProfileImage(it) }
+
+            user.value?.response?.profilePhoto?.let {
+                viewModel.updateProfilePic(it)
+                setProfileImage(it)
+            }
             name_profile.setText(userProvider.getUserName())
             fullname_field.text = userProvider.getUserName()
             email_field.text = userProvider.getEmail()
@@ -182,6 +199,12 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
         } else {
             navController.navigate(R.id.navigation_login)
         }
+    }
+
+    private fun onClickImage(url: String) {
+        val fullImageIntent = Intent(context, FullScreenImageViewActivity::class.java)
+        fullImageIntent.putExtra("url", url)
+        startActivity(fullImageIntent)
     }
 
 

@@ -2,14 +2,16 @@
     <!-- Base application theme. -->
     <style name="Theme.Track4Deals" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_200</item>
-        <item name="colorPrimaryVariant">@color/purple_700</item>
+        <item name="colorPrimary">@color/primaryColorTeal</item>
+        <item name="colorPrimaryVariant">@color/primaryDarkColorTeal</item>
         <item name="colorOnPrimary">@color/black</item>
         <item name="colorBackgroundFloating">@color/black</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/teal_200</item>
-        <item name="colorSecondaryVariant">@color/teal_200</item>
+        <item name="colorSecondary">@color/secondaryDarkColorTeal</item>
+        <item name="colorSecondaryVariant">@color/secondaryColorTeal</item>
         <item name="colorOnSecondary">@color/black</item>
+        <item name="android:textColor">@color/primaryTextColorTeal</item>
+        <item name="cardBackgroundColor">?attr/colorSecondary</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
