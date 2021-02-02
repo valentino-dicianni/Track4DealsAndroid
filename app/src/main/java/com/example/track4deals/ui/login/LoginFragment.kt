@@ -70,6 +70,7 @@ class LoginFragment : ScopedFragment(), KodeinAware {
             Observer { loginResult ->
                 loginResult ?: return@Observer
                 loading.visibility = View.GONE
+                containerLogin.visibility = View.VISIBLE
                 loginResult.error?.let {
                     showLoginFailed(it)
                 }
@@ -80,13 +81,8 @@ class LoginFragment : ScopedFragment(), KodeinAware {
 
 
         val afterTextChangedListener = object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
-                // ignore
-            }
-
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                // ignore
-            }
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
 
             override fun afterTextChanged(s: Editable) {
                 loginViewModel.loginDataChanged(
@@ -110,6 +106,7 @@ class LoginFragment : ScopedFragment(), KodeinAware {
 
         loginButton.setOnClickListener {
             loading.visibility = View.VISIBLE
+            containerLogin.visibility = View.GONE
             loginViewModel.login(
                 username.text.toString(),
                 password.text.toString()
@@ -126,6 +123,7 @@ class LoginFragment : ScopedFragment(), KodeinAware {
         }
 
         google_button.setOnClickListener {
+            loading.visibility = View.VISIBLE
             signInGoogle()
         }
     }
@@ -134,7 +132,6 @@ class LoginFragment : ScopedFragment(), KodeinAware {
         val welcome = getString(R.string.welcome) + model.displayName
         val appContext = context?.applicationContext ?: return
         Toast.makeText(appContext, welcome, Toast.LENGTH_LONG).show()
-
         findNavController().navigate(R.id.navigation_profile)
     }
 
@@ -144,7 +141,7 @@ class LoginFragment : ScopedFragment(), KodeinAware {
     }
 
 
-    fun signInGoogle() {
+    private fun signInGoogle() {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.server_client_id))
             .requestEmail()
