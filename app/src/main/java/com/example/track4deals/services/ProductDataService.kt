@@ -4,10 +4,9 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.track4deals.data.database.entity.ProductEntity
-import com.example.track4deals.data.models.Product
 import com.example.track4deals.data.models.ServerResponse
-import com.example.track4deals.internal.NoConnectivityException
-import com.example.track4deals.internal.TimeOutException
+import com.example.track4deals.services.utils.NoConnectivityException
+import com.example.track4deals.services.utils.NoInternetException
 import retrofit2.HttpException
 import java.net.SocketTimeoutException
 
@@ -41,7 +40,9 @@ class ProductDataService(
             val offers = offersService.getAllOffersAsync().await()
             _downloadedOffers.postValue(offers)
         } catch (e: NoConnectivityException) {
-            Log.e("Connectivity", "NO internet connection", e)
+            Log.e("Connectivity", e.message)
+        } catch (e: NoInternetException) {
+            Log.e("Connectivity", e.message)
         } catch (e: SocketTimeoutException) {
             Log.e("Connectivity", "TimeOut exception", e)
         } catch (e: HttpException) {
@@ -54,7 +55,9 @@ class ProductDataService(
             val offers = offersService.getAllTrackingAsync().await()
             _downloadeTracking.postValue(offers)
         } catch (e: NoConnectivityException) {
-            Log.e("Connectivity", "NO internet connection", e)
+            Log.e("Connectivity", e.message)
+        } catch (e: NoInternetException) {
+            Log.e("Connectivity", e.message)
         } catch (e: SocketTimeoutException) {
             Log.e("Connectivity", "TimeOut exception", e)
         } catch (e: HttpException) {
@@ -67,7 +70,9 @@ class ProductDataService(
             val res = offersService.verifyProductAsync(ASIN).await()
             _fetchedProduct.postValue(res)
         } catch (e: NoConnectivityException) {
-            Log.e("Connectivity", "NO internet connection", e)
+            Log.e("Connectivity", e.message)
+        } catch (e: NoInternetException) {
+            Log.e("Connectivity", e.message)
         } catch (e: SocketTimeoutException) {
             Log.e("Connectivity", "TimeOut exception", e)
         } catch (e: HttpException) {
@@ -96,7 +101,9 @@ class ProductDataService(
             ).await()
             _addTrackingRes.postValue(serverRes)
         } catch (e: NoConnectivityException) {
-            Log.e("Connectivity", "NO internet connection", e)
+            Log.e("Connectivity", e.message)
+        } catch (e: NoInternetException) {
+            Log.e("Connectivity", e.message)
         } catch (e: SocketTimeoutException) {
             Log.e("Connectivity", "TimeOut exception", e)
         } catch (e: HttpException) {
@@ -125,7 +132,9 @@ class ProductDataService(
             ).await()
             _removeTrackingRes.postValue(res)
         } catch (e: NoConnectivityException) {
-            Log.e("Connectivity", "NO internet connection", e)
+            Log.e("Connectivity", e.message)
+        } catch (e: NoInternetException) {
+            Log.e("Connectivity", e.message)
         } catch (e: SocketTimeoutException) {
             Log.e("Connectivity", "TimeOut exception", e)
         } catch (e: HttpException) {

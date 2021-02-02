@@ -1,8 +1,8 @@
-package com.example.track4deals.internal
+package com.example.track4deals.services.utils
 
 import java.io.IOException
-import java.lang.Exception
 
-public class NoConnectivityException : IOException()
-public class TimeOutException : Exception()
-public class ArgNotFoundException :Exception()
+class NoConnectivityException : IOException(){
+    override val message: String
+        get() = "No network available, please check your WiFi or Data connection"
+}
