@@ -16,6 +16,7 @@ import com.example.track4deals.R
 import com.example.track4deals.data.constants.AppConstants.Companion.SERVER_OK
 import com.example.track4deals.data.database.entity.ProductEntity
 import com.example.track4deals.data.models.Product
+import com.example.track4deals.data.models.ServerResponse
 import com.example.track4deals.internal.ScopedFragment
 import com.example.track4deals.internal.UserProvider
 import com.example.track4deals.ui.login.LoginFragment.Companion.TAG
@@ -50,7 +51,7 @@ class TrackingFragment : ScopedFragment(), KodeinAware {
             if (response.ok == SERVER_OK) {
                 context?.let { response.response?.let { it1 -> showDialog(it1[0], it) } }
             } else {
-                context?.let { showDialogError(it) }
+                context?.let { showDialogError(it, response) }
             }
 
         })
@@ -126,10 +127,10 @@ class TrackingFragment : ScopedFragment(), KodeinAware {
         builder.show()
     }
 
-    private fun showDialogError(context: Context) {
+    private fun showDialogError(context: Context, response: ServerResponse) {
         val builder = AlertDialog.Builder(context)
         builder.setTitle(R.string.warning)
-        builder.setMessage("Non è possibile tracciare questo prodotto!")
+        builder.setMessage("${response.err}")
 
         builder.setNeutralButton(R.string.closeBtn) { _, _ ->
             edit_text_link.setText("")
