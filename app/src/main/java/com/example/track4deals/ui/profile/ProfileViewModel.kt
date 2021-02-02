@@ -23,6 +23,9 @@ class ProfileViewModel(
     private val passwordLive = MutableLiveData<String>()
     private val deleteLive = MutableLiveData<Boolean>()
     private val profileImage = MutableLiveData<String>()
+    private var _isDeleteDialogFragment: Boolean = false
+    val isDeleteDialogFragment: Boolean
+        get() = _isDeleteDialogFragment
 
 
     private val _emailChangeRes = MutableLiveData<FirebaseOperationResponse>()
@@ -40,37 +43,38 @@ class ProfileViewModel(
     val passwordChangeRes: LiveData<FirebaseOperationResponse> = _passwordChangeRes
 
 
-    val changeEmailPairLiveData: LiveData<Pair<String, String>> = object : MediatorLiveData<Pair<String, String>>() {
-        var password: String? = null
-        var email: String? = null
+    val changeEmailPairLiveData: LiveData<Pair<String, String>> =
+        object : MediatorLiveData<Pair<String, String>>() {
+            var password: String? = null
+            var email: String? = null
 
-        init {
-            addSource(passwordLive) { passowrd ->
-                this.password = passowrd
-                email?.let { value = password!! to it }
-            }
-            addSource(modifiedEmail) { email ->
-                this.email = email
-                password?.let { value = it to email }
+            init {
+                addSource(passwordLive) { passowrd ->
+                    this.password = passowrd
+                    email?.let { value = password!! to it }
+                }
+                addSource(modifiedEmail) { email ->
+                    this.email = email
+                    password?.let { value = it to email }
+                }
             }
         }
-    }
-    val deletePairLiveData: LiveData<Pair<String, Boolean>> = object : MediatorLiveData<Pair<String, Boolean>>() {
-        var password: String? = null
-        var delete: Boolean? = null
+    val deletePairLiveData: LiveData<Pair<String, Boolean>> =
+        object : MediatorLiveData<Pair<String, Boolean>>() {
+            var password: String? = null
+            var delete: Boolean? = null
 
-        init {
-            addSource(passwordLive) { passwrd ->
-                this.password = passwrd
-                delete?.let { value = password!! to it }
-            }
-            addSource(deleteLive) { delete ->
-                this.delete = delete
-                password?.let { value = it to delete }
+            init {
+                addSource(passwordLive) { passwrd ->
+                    this.password = passwrd
+                    delete?.let { value = password!! to it }
+                }
+                addSource(deleteLive) { delete ->
+                    this.delete = delete
+                    password?.let { value = it to delete }
+                }
             }
         }
-    }
-
 
 
     val user by lazyDeferred {
@@ -86,7 +90,7 @@ class ProfileViewModel(
         this.modifiedEmail.postValue(e)
     }
 
-    fun delete(d:Boolean) {
+    fun delete(d: Boolean) {
         this.deleteLive.postValue(d)
     }
 
@@ -103,6 +107,15 @@ class ProfileViewModel(
         return profileImage.value
     }
 
+    fun deleteDialogNeeded() {
+        _isDeleteDialogFragment = true
+    }
+
+    fun emailDialogNeeded() {
+        _isDeleteDialogFragment = false
+    }
+
+
     // switchMap starts a coroutine whenever the value of a LiveData changes.
     val addUserRes = modifiedUser.switchMap {
         liveData {
@@ -111,7 +124,7 @@ class ProfileViewModel(
     }
 
 
-    fun updateUsername(newUsername:String){
+    fun updateUsername(newUsername: String) {
         authRepository.updateUsername(newUsername, _usernameChangeRes)
     }
 
@@ -124,14 +137,14 @@ class ProfileViewModel(
     }
 
 
-    fun changePassword(oldPass:String, newPass:String){
-        authRepository.updatePassword(oldPass,newPass, _passwordChangeRes)
+    fun changePassword(oldPass: String, newPass: String) {
+        authRepository.updatePassword(oldPass, newPass, _passwordChangeRes)
     }
 
 
     val deleteResult = deletePairLiveData.switchMap {
         liveData {
-            authRepository.delete(it.first,_deleteRes)
+            authRepository.delete(it.first, _deleteRes)
             emit(deleteRes)
         }
     }
@@ -161,7 +174,6 @@ class ProfileViewModel(
     private fun isPasswordValid(password: String): Boolean {
         return password.length > 5
     }
-
 
 
 }

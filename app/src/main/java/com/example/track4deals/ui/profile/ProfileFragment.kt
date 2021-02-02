@@ -72,6 +72,7 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
                     if (name_profile.text.toString() != userProvider.getUserName())
                         viewModel.updateUsername(name_profile.text.toString())
                     if (email_profile.text.toString() != userProvider.getEmail()) {
+                        viewModel.emailDialogNeeded()
                         PasswordConfirmationDialogFragment(viewModel).show(
                             parentFragmentManager,
                             PasswordConfirmationDialogFragment.TAG
@@ -92,6 +93,7 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
 
 
         delete_btn.setOnClickListener {
+            viewModel.deleteDialogNeeded()
             PasswordConfirmationDialogFragment(viewModel).show(
                 parentFragmentManager,
                 PasswordConfirmationDialogFragment.TAG
