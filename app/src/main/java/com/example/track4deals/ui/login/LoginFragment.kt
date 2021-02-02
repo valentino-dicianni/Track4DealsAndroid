@@ -129,7 +129,7 @@ class LoginFragment : ScopedFragment(), KodeinAware {
     }
 
     private fun updateUiWithUser(model: LoggedInUserView) {
-        val welcome = getString(R.string.welcome) + model.displayName
+        val welcome = getString(R.string.welcomeMessage) + model.displayName
         val appContext = context?.applicationContext ?: return
         Toast.makeText(appContext, welcome, Toast.LENGTH_LONG).show()
         findNavController().navigate(R.id.navigation_profile)

@@ -21,6 +21,7 @@
     <string name="register_failed">Registrazione fallita</string>
     <string name="invalid_email">Email non valida</string>
     <string name="loading">Caricamento…</string>
+    <string name="welcomeMessage">Benvenuto, </string>
     <!-- Strings related to profile -->
     <string name="name_surename_it">Nome e Cognome</string>
     <string name="phone_it">Cellulare</string>
