@@ -92,8 +92,10 @@
     <string name="perc_risparmio">perc risparmio</string>
     <string name="registrationTokenMsg">"Registrazione Firebase token FMC: "</string>
     <!-- Confirmation Dialog -->
-    <string name="dialog_message">Per modificare l\'email è necessario reinserire la password:</string>
+    <string name="dialog_message_email">Per modificare l\'email è necessario reinserire la password:</string>
+    <string name="dialog_message_delete">Per eliminare l\'account è necessario reinserire la password:</string>
     <string name="caps_edit">MODIFICA</string>
+    <string name="caps_delete">ELIMINA</string>
     <string name="notSamePsw">Le password non coincidono</string>
     <string name="registrationSucceded">Registrazione effettuata</string>
     <string name="emailRegError">Email già registrata</string>
