@@ -35,14 +35,13 @@ class MyFirebaseMessagingService() : FirebaseMessagingService(), KodeinAware {
 
     private fun registerToken(token: String) {
         GlobalScope.launch(Dispatchers.IO) {
-            authService.registerFirebaseTokenAsync(token)
+            authService.registerFirebaseTokenAsync(token).await()
             Log.d("MyFirebaseMessagingService", "Sent token to Track4Deals Server")
         }
     }
 
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-
         Log.d("MyFirebaseMessagingService", "From: ${remoteMessage.from}")
 
         // Check if message contains a notification payload.
