@@ -1,5 +1,7 @@
 package com.example.track4deals.ui.profile
 
+import android.app.Activity
+import android.app.ProgressDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -21,7 +23,13 @@ import com.example.track4deals.internal.ScopedFragment
 import com.example.track4deals.internal.UserProvider
 import com.example.track4deals.ui.login.LoginFragment
 import com.example.track4deals.ui.offers.recyclerView.FullScreenImageViewActivity
+import com.google.android.gms.tasks.Continuation
+import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
+import com.google.firebase.storage.StorageTask
+import com.google.firebase.storage.UploadTask
 import kotlinx.android.synthetic.main.element_row_rv.view.*
 import kotlinx.android.synthetic.main.fragment_profile.*
 import kotlinx.coroutines.Dispatchers
@@ -34,7 +42,9 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
     override val kodein by closestKodein()
     private val profileViewModelFactory: ProfileViewModelFactory by instance()
     private val userProvider: UserProvider by instance()
-
+    private val RequestCode = 438
+    private var imageUri: Uri? = null
+    private var storageRef: StorageReference? = null
 
     companion object {
         fun newInstance() = ProfileFragment()
@@ -50,6 +60,7 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
     ): View? {
         viewModel =
             ViewModelProvider(this, profileViewModelFactory).get(ProfileViewModel::class.java)
+        storageRef = FirebaseStorage.getInstance().reference.child("UserPictures")
         return inflater.inflate(R.layout.fragment_profile, container, false)
     }
 
@@ -57,6 +68,7 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
         super.onViewCreated(view, savedInstanceState)
         val formFieldList: List<EditText> = listOf(name_profile, email_profile)
         val mapOfFields = createEditTextListenersMap(formFieldList)
+
         disableAllTextField(formFieldList)
 
         modify_profile_btn.setOnClickListener {
@@ -100,13 +112,11 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
             )
             viewModel.delete(true)
         }
-        profile_image.setOnClickListener{
-            viewModel.getProfilePic()?.let {
-                if(it != "")
-                    onClickImage(it)
-                else
-                    Toast.makeText(context, getString(R.string.imageError), LENGTH_LONG).show()
-            }
+
+        edit_image_icon.setOnClickListener {
+
+            onClickImage()
+
         }
 
         userProvider.loadingComplete.observe(viewLifecycleOwner, Observer {
@@ -132,7 +142,7 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
                 if (it.status) {
                     makeText(context, "Email modificata con successo", Toast.LENGTH_LONG).show()
                 } else
-                    makeText(context, "Errore: ${it.message}" , Toast.LENGTH_LONG).show()
+                    makeText(context, "Errore: ${it.message}", Toast.LENGTH_LONG).show()
             })
         })
 
@@ -147,7 +157,7 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
                     userProvider.flush()
                     navigateLogin()
                 } else
-                    makeText(context, "Errore: ${it.message}" , Toast.LENGTH_LONG).show()
+                    makeText(context, "Errore: ${it.message}", Toast.LENGTH_LONG).show()
             })
         })
 
@@ -157,7 +167,17 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
             if (it.status) {
                 makeText(context, "Password modificata con successo", Toast.LENGTH_LONG).show()
             } else
-                makeText(context, "Errore: ${it.message}" , Toast.LENGTH_LONG).show()
+                makeText(context, "Errore: ${it.message}", Toast.LENGTH_LONG).show()
+
+        })
+
+        viewModel.pictureChangeRes.observe(viewLifecycleOwner, Observer {
+            if (it == null) return@Observer
+
+            if (it.status) {
+                makeText(context, "Immagine modificata con successo", Toast.LENGTH_LONG).show()
+            } else
+                makeText(context, "Errore: ${it.message}", Toast.LENGTH_LONG).show()
 
         })
 
@@ -189,10 +209,64 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
         }
     }
 
-    private fun onClickImage(url: String) {
-        val fullImageIntent = Intent(context, FullScreenImageViewActivity::class.java)
-        fullImageIntent.putExtra("url", url)
-        startActivity(fullImageIntent)
+    private fun onClickImage() {
+
+        val intent = Intent()
+        intent.type = "image/*"
+        intent.action = Intent.ACTION_GET_CONTENT
+        startActivityForResult(intent, RequestCode)
+
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == RequestCode && resultCode == Activity.RESULT_OK && data!!.data != null) {
+            imageUri = data.data
+            makeText(context, "Uploading...", Toast.LENGTH_LONG).show()
+            uploadImageToDatabase()
+        }
+
+    }
+
+    private fun uploadImageToDatabase() {
+
+        val progressBar = ProgressDialog(context)
+        progressBar.setMessage("Image is uploading, please wait...")
+        progressBar.show()
+
+
+        if (imageUri != null) {
+            val fileRef = storageRef!!.child(System.currentTimeMillis().toString() + ".jpg")
+
+            var uploadTask: StorageTask<*>
+            uploadTask = fileRef.putFile(imageUri!!)
+
+            uploadTask.continueWithTask(Continuation<UploadTask.TaskSnapshot, Task<Uri>> { task ->
+                if (!task.isSuccessful) {
+
+                    task.exception?.let {
+                        throw it
+                    }
+
+                }
+
+                return@Continuation fileRef.downloadUrl
+            }).addOnCompleteListener { task ->
+                if(task.isSuccessful){
+                    val downloadUrl = task.result
+                    if (downloadUrl != null) {
+                        viewModel.updatePicture(downloadUrl)
+                    }
+                    setProfileImage(downloadUrl.toString())
+                    progressBar.dismiss()
+                }
+            }
+
+
+        }
+
+
     }
 
 
@@ -204,6 +278,7 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
         Glide.with(this)
             .applyDefaultRequestOptions(requestOptions)
             .load(profilePhoto)
+            .circleCrop()
             .into(profile_image)
     }
 

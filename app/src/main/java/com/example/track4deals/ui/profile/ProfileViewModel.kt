@@ -1,5 +1,6 @@
 package com.example.track4deals.ui.profile
 
+import android.net.Uri
 import androidx.lifecycle.*
 import com.example.track4deals.R
 import com.example.track4deals.data.models.ChangePasswordFormState
@@ -41,6 +42,9 @@ class ProfileViewModel(
 
     private val _passwordChangeRes = MutableLiveData<FirebaseOperationResponse>()
     val passwordChangeRes: LiveData<FirebaseOperationResponse> = _passwordChangeRes
+
+    private val _pictureChangeRes = MutableLiveData<FirebaseOperationResponse>()
+    val pictureChangeRes: LiveData<FirebaseOperationResponse> = _pictureChangeRes
 
 
     val changeEmailPairLiveData: LiveData<Pair<String, String>> =
@@ -139,6 +143,10 @@ class ProfileViewModel(
 
     fun changePassword(oldPass: String, newPass: String) {
         authRepository.updatePassword(oldPass, newPass, _passwordChangeRes)
+    }
+
+    fun updatePicture(uri: Uri) {
+        authRepository.updatePicture(uri,_pictureChangeRes)
     }
 
 

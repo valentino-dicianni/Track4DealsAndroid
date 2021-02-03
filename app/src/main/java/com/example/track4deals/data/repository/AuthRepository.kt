@@ -58,7 +58,7 @@ class AuthRepository(
                             registerFirebaseToken(currentUser.uid, withUserRegistration = false)
 
                             currentUser.displayName?.let { userProvider.setUsername(it) }
-                            currentUser.email?.let { userProvider.setEmail(it) }
+                            currentUser.photoUrl?.let { userProvider.setProfilePic(it) }
 
                             result.value = LoginResult(
                                 LoggedInUserView(
@@ -96,7 +96,7 @@ class AuthRepository(
                                 }
                                 registerFirebaseToken(currentUser.uid, withUserRegistration = true)
                                 currentUser.displayName?.let { userProvider.setUsername(it) }
-                                currentUser.email?.let { userProvider.setEmail(it) }
+                                currentUser.photoUrl?.let { userProvider.setProfilePic(it) }
 
                                 result.value = LoginResult(
                                     LoggedInUserView(
@@ -162,7 +162,7 @@ class AuthRepository(
                         Log.d("MyFirebaseMessagingService", "Sent token to Track4Deals Server")
                     }
                 }
-            }catch (e: NoConnectivityException) {
+            } catch (e: NoConnectivityException) {
                 Log.e("Connectivity", e.message)
             } catch (e: NoInternetException) {
                 Log.e("Connectivity", e.message)
@@ -184,11 +184,8 @@ class AuthRepository(
         userProvider.updateUsername(username, _usernameChangeRes)
     }
 
-    suspend fun updatePicture(uri: Uri): LiveData<FirebaseOperationResponse> {
-        return withContext(Dispatchers.IO) {
-            userProvider.updatePicture(uri)
-            return@withContext userProvider.firebaseResponse
-        }
+    fun updatePicture(uri: Uri, _pictureChangeRes: MutableLiveData<FirebaseOperationResponse>) {
+        userProvider.updatePicture(uri, _pictureChangeRes)
     }
 
     suspend fun updateEmail(

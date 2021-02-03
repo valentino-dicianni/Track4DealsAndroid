@@ -122,7 +122,10 @@ class UserProvider {
         }
     }
 
-    fun updateUsername(username: String, _usernameChangeRes : MutableLiveData<FirebaseOperationResponse>) {
+    fun updateUsername(
+        username: String,
+        _usernameChangeRes: MutableLiveData<FirebaseOperationResponse>
+    ) {
         val profileUpdates = userProfileChangeRequest {
             displayName = username
         }
@@ -148,20 +151,23 @@ class UserProvider {
     }
 
 
-    fun updatePicture(pic: Uri) {
+    fun updatePicture(pic: Uri, _pictureChangeRes: MutableLiveData<FirebaseOperationResponse>) {
         val profileUpdates = userProfileChangeRequest {
             photoUri = pic
         }
 
         firebase.currentUser!!.updateProfile(profileUpdates)
             .addOnCompleteListener { task ->
-                if (task.isSuccessful) _firebaseResponse.postValue(
-                    FirebaseOperationResponse(
-                        true,
-                        FirebaseOperation.UPDATEPIC,
-                        ""
+                if (task.isSuccessful) {
+                    _pictureChangeRes.postValue(
+                        FirebaseOperationResponse(
+                            true,
+                            FirebaseOperation.UPDATEPIC,
+                            ""
+                        )
                     )
-                ) else _firebaseResponse.postValue(
+                    setProfilePic(pic)
+                } else _pictureChangeRes.postValue(
                     FirebaseOperationResponse(
                         false,
                         FirebaseOperation.UPDATEPIC,
@@ -193,27 +199,34 @@ class UserProvider {
                                     true,
                                     FirebaseOperation.UPDATEEMAIL,
                                     ""
-                                ))
+                                )
+                            )
                         } else _emailChangeRes.postValue(
                             FirebaseOperationResponse(
                                 false,
                                 FirebaseOperation.UPDATEEMAIL,
                                 task.exception?.message.toString()
-                            ))
+                            )
+                        )
                     }
             } else _emailChangeRes.postValue(
                 FirebaseOperationResponse(
                     false,
                     FirebaseOperation.UPDATEEMAIL,
                     it.exception?.message.toString()
-                ))
+                )
+            )
 
 
         }
     }
 
 
-    fun updatePassword(oldpass: String, newpass: String, _passwordChangeRes : MutableLiveData<FirebaseOperationResponse>) {
+    fun updatePassword(
+        oldpass: String,
+        newpass: String,
+        _passwordChangeRes: MutableLiveData<FirebaseOperationResponse>
+    ) {
 
         val credential: AuthCredential = EmailAuthProvider.getCredential(this.email, oldpass)
 
@@ -271,7 +284,7 @@ class UserProvider {
     }
 
 
-    fun delete(password: String,_deleteRes: MutableLiveData<FirebaseOperationResponse>) {
+    fun delete(password: String, _deleteRes: MutableLiveData<FirebaseOperationResponse>) {
         val credential: AuthCredential = EmailAuthProvider.getCredential(this.email, password)
 
         firebase.currentUser!!.reauthenticate(credential).addOnCompleteListener() {

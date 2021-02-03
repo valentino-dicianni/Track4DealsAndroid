@@ -105,5 +105,7 @@
     <string name="mario_rossi">Mario Rossi</string>
     <string name="trackp_30">30</string>
     <string name="imageError">Nessuna immaigine caricata</string>
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>
