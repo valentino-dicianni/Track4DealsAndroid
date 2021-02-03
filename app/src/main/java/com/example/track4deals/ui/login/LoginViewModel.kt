@@ -19,10 +19,6 @@ class LoginViewModel(private val authRepository: AuthRepository) : ViewModel() {
     private val _loginResult = MutableLiveData<LoginResult>()
     val loginResult: LiveData<LoginResult> = _loginResult
 
-    private val _registerResult = MutableLiveData<RegisterResult>()
-    val registerResult: LiveData<RegisterResult> = _registerResult
-
-
 
     fun login(username: String, password: String) {
         authRepository.login(username, password, _loginResult)

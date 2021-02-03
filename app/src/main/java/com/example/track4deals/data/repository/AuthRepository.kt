@@ -58,7 +58,7 @@ class AuthRepository(
                             registerFirebaseToken(currentUser.uid, withUserRegistration = false)
 
                             currentUser.displayName?.let { userProvider.setUsername(it) }
-                            //currentUser.photoUrl?.let { userProvider.setProfilePic(it) }
+                            currentUser.email?.let { userProvider.setEmail(it) }
 
                             result.value = LoginResult(
                                 LoggedInUserView(
@@ -96,7 +96,7 @@ class AuthRepository(
                                 }
                                 registerFirebaseToken(currentUser.uid, withUserRegistration = true)
                                 currentUser.displayName?.let { userProvider.setUsername(it) }
-                                //currentUser.photoUrl?.let { userProvider.setProfilePic(it) }
+                                currentUser.email?.let { userProvider.setEmail(it) }
 
                                 result.value = LoginResult(
                                     LoggedInUserView(

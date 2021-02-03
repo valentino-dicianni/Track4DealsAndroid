@@ -56,6 +56,15 @@ class UserProvider {
         this.username = username
     }
 
+    fun setEmail(email: String) {
+        this.email = email
+    }
+
+    fun setPic(pic: Uri) {
+        this.profilePic = pic
+    }
+
+
     fun setProfilePic(url: Uri) {
         this.profilePic = url
     }
@@ -92,17 +101,7 @@ class UserProvider {
         return false
     }
 
-    private fun setUserName(username: String) {
-        this.username = username
-    }
 
-    private fun setEmail(email: String) {
-        this.email = email
-    }
-
-    private fun setPic(pic: Uri) {
-        this.profilePic = pic
-    }
 
 
     private fun getToken(callback: (String) -> Unit) {
@@ -110,7 +109,7 @@ class UserProvider {
         if (user != null) {
             user.getIdToken(false).addOnCompleteListener {
                 if (it.isSuccessful) {
-                    user.displayName?.let { it1 -> setUserName(it1) }
+                    user.displayName?.let { it1 -> setUsername(it1) }
                     user.email?.let { it1 -> setEmail(it1) }
                     user.photoUrl?.let { it1 -> setPic(it1) }
                     callback(it.result?.token!!)
