@@ -129,6 +129,7 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
         viewModel.usernameChangeRes.observe(viewLifecycleOwner, Observer {
             if (it == null) return@Observer
             if (it?.status) {
+                bindUI()
                 makeText(context,  getString(R.string.username_change_success), Toast.LENGTH_LONG).show()
             } else
                 makeText(context,  getString(R.string.generic_error), Toast.LENGTH_LONG).show()
@@ -142,6 +143,7 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
                 if (it == null) return@Observer
 
                 if (it.status) {
+                    bindUI()
                     makeText(context, getString(R.string.email_change_success), Toast.LENGTH_LONG).show()
                 } else
                     makeText(context, getString(R.string.generic_error) + " ${it.message}", Toast.LENGTH_LONG).show()
@@ -216,7 +218,7 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
 
         if (requestCode == RC_UPDATE_IMG && resultCode == Activity.RESULT_OK && data!!.data != null) {
             imageUri = data.data
-            makeText(context, "Uploading...", Toast.LENGTH_LONG).show()
+            makeText(context, getString(R.string.image_uploading), Toast.LENGTH_LONG).show()
             uploadImageToDatabase()
         }
     }

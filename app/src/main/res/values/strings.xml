@@ -38,7 +38,7 @@
     <string name="user_delete_success">Account eliminato con successo</string>
     <string name="password_change_success">Password modificata con successo</string>
     <string name="picture_change_success">Immagine modificata con successo</string>
-
+    <string name="image_uploading">Caricamento immagine...</string>
     <!-- Strings related to change password -->
     <string name="old_password">Vecchia Password</string>
     <string name="new_password">Nuova Password</string>
