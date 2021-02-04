@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.annotation.StringRes
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -71,7 +72,15 @@ class LoginFragment : ScopedFragment(), KodeinAware {
                 if (forgotFormStete == null) {
                     return@Observer
                 }
-                btn_forgot_password.isEnabled = forgotFormStete.isDataValid
+
+                if(forgotFormStete.isDataValid){
+                    forgot_password.isEnabled = true
+                    forgot_password.setTextColor(ContextCompat.getColor(requireContext(), R.color.primaryDarkColorBlue))
+                }else{
+                    forgot_password.isEnabled = false
+                    forgot_password.setTextColor(ContextCompat.getColor(requireContext(), R.color.primaryDarkColorGray))
+                }
+
             })
 
         loginViewModel.changePswResponse.observe(viewLifecycleOwner, Observer {
@@ -129,7 +138,7 @@ class LoginFragment : ScopedFragment(), KodeinAware {
                 password.text.toString()
             )
         }
-        btn_forgot_password.setOnClickListener {
+        forgot_password.setOnClickListener {
             loginViewModel.forgotPassword(
                 username.text.toString()
             )

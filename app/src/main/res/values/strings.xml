@@ -13,7 +13,7 @@
     <string name="prompt_repeat_password">Ripeti la  Password</string>
     <string name="action_register">Registrati</string>
     <string name="action_cancel">Cancella</string>
-    <string name="action_sign_in_short">Sign in</string>
+    <string name="action_sign_in_short">Accedi</string>
     <string name="welcome">"Benvenuto!"</string>
     <string name="invalid_username">Non è unsername valido</string>
     <string name="invalid_password">La password deve essere maggiore di 5 caratteri</string>
