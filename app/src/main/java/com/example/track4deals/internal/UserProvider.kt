@@ -300,22 +300,23 @@ class UserProvider {
     ) {
         firebase.sendPasswordResetEmail(email)
             .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    if (task.isSuccessful) _passwordResetRes.postValue(
+                if (task.isSuccessful)
+                    _passwordResetRes.postValue(
                         FirebaseOperationResponse(
                             true,
                             FirebaseOperation.RESETPASSWORD,
                             ""
                         )
-                    ) else _passwordResetRes.postValue(
-                        FirebaseOperationResponse(
-                            false,
-                            FirebaseOperation.RESETPASSWORD,
-                            task.exception?.message.toString()
-                        )
                     )
-                }
+                else _passwordResetRes.postValue(
+                    FirebaseOperationResponse(
+                        false,
+                        FirebaseOperation.RESETPASSWORD,
+                        task.exception?.message.toString()
+                    )
+                )
             }
+
     }
 
     /**
