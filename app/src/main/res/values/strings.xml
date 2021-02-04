@@ -21,7 +21,7 @@
     <string name="register_failed">Registrazione fallita</string>
     <string name="invalid_email">Email non valida</string>
     <string name="loading">Caricamento…</string>
-    <string name="welcomeMessage">Benvenuto, </string>
+    <string name="welcomeMessage">Benvenuto,\n </string>
     <!-- Strings related to profile -->
     <string name="name_surename_it">Nome e Cognome</string>
     <string name="phone_it">Cellulare</string>
@@ -32,6 +32,13 @@
     <string name="price">Price</string>
     <string name="Brand">Brand</string>
     <string name="Save">SALVA</string>
+    <string name="generic_error">Errore</string>
+    <string name="username_change_success">Username modificato con successo</string>
+    <string name="email_change_success">Email modificata con successo</string>
+    <string name="user_delete_success">Account eliminato con successo</string>
+    <string name="password_change_success">Password modificata con successo</string>
+    <string name="picture_change_success">Immagine modificata con successo</string>
+
     <!-- Strings related to change password -->
     <string name="old_password">Vecchia Password</string>
     <string name="new_password">Nuova Password</string>
@@ -105,10 +112,10 @@
     <string name="mario_rossi">Mario Rossi</string>
     <string name="trackp_30">30</string>
     <string name="imageError">Nessuna immaigine caricata</string>
-<!-- TODO: Remove or change this placeholder text -->
+    <!-- Reset Password -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="hai_dimenticato_la_password">Hai dimenticato la password?</string>
-    <string name="errorChangePsw">Errore nel cambio password</string>
+    <string name="password_forgotten">Hai dimenticato la password?</string>
+    <string name="error_reset_Psw">Errore nel reset della password</string>
     <string name="checkEmail">Email inviata!</string>
 
 </resources>

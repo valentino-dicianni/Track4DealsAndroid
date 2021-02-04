@@ -71,6 +71,7 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
 
         disableAllTextField(formFieldList)
 
+        //UI LISTENERS
         modify_profile_btn.setOnClickListener {
             when (modify_profile_btn.text) {
 
@@ -117,6 +118,9 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
             onClickImage()
         }
 
+
+        //VIEWMODEL RESULT LISTENER
+
         userProvider.loadingComplete.observe(viewLifecycleOwner, Observer {
             bindUI()
         })
@@ -125,9 +129,9 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
         viewModel.usernameChangeRes.observe(viewLifecycleOwner, Observer {
             if (it == null) return@Observer
             if (it?.status) {
-                makeText(context, "Username modificato con successo", Toast.LENGTH_LONG).show()
+                makeText(context,  getString(R.string.username_change_success), Toast.LENGTH_LONG).show()
             } else
-                makeText(context, "Errore", Toast.LENGTH_LONG).show()
+                makeText(context,  getString(R.string.generic_error), Toast.LENGTH_LONG).show()
         })
 
 
@@ -138,9 +142,9 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
                 if (it == null) return@Observer
 
                 if (it.status) {
-                    makeText(context, "Email modificata con successo", Toast.LENGTH_LONG).show()
+                    makeText(context, getString(R.string.email_change_success), Toast.LENGTH_LONG).show()
                 } else
-                    makeText(context, "Errore: ${it.message}", Toast.LENGTH_LONG).show()
+                    makeText(context, getString(R.string.generic_error) + " ${it.message}", Toast.LENGTH_LONG).show()
             })
         })
 
@@ -150,12 +154,12 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
                 if (it == null) return@Observer
 
                 if (it.status) {
-                    makeText(context, "Account eliminato con successo", Toast.LENGTH_LONG).show()
+                    makeText(context,  getString(R.string.user_delete_success), Toast.LENGTH_LONG).show()
                     FirebaseAuth.getInstance().signOut()
                     userProvider.flush()
                     navigateLogin()
                 } else
-                    makeText(context, "Errore: ${it.message}", Toast.LENGTH_LONG).show()
+                    makeText(context, getString(R.string.generic_error) + " ${it.message}", Toast.LENGTH_LONG).show()
             })
         })
 
@@ -163,9 +167,9 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
             if (it == null) return@Observer
 
             if (it.status) {
-                makeText(context, "Password modificata con successo", Toast.LENGTH_LONG).show()
+                makeText(context, getString(R.string.password_change_success), Toast.LENGTH_LONG).show()
             } else
-                makeText(context, "Errore: ${it.message}", Toast.LENGTH_LONG).show()
+                makeText(context, getString(R.string.generic_error) + " ${it.message}", Toast.LENGTH_LONG).show()
 
         })
 
@@ -173,9 +177,9 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
             if (it == null) return@Observer
 
             if (it.status) {
-                makeText(context, "Immagine modificata con successo", Toast.LENGTH_LONG).show()
+                makeText(context, getString(R.string.password_change_success), Toast.LENGTH_LONG).show()
             } else
-                makeText(context, "Errore: ${it.message}", Toast.LENGTH_LONG).show()
+                makeText(context, getString(R.string.generic_error) + " ${it.message}", Toast.LENGTH_LONG).show()
 
         })
 
@@ -262,9 +266,11 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
     }
 
 
-    //INPUT: Map of  EditText component and respective key listener to be enabled
-    //OUTPUT: none
-    //Makes text view focusable and editable
+    /**
+     * Makes text view focusable and editable
+     * @param fieldsMap Map of EditText component to be enabled
+     * @param KeyListener EditText key listener
+     */
     private fun enableAllTextField(fieldsMap: MutableMap<EditText, KeyListener>) {
         fieldsMap.forEach {
             it.key.keyListener = it.value
@@ -272,9 +278,12 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
         }
     }
 
-    //INPUT: EditText component to be disabled
-    //OUTPUT: none
-    //Makes text view not focusable and editable anymore
+
+
+    /**
+     * Makes text view not focusable and editable anymore
+     * @param fields EditText component to be disabled
+     */
     private fun disableAllTextField(fields: List<EditText>) {
         fields.forEach {
             it.keyListener = null
@@ -282,9 +291,12 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
         }
     }
 
-    //INPUT: List of EditText
-    //OUTPUT: Map of EditText fields paired with respective KeyListener
-    //Bound each EditText fields with respective key listeners
+
+    /**
+     * Bound each EditText fields with respective key listeners
+     * @param fields List of EditText
+     * @return Map of EditText fields paired with respective KeyListener
+     */
     private fun createEditTextListenersMap(fields: List<EditText>): MutableMap<EditText, KeyListener> {
         val listeners = mutableMapOf<EditText, KeyListener>()
         fields.forEach {

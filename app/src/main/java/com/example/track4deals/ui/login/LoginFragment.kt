@@ -87,7 +87,7 @@ class LoginFragment : ScopedFragment(), KodeinAware {
             if(it.status) {
                 Toast.makeText(context, getString(R.string.checkEmail), Toast.LENGTH_LONG).show()
             } else {
-                Toast.makeText(context, getString(R.string.errorChangePsw), Toast.LENGTH_LONG).show()
+                Toast.makeText(context, getString(R.string.error_reset_Psw), Toast.LENGTH_LONG).show()
 
             }
         })

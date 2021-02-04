@@ -102,8 +102,6 @@ class UserProvider {
      * Populate displayName, email and photoUrl with server data
      * @param callback callback function for returning JWT
      */
-
-
     private fun getToken(callback: (String) -> Unit) {
         val user = firebase.currentUser
         if (user != null) {
