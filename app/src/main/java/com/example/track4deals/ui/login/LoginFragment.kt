@@ -66,6 +66,23 @@ class LoginFragment : ScopedFragment(), KodeinAware {
                 }
             })
 
+        loginViewModel.changePswState.observe(viewLifecycleOwner,
+            Observer { forgotFormStete ->
+                if (forgotFormStete == null) {
+                    return@Observer
+                }
+                btn_forgot_password.isEnabled = forgotFormStete.isDataValid
+            })
+
+        loginViewModel.changePswResponse.observe(viewLifecycleOwner, Observer {
+            if(it.status) {
+                Toast.makeText(context, getString(R.string.checkEmail), Toast.LENGTH_LONG).show()
+            } else {
+                Toast.makeText(context, getString(R.string.errorChangePsw), Toast.LENGTH_LONG).show()
+
+            }
+        })
+
         loginViewModel.loginResult.observe(viewLifecycleOwner,
             Observer { loginResult ->
                 loginResult ?: return@Observer
@@ -89,7 +106,7 @@ class LoginFragment : ScopedFragment(), KodeinAware {
                     username.text.toString(),
                     password.text.toString()
                 )
-
+                loginViewModel.forgotPasswordDataChanged(username.text.toString())
             }
         }
         username.addTextChangedListener(afterTextChangedListener)
@@ -112,6 +129,11 @@ class LoginFragment : ScopedFragment(), KodeinAware {
                 password.text.toString()
             )
         }
+        btn_forgot_password.setOnClickListener {
+            loginViewModel.forgotPassword(
+                username.text.toString()
+            )
+        }
 
         toRegistrationBtn.setOnClickListener {
             parentFragmentManager.apply {
@@ -126,6 +148,8 @@ class LoginFragment : ScopedFragment(), KodeinAware {
             loading.visibility = View.VISIBLE
             signInGoogle()
         }
+
+
     }
 
     private fun updateUiWithUser(model: LoggedInUserView) {
