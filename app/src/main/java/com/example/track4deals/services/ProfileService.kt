@@ -29,46 +29,46 @@ interface ProfileService {
     @POST("/profile/modify_profile")
     suspend fun updateProfile(
         @Field("profilePhoto") profilePhoto: String,
-        @Field("caregoty_list") caregoty_list:  Array<String?>,
+        @Field("caregoty_list") caregoty_list: Array<String?>,
     ): Deferred<ServerResponseUser>
 
 
     companion object {
         operator fun invoke(
-                connectivityInterceptor: ConnectivityInterceptor,
-                jwTinterceptor: JWTinterceptor
+            connectivityInterceptor: ConnectivityInterceptor,
+            jwTinterceptor: JWTinterceptor
         ): ProfileService {
             val requestInterceptor = Interceptor { chain ->
                 val url = chain.request().url
                 val request = chain.request()
-                        .newBuilder()
-                        .url(url)
-                        .build()
+                    .newBuilder()
+                    .url(url)
+                    .build()
 
                 return@Interceptor chain.proceed(request)
             }
 
             val okHttpClient = OkHttpClient.Builder()
-                    .callTimeout(20, TimeUnit.SECONDS)
-                    .addInterceptor(requestInterceptor)
-                    .addInterceptor(connectivityInterceptor)
-                    .addInterceptor(jwTinterceptor)
-                    .addInterceptor(Interceptor { chain ->
-                        val r = chain.request()
-                        val builder = r.newBuilder()
-                        builder.addHeader("Accept", "application/json")
-                        builder.addHeader("Content-Type", "application/x-www-form-urlencoded")
-                        builder.method(r.method, r.body)
-                        chain.proceed(builder.build())
-                    })
-                    .build()
+                .callTimeout(20, TimeUnit.SECONDS)
+                .addInterceptor(requestInterceptor)
+                .addInterceptor(connectivityInterceptor)
+                .addInterceptor(jwTinterceptor)
+                .addInterceptor(Interceptor { chain ->
+                    val r = chain.request()
+                    val builder = r.newBuilder()
+                    builder.addHeader("Accept", "application/json")
+                    builder.addHeader("Content-Type", "application/x-www-form-urlencoded")
+                    builder.method(r.method, r.body)
+                    chain.proceed(builder.build())
+                })
+                .build()
 
             return Retrofit.Builder().client(okHttpClient)
-                    .baseUrl(AppConstants.baseServerURL)
-                    .addCallAdapterFactory(CoroutineCallAdapterFactory())
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build()
-                    .create(ProfileService::class.java)
+                .baseUrl(AppConstants.baseServerURL)
+                .addCallAdapterFactory(CoroutineCallAdapterFactory())
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(ProfileService::class.java)
         }
     }
 }

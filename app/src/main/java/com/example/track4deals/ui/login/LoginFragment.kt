@@ -105,7 +105,6 @@ class LoginFragment : ScopedFragment(), KodeinAware {
                 }
             })
 
-
         val afterTextChangedListener = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
@@ -138,6 +137,7 @@ class LoginFragment : ScopedFragment(), KodeinAware {
                 password.text.toString()
             )
         }
+
         forgot_password.setOnClickListener {
             loginViewModel.forgotPassword(
                 username.text.toString()
@@ -157,8 +157,6 @@ class LoginFragment : ScopedFragment(), KodeinAware {
             loading.visibility = View.VISIBLE
             signInGoogle()
         }
-
-
     }
 
     private fun updateUiWithUser(model: LoggedInUserView) {
@@ -173,7 +171,6 @@ class LoginFragment : ScopedFragment(), KodeinAware {
         Toast.makeText(appContext, getString(errorString), Toast.LENGTH_LONG).show()
     }
 
-
     private fun signInGoogle() {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.server_client_id))
@@ -182,14 +179,11 @@ class LoginFragment : ScopedFragment(), KodeinAware {
         val mGoogleSignInClient = activity?.let { GoogleSignIn.getClient(it, gso) }
         val signInIntent = mGoogleSignInClient!!.signInIntent
         startActivityForResult(signInIntent, RC_SIGN_IN)
-
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == RC_SIGN_IN) {
-            // The Task returned from this call is always completed, no need to attach
-            // a listener.
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             handleSignInResult(task)
         }
@@ -205,5 +199,4 @@ class LoginFragment : ScopedFragment(), KodeinAware {
             showLoginFailed(R.string.errorGLogin)
         }
     }
-
 }
