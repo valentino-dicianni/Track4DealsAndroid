@@ -208,11 +208,11 @@ class AuthRepository(
         userProvider.updatePassword(oldpass, newpass, _passwordChangeRes)
     }
 
-    suspend fun resetPassword(email: String): LiveData<FirebaseOperationResponse> {
-        return withContext(Dispatchers.IO) {
-            userProvider.resetPassword(email)
-            return@withContext userProvider.firebaseResponse
-        }
+    fun resetPassword(
+        email: String,
+        _passwordResetRes: MutableLiveData<FirebaseOperationResponse>
+    ) {
+        userProvider.resetPassword(email, _passwordResetRes)
     }
 
     suspend fun delete(password: String, _deleteRes: MutableLiveData<FirebaseOperationResponse>) {

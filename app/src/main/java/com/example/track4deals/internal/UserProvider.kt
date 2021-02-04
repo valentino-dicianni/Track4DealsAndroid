@@ -26,10 +26,6 @@ class UserProvider {
     private var numTracking: Int = 0
     private var loading = MutableLiveData<Boolean>()
 
-    private var _firebaseResponse = MutableLiveData<FirebaseOperationResponse>()
-    val firebaseResponse: LiveData<FirebaseOperationResponse> = _firebaseResponse
-
-
     private var firebase = FirebaseAuth.getInstance()
 
     init {
@@ -101,7 +97,11 @@ class UserProvider {
         return false
     }
 
-
+    /**
+     * Take and return the JWT token from Firebase
+     * Populate displayName, email and photoUrl with server data
+     * @param callback callback function for returning JWT
+     */
 
 
     private fun getToken(callback: (String) -> Unit) {
@@ -122,6 +122,11 @@ class UserProvider {
         }
     }
 
+    /**
+     * Ask Firebase to change username
+     * @param username username to be changed
+     * @param _usernameChangeRes liveData updated with the result of the request
+     */
     fun updateUsername(
         username: String,
         _usernameChangeRes: MutableLiveData<FirebaseOperationResponse>
@@ -150,8 +155,16 @@ class UserProvider {
             }
     }
 
+    /**
+     * Ask Firebase to update profile picture uri
+     * @param pic new picture uri
+     * @param _pictureChangeRes liveData updated with the result of the request
+     */
 
-    fun updatePicture(pic: Uri, _pictureChangeRes: MutableLiveData<FirebaseOperationResponse>) {
+    fun updatePicture(
+        pic: Uri,
+        _pictureChangeRes: MutableLiveData<FirebaseOperationResponse>
+    ) {
         val profileUpdates = userProfileChangeRequest {
             photoUri = pic
         }
@@ -177,6 +190,13 @@ class UserProvider {
             }
     }
 
+    /**
+     * Ask Firebase to update profile email
+     * Since it's a sensitive operation password confirmation is required
+     * @param email new email
+     * @param password user password
+     * @param _emailChangeRes liveData updated with the result of the request
+     */
 
     fun updateEmail(
         email: String,
@@ -222,6 +242,12 @@ class UserProvider {
     }
 
 
+    /**
+     * Reauthenticate user and then ask Firebase to change password
+     * @param oldpass old password
+     * @param newpass new password
+     * @param _passwordChangeRes liveData updated with the result of the request
+     */
     fun updatePassword(
         oldpass: String,
         newpass: String,
@@ -262,17 +288,26 @@ class UserProvider {
 
     }
 
-    fun resetPassword(email: String) {
+    /**
+     * Ask Firebase to reset users password
+     * An email will be sent to given address with reset password instruction
+     * @param email email of the account to be resetted
+     * @param _pictureChangeRes liveData updated with the result of the request
+     */
+    fun resetPassword(
+        email: String,
+        _passwordResetRes: MutableLiveData<FirebaseOperationResponse>
+    ) {
         firebase.sendPasswordResetEmail(email)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    if (task.isSuccessful) _firebaseResponse.postValue(
+                    if (task.isSuccessful) _passwordResetRes.postValue(
                         FirebaseOperationResponse(
                             true,
                             FirebaseOperation.RESETPASSWORD,
                             ""
                         )
-                    ) else _firebaseResponse.postValue(
+                    ) else _passwordResetRes.postValue(
                         FirebaseOperationResponse(
                             false,
                             FirebaseOperation.RESETPASSWORD,
@@ -283,8 +318,17 @@ class UserProvider {
             }
     }
 
+    /**
+     * Ask Firebase to delete current user profile
+     * Since it's a sensitive operation password confirmation is required
+     * @param password user password
+     * @param _deleteRes liveData updated with the result of the request
+     */
 
-    fun delete(password: String, _deleteRes: MutableLiveData<FirebaseOperationResponse>) {
+    fun delete(
+        password: String,
+        _deleteRes: MutableLiveData<FirebaseOperationResponse>
+    ) {
         val credential: AuthCredential = EmailAuthProvider.getCredential(this.email, password)
 
         firebase.currentUser!!.reauthenticate(credential).addOnCompleteListener() {
