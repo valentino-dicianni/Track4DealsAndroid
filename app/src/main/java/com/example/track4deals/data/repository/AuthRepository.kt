@@ -10,6 +10,8 @@ import com.example.track4deals.data.models.*
 import com.example.track4deals.services.utils.NoConnectivityException
 import com.example.track4deals.internal.UserProvider
 import com.example.track4deals.services.AuthService
+import com.example.track4deals.services.OffersService
+import com.example.track4deals.services.ProductDataService
 import com.example.track4deals.services.utils.NoInternetException
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.FirebaseAuth
@@ -29,8 +31,8 @@ import java.net.SocketTimeoutException
 
 class AuthRepository(
     private val userProvider: UserProvider,
-    private val authService: AuthService
-
+    private val authService: AuthService,
+    private val offersService: OffersService
 ) {
     private var auth: FirebaseAuth = FirebaseAuth.getInstance()
     private var messaging: FirebaseMessaging = FirebaseMessaging.getInstance()
@@ -55,17 +57,13 @@ class AuthRepository(
                             currentUser.getIdToken(false).result?.token?.let {
                                 userProvider.loadToken(it)
                             }
-                            registerFirebaseToken(currentUser.uid, withUserRegistration = false)
-
                             currentUser.displayName?.let { userProvider.setUsername(it) }
                             currentUser.email?.let { userProvider.setEmail(it) }
                             currentUser.photoUrl?.let { userProvider.setProfilePic(it) }
-
-                            result.value = LoginResult(
-                                LoggedInUserView(
-                                    userProvider.getUserName(),
-                                    userProvider.getProfilePic()
-                                )
+                            registerFirebaseToken(
+                                currentUser.uid,
+                                withUserRegistration = false,
+                                result
                             )
                         }
                     }
@@ -95,16 +93,13 @@ class AuthRepository(
                                 currentUser.getIdToken(false).result?.token?.let {
                                     userProvider.loadToken(it)
                                 }
-                                registerFirebaseToken(currentUser.uid, withUserRegistration = true)
                                 currentUser.displayName?.let { userProvider.setUsername(it) }
                                 currentUser.email?.let { userProvider.setEmail(it) }
                                 currentUser.photoUrl?.let { userProvider.setProfilePic(it) }
-
-                                result.value = LoginResult(
-                                    LoggedInUserView(
-                                        userProvider.getUserName(),
-                                        userProvider.getProfilePic()
-                                    )
+                                registerFirebaseToken(
+                                    currentUser.uid,
+                                    withUserRegistration = true,
+                                    result
                                 )
                             }
                         }
@@ -147,7 +142,11 @@ class AuthRepository(
     }
 
 
-    private fun registerFirebaseToken(uid: String, withUserRegistration: Boolean) {
+    private fun registerFirebaseToken(
+        uid: String,
+        withUserRegistration: Boolean,
+        result: MutableLiveData<LoginResult>
+    ) {
         messaging.token.addOnCompleteListener(OnCompleteListener { task ->
             if (!task.isSuccessful) {
                 Log.w(TAG, "Fetching FCM registration token failed", task.exception)
@@ -156,13 +155,21 @@ class AuthRepository(
             val token = task.result
             Log.w(TAG, "Fetching FCM registration token: $token", task.exception)
             try {
-                GlobalScope.launch(Dispatchers.IO) {
+                GlobalScope.launch(Dispatchers.Main) {
                     if (withUserRegistration)
                         authService.registerNewUserGoogleAsync(uid).await()
                     if (token != null) {
                         authService.registerFirebaseTokenAsync(token).await()
                         Log.d("MyFirebaseMessagingService", "Sent token to Track4Deals Server")
                     }
+                    val res = offersService.getAllTrackingAsync().await()
+                    res.response?.let { userProvider.setNumTracking(it.size) }
+                    result.value = LoginResult(
+                        LoggedInUserView(
+                            userProvider.getUserName(),
+                            userProvider.getProfilePic()
+                        )
+                    )
                 }
             } catch (e: NoConnectivityException) {
                 Log.e("Connectivity", e.message)
