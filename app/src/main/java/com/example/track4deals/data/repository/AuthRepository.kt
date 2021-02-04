@@ -47,25 +47,11 @@ class AuthRepository(
         password: String,
         result: MutableLiveData<LoginResult>
     ) {
-        // handle login
         try {
             auth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
                 when {
                     task.isSuccessful -> {
-                        val currentUser = auth.currentUser
-                        if (currentUser != null) {
-                            currentUser.getIdToken(false).result?.token?.let {
-                                userProvider.loadToken(it)
-                            }
-                            currentUser.displayName?.let { userProvider.setUsername(it) }
-                            currentUser.email?.let { userProvider.setEmail(it) }
-                            currentUser.photoUrl?.let { userProvider.setProfilePic(it) }
-                            registerFirebaseToken(
-                                currentUser.uid,
-                                withUserRegistration = false,
-                                result
-                            )
-                        }
+                        loginSuccess(result, false)
                     }
                     else -> {
                         result.value = LoginResult(error = R.string.login_failed)
@@ -81,27 +67,12 @@ class AuthRepository(
         idToken: String,
         result: MutableLiveData<LoginResult>
     ) {
-        // handle login
         try {
-            val credential = GoogleAuthProvider.getCredential(idToken, null)
-            auth.signInWithCredential(credential)
+            auth.signInWithCredential(GoogleAuthProvider.getCredential(idToken, null))
                 .addOnCompleteListener { task ->
                     when {
                         task.isSuccessful -> {
-                            val currentUser = auth.currentUser
-                            if (currentUser != null) {
-                                currentUser.getIdToken(false).result?.token?.let {
-                                    userProvider.loadToken(it)
-                                }
-                                currentUser.displayName?.let { userProvider.setUsername(it) }
-                                currentUser.email?.let { userProvider.setEmail(it) }
-                                currentUser.photoUrl?.let { userProvider.setProfilePic(it) }
-                                registerFirebaseToken(
-                                    currentUser.uid,
-                                    withUserRegistration = true,
-                                    result
-                                )
-                            }
+                            loginSuccess(result, true)
                         }
                         else -> {
                             result.value = LoginResult(error = R.string.login_failed)
@@ -113,6 +84,22 @@ class AuthRepository(
         }
     }
 
+    private fun loginSuccess(result: MutableLiveData<LoginResult>, withUserRegistration: Boolean) {
+        val currentUser = auth.currentUser
+        if (currentUser != null) {
+            currentUser.getIdToken(false).result?.token?.let {
+                userProvider.loadToken(it)
+            }
+            currentUser.displayName?.let { userProvider.setUsername(it) }
+            currentUser.email?.let { userProvider.setEmail(it) }
+            currentUser.photoUrl?.let { userProvider.setProfilePic(it) }
+            registerFirebaseToken(
+                currentUser.uid,
+                withUserRegistration,
+                result
+            )
+        }
+    }
 
     suspend fun registerUser(
         username: String,
