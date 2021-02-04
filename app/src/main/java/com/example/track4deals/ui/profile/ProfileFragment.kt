@@ -19,6 +19,7 @@ import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.track4deals.R
+import com.example.track4deals.data.constants.AppConstants.Companion.RC_UPDATE_IMG
 import com.example.track4deals.internal.ScopedFragment
 import com.example.track4deals.internal.UserProvider
 import com.example.track4deals.ui.login.LoginFragment
@@ -42,7 +43,6 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
     override val kodein by closestKodein()
     private val profileViewModelFactory: ProfileViewModelFactory by instance()
     private val userProvider: UserProvider by instance()
-    private val RequestCode = 438
     private var imageUri: Uri? = null
     private var storageRef: StorageReference? = null
 
@@ -114,9 +114,7 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
         }
 
         edit_image_icon.setOnClickListener {
-
             onClickImage()
-
         }
 
         userProvider.loadingComplete.observe(viewLifecycleOwner, Observer {
@@ -188,15 +186,8 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
         val navController = findNavController()
         if (userProvider.isLoggedIn()) {
             val user = viewModel.user.await()
-            user.observe(viewLifecycleOwner, Observer {
-                if (it == null) return@Observer
-                userProvider.setProfilePic(Uri.parse(user.value?.response?.profilePhoto))
-            })
 
-            user.value?.response?.profilePhoto?.let {
-                viewModel.updateProfilePic(it)
-                setProfileImage(it)
-            }
+            setProfileImage(userProvider.getProfilePic().toString())
             name_profile.setText(userProvider.getUserName())
             fullname_field.text = userProvider.getUserName()
             email_field.text = userProvider.getEmail()
@@ -210,47 +201,39 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
     }
 
     private fun onClickImage() {
-
         val intent = Intent()
         intent.type = "image/*"
         intent.action = Intent.ACTION_GET_CONTENT
-        startActivityForResult(intent, RequestCode)
-
+        startActivityForResult(intent, RC_UPDATE_IMG)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (requestCode == RequestCode && resultCode == Activity.RESULT_OK && data!!.data != null) {
+        if (requestCode == RC_UPDATE_IMG && resultCode == Activity.RESULT_OK && data!!.data != null) {
             imageUri = data.data
             makeText(context, "Uploading...", Toast.LENGTH_LONG).show()
             uploadImageToDatabase()
         }
-
     }
 
     private fun uploadImageToDatabase() {
-
         val progressBar = ProgressDialog(context)
         progressBar.setMessage("Image is uploading, please wait...")
         progressBar.show()
 
-
         if (imageUri != null) {
             val fileRef = storageRef!!.child(System.currentTimeMillis().toString() + ".jpg")
 
-            var uploadTask: StorageTask<*>
+            val uploadTask: StorageTask<*>
             uploadTask = fileRef.putFile(imageUri!!)
 
             uploadTask.continueWithTask(Continuation<UploadTask.TaskSnapshot, Task<Uri>> { task ->
                 if (!task.isSuccessful) {
-
                     task.exception?.let {
                         throw it
                     }
-
                 }
-
                 return@Continuation fileRef.downloadUrl
             }).addOnCompleteListener { task ->
                 if(task.isSuccessful){
@@ -262,11 +245,7 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
                     progressBar.dismiss()
                 }
             }
-
-
         }
-
-
     }
 
 

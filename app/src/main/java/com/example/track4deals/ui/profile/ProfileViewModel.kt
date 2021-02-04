@@ -20,10 +20,8 @@ class ProfileViewModel(
     private val modifiedUser = MutableLiveData<UserInfo>()
     private var firebaseResponse = MutableLiveData<FirebaseOperationResponse>()
     private val modifiedEmail = MutableLiveData<String>()
-    private val modifiedPic = MutableLiveData<String>()
     private val passwordLive = MutableLiveData<String>()
     private val deleteLive = MutableLiveData<Boolean>()
-    private val profileImage = MutableLiveData<String>()
     private var _isDeleteDialogFragment: Boolean = false
     val isDeleteDialogFragment: Boolean
         get() = _isDeleteDialogFragment
@@ -47,7 +45,7 @@ class ProfileViewModel(
     val pictureChangeRes: LiveData<FirebaseOperationResponse> = _pictureChangeRes
 
 
-    val changeEmailPairLiveData: LiveData<Pair<String, String>> =
+    private val changeEmailPairLiveData: LiveData<Pair<String, String>> =
         object : MediatorLiveData<Pair<String, String>>() {
             var password: String? = null
             var email: String? = null
@@ -63,7 +61,7 @@ class ProfileViewModel(
                 }
             }
         }
-    val deletePairLiveData: LiveData<Pair<String, Boolean>> =
+    private val deletePairLiveData: LiveData<Pair<String, Boolean>> =
         object : MediatorLiveData<Pair<String, Boolean>>() {
             var password: String? = null
             var delete: Boolean? = null
@@ -85,10 +83,34 @@ class ProfileViewModel(
         userRepository.getUser()
     }
 
+    // switchMap starts a coroutine whenever the value of a LiveData changes.
+    val modUserResult = modifiedUser.switchMap {
+        liveData {
+            userRepository.modifyUser(it).value?.let { emit(it) }
+        }
+    }
+
+    val updateEmailResult = changeEmailPairLiveData.switchMap {
+        liveData {
+            authRepository.updateEmail(it.second, it.first, _emailChangeRes)
+            emit(emailChangeRes)
+        }
+    }
+
+    val deleteResult = deletePairLiveData.switchMap {
+        liveData {
+            authRepository.delete(it.first, _deleteRes)
+            emit(deleteRes)
+        }
+    }
+
     fun modifyUser(u: UserInfo) {
         this.modifiedUser.postValue(u)
     }
 
+    fun updateUsername(newUsername: String) {
+        authRepository.updateUsername(newUsername, _usernameChangeRes)
+    }
 
     fun modifyEmail(e: String) {
         this.modifiedEmail.postValue(e)
@@ -98,63 +120,16 @@ class ProfileViewModel(
         this.deleteLive.postValue(d)
     }
 
-
     fun sendPassword(p: String) {
         this.passwordLive.postValue(p)
     }
-
-    fun updateProfilePic(it: String) {
-        profileImage.postValue(it)
-    }
-
-    fun getProfilePic(): String? {
-        return profileImage.value
-    }
-
-    fun deleteDialogNeeded() {
-        _isDeleteDialogFragment = true
-    }
-
-    fun emailDialogNeeded() {
-        _isDeleteDialogFragment = false
-    }
-
-
-    // switchMap starts a coroutine whenever the value of a LiveData changes.
-    val addUserRes = modifiedUser.switchMap {
-        liveData {
-            userRepository.modifyUser(it).value?.let { emit(it) }
-        }
-    }
-
-
-    fun updateUsername(newUsername: String) {
-        authRepository.updateUsername(newUsername, _usernameChangeRes)
-    }
-
-
-    val updateEmailResult = changeEmailPairLiveData.switchMap {
-        liveData {
-            authRepository.updateEmail(it.second, it.first, _emailChangeRes)
-            emit(emailChangeRes)
-        }
-    }
-
 
     fun changePassword(oldPass: String, newPass: String) {
         authRepository.updatePassword(oldPass, newPass, _passwordChangeRes)
     }
 
     fun updatePicture(uri: Uri) {
-        authRepository.updatePicture(uri,_pictureChangeRes)
-    }
-
-
-    val deleteResult = deletePairLiveData.switchMap {
-        liveData {
-            authRepository.delete(it.first, _deleteRes)
-            emit(deleteRes)
-        }
+        authRepository.updatePicture(uri, _pictureChangeRes)
     }
 
 
@@ -178,10 +153,16 @@ class ProfileViewModel(
         }
     }
 
+    fun deleteDialogNeeded() {
+        _isDeleteDialogFragment = true
+    }
+
+    fun emailDialogNeeded() {
+        _isDeleteDialogFragment = false
+    }
+
     // A placeholder password validation check
     private fun isPasswordValid(password: String): Boolean {
         return password.length > 5
     }
-
-
 }
