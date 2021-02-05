@@ -32,7 +32,8 @@ class MainActivity : AppCompatActivity(), KodeinAware {
                 R.id.navigation_offers,
                 R.id.navigation_track,
                 R.id.navigation_settings,
-                R.id.navigation_profile
+                R.id.navigation_profile,
+                R.id.navigation_login
             )
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
