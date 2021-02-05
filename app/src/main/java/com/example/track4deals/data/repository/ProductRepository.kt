@@ -1,7 +1,6 @@
 package com.example.track4deals.data.repository
 
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import com.example.track4deals.data.database.ProductDAO
 import com.example.track4deals.data.database.entity.ProductEntity
@@ -9,6 +8,7 @@ import com.example.track4deals.data.models.Product
 import com.example.track4deals.data.models.ServerResponse
 import com.example.track4deals.services.ProductDataService
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.Flow
 import org.threeten.bp.ZonedDateTime
 
 class ProductRepository(
@@ -63,7 +63,7 @@ class ProductRepository(
         }
     }
 
-    suspend fun getOffers(): LiveData<List<ProductEntity>> {
+    suspend fun getOffers(): Flow<List<ProductEntity>> {
         return withContext(Dispatchers.IO) {
             if (isServerFetchNeeded(lastFetchTimeOffers)) {
                 productDataService.getOffers()
@@ -73,7 +73,7 @@ class ProductRepository(
         }
     }
 
-    suspend fun getTrackingProducts(): LiveData<List<ProductEntity>> {
+    suspend fun getTrackingProducts(): Flow<List<ProductEntity>> {
         return withContext(Dispatchers.IO) {
             if (isServerFetchNeeded(lastFetchTimeTrackings)) {
                 productDataService.getTracking()

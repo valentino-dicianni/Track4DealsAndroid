@@ -3,6 +3,7 @@ package com.example.track4deals.data.database
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.example.track4deals.data.database.entity.ProductEntity
+import kotlinx.coroutines.flow.Flow
 
 
 @Dao
@@ -26,10 +27,10 @@ interface ProductDAO {
 
 
     @Query("select * from product where isDeal = 1")
-    fun getAllProduct(): LiveData<List<ProductEntity>>
+    fun getAllProduct(): Flow<List<ProductEntity>>
 
     @Query("select * from product where is_tracking = 1")
-    fun getAllTracking(): LiveData<List<ProductEntity>>
+    fun getAllTracking(): Flow<List<ProductEntity>>
 
     @Transaction
     fun customUpsert(obj: ProductEntity?) {

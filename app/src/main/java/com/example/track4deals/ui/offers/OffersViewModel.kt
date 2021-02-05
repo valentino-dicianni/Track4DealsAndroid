@@ -3,12 +3,8 @@ package com.example.track4deals.ui.offers
 
 import androidx.lifecycle.*
 import com.example.track4deals.data.database.entity.ProductEntity
-import com.example.track4deals.data.models.LoginFormState
-import com.example.track4deals.data.models.Product
-import com.example.track4deals.data.models.ServerResponse
 import com.example.track4deals.data.repository.ProductRepository
-import com.example.track4deals.internal.lazyDeferred
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class OffersViewModel(
@@ -18,13 +14,27 @@ class OffersViewModel(
     private val addTrack = MutableLiveData<ProductEntity>()
     private val remTrack = MutableLiveData<ProductEntity>()
 
-    // LAZY!! chiamate solo all'occorrenza per la recycler view
-    val offers by lazyDeferred {
-        productRepository.getOffers()
+    private var _offersRes = MutableLiveData<List<ProductEntity>>()
+    val offersRes: LiveData<List<ProductEntity>> = _offersRes
+
+    private var _trackingRes = MutableLiveData<List<ProductEntity>>()
+    val trackingRes: LiveData<List<ProductEntity>> = _trackingRes
+
+
+    fun getOffers() {
+        viewModelScope.launch {
+            productRepository.getOffers().collect {
+                _offersRes.postValue(it)
+            }
+        }
     }
 
-    val trackings by lazyDeferred {
-        productRepository.getTrackingProducts()
+    fun getTrackings(){
+        viewModelScope.launch {
+            productRepository.getTrackingProducts().collect {
+                _trackingRes.postValue(it)
+            }
+        }
     }
 
     fun setAddT(p: ProductEntity) {

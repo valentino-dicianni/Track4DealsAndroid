@@ -4,30 +4,27 @@ package com.example.track4deals.ui.offers
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.track4deals.R
 import com.example.track4deals.data.constants.AppConstants.Companion.SERVER_OK
 import com.example.track4deals.data.database.entity.ProductEntity
-import com.example.track4deals.internal.ScopedFragment
 import com.example.track4deals.internal.UserProvider
 import com.example.track4deals.ui.offers.recyclerView.*
 import com.xwray.groupie.*
 import kotlinx.android.synthetic.main.fragment_offers.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.x.closestKodein
 import org.kodein.di.generic.instance
 
 
-class OffersFragment : ScopedFragment(), KodeinAware, OnProductListener {
+class OffersFragment : Fragment(), KodeinAware, OnProductListener {
     override val kodein by closestKodein()
     private lateinit var offersViewModel: OffersViewModel
     private val offersViewModelFactory: OffersViewModelFactory by instance()
@@ -58,15 +55,13 @@ class OffersFragment : ScopedFragment(), KodeinAware, OnProductListener {
             setHasFixedSize(true)
         }
 
-
-
         // On refresh UI
         swipeContainer.setOnRefreshListener {
             groupAdapter = GroupAdapter<ViewHolder>()
             items_linear_rv.adapter = groupAdapter
             numOffers = 0
             numTracking = 0
-            bindUI(this)
+            bindUI()
             swipeContainer.isRefreshing = false
         }
 
@@ -88,8 +83,24 @@ class OffersFragment : ScopedFragment(), KodeinAware, OnProductListener {
 
         userProvider.loadingComplete.observe(viewLifecycleOwner, Observer {
             // Bind recycler view
-            bindUI(this)
+            bindUI()
+
         })
+
+        offersViewModel.offersRes.observe(viewLifecycleOwner, Observer {
+            if (it == null) return@Observer // gestrire null
+            if (numOffers < 1)
+                addOffersRecyclerView(it.toItemsList(this))
+        })
+
+        offersViewModel.trackingRes.observe(viewLifecycleOwner, Observer {
+            if (it == null) return@Observer // gestrire null
+            userProvider.setNumTracking(it.size)
+            if (numTracking < 1)
+                addTrackingRecyclerView(it.toItemsList(this))
+
+        })
+
     }
 
     /**
@@ -99,24 +110,13 @@ class OffersFragment : ScopedFragment(), KodeinAware, OnProductListener {
      * @param listener listener interface for buttons
      * in the items of the recycler view
      */
-    private fun bindUI(listener: OnProductListener) = launch(Dispatchers.Main) {
-        val offers = offersViewModel.offers.await()
-        offers.observe(viewLifecycleOwner, Observer {
-            if (it == null) return@Observer // gestrire null
-            if (numOffers < 1)
-                addOffersRecyclerView(it.toItemsList(listener))
-        })
+    private fun bindUI() {
+        offersViewModel.getOffers()
         if (userProvider.isLoggedIn()) {
-            val trackings = offersViewModel.trackings.await()
-            trackings.observe(viewLifecycleOwner, Observer {
-                if (it == null) return@Observer // gestrire null
-                userProvider.setNumTracking(it.size)
-                if (numTracking < 1)
-                    addTrackingRecyclerView(it.toItemsList(listener))
-            })
+            offersViewModel.getTrackings()
         }
-
     }
+
 
     /**
      * Mapping function from list of ProductEntity to list of ProductListItem
@@ -142,6 +142,8 @@ class OffersFragment : ScopedFragment(), KodeinAware, OnProductListener {
             groupAdapter.add(this)
         }
         numOffers++
+        group_loading.visibility = View.GONE
+
         if (!userProvider.isLoggedIn()) {
             group_loading.visibility = View.GONE
         }
