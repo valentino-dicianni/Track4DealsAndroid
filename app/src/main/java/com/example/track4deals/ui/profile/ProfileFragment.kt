@@ -1,20 +1,15 @@
 package com.example.track4deals.ui.profile
 
 import android.app.Activity
-import android.app.Dialog
-import android.app.ProgressDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
 import android.text.method.KeyListener
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
-import android.widget.ProgressBar
 import android.widget.Toast
-import android.widget.Toast.LENGTH_LONG
 import android.widget.Toast.makeText
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -26,7 +21,6 @@ import com.example.track4deals.data.constants.AppConstants.Companion.RC_UPDATE_I
 import com.example.track4deals.internal.ScopedFragment
 import com.example.track4deals.internal.UserProvider
 import com.example.track4deals.ui.login.LoginFragment
-import com.example.track4deals.ui.offers.recyclerView.FullScreenImageViewActivity
 import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
@@ -124,47 +118,69 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
 
         //VIEWMODEL RESULT LISTENER
 
-        userProvider.loadingComplete.observe(viewLifecycleOwner, Observer {
+        userProvider.loadingComplete.observe(viewLifecycleOwner, {
             bindUI()
         })
 
 
         viewModel.usernameChangeRes.observe(viewLifecycleOwner, Observer {
             if (it == null) return@Observer
-            if (it?.status) {
+            if (it.status) {
                 bindUI()
-                makeText(context,  getString(R.string.username_change_success), Toast.LENGTH_LONG).show()
+                makeText(
+                    context,
+                    getString(R.string.username_change_success),
+                    Toast.LENGTH_LONG
+                ).show()
             } else
-                makeText(context,  getString(R.string.generic_error), Toast.LENGTH_LONG).show()
+                makeText(context, getString(R.string.generic_error), Toast.LENGTH_LONG).show()
         })
 
 
 
-        viewModel.updateEmailResult.observe(viewLifecycleOwner, Observer {
-            if (it == null) return@Observer
-            it.observe(viewLifecycleOwner, Observer {
-                if (it == null) return@Observer
+        viewModel.updateEmailResult.observe(viewLifecycleOwner, Observer { res ->
+            if (res == null) return@Observer
+            res.observe(viewLifecycleOwner, {
+                if (it != null) {
 
-                if (it.status) {
-                    bindUI()
-                    makeText(context, getString(R.string.email_change_success), Toast.LENGTH_LONG).show()
-                } else
-                    makeText(context, getString(R.string.generic_error) + " ${it.message}", Toast.LENGTH_LONG).show()
+                    if (it.status) {
+                        bindUI()
+                        makeText(
+                            context,
+                            getString(R.string.email_change_success),
+                            Toast.LENGTH_LONG
+                        ).show()
+                    } else
+                        makeText(
+                            context,
+                            getString(R.string.generic_error) + " ${it.message}",
+                            Toast.LENGTH_LONG
+                        ).show()
+                }
             })
         })
 
-        viewModel.deleteResult.observe(viewLifecycleOwner, Observer {
-            if (it == null) return@Observer
-            it.observe(viewLifecycleOwner, Observer {
-                if (it == null) return@Observer
+        viewModel.deleteResult.observe(viewLifecycleOwner, Observer { res ->
+            if (res == null) return@Observer
+            res.observe(viewLifecycleOwner, {
+                if (it != null) {
 
-                if (it.status) {
-                    makeText(context,  getString(R.string.user_delete_success), Toast.LENGTH_LONG).show()
-                    FirebaseAuth.getInstance().signOut()
-                    userProvider.flush()
-                    navigateLogin()
-                } else
-                    makeText(context, getString(R.string.generic_error) + " ${it.message}", Toast.LENGTH_LONG).show()
+                    if (it.status) {
+                        makeText(
+                            context,
+                            getString(R.string.user_delete_success),
+                            Toast.LENGTH_LONG
+                        ).show()
+                        FirebaseAuth.getInstance().signOut()
+                        userProvider.flush()
+                        navigateLogin()
+                    } else
+                        makeText(
+                            context,
+                            getString(R.string.generic_error) + " ${it.message}",
+                            Toast.LENGTH_LONG
+                        ).show()
+                }
             })
         })
 
@@ -172,9 +188,17 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
             if (it == null) return@Observer
 
             if (it.status) {
-                makeText(context, getString(R.string.password_change_success), Toast.LENGTH_LONG).show()
+                makeText(
+                    context,
+                    getString(R.string.password_change_success),
+                    Toast.LENGTH_LONG
+                ).show()
             } else
-                makeText(context, getString(R.string.generic_error) + " ${it.message}", Toast.LENGTH_LONG).show()
+                makeText(
+                    context,
+                    getString(R.string.generic_error) + " ${it.message}",
+                    Toast.LENGTH_LONG
+                ).show()
 
         })
 
@@ -182,9 +206,17 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
             if (it == null) return@Observer
 
             if (it.status) {
-                makeText(context, getString(R.string.picture_change_success), Toast.LENGTH_LONG).show()
+                makeText(
+                    context,
+                    getString(R.string.picture_change_success),
+                    Toast.LENGTH_LONG
+                ).show()
             } else
-                makeText(context, getString(R.string.generic_error) + " ${it.message}", Toast.LENGTH_LONG).show()
+                makeText(
+                    context,
+                    getString(R.string.generic_error) + " ${it.message}",
+                    Toast.LENGTH_LONG
+                ).show()
 
         })
 
@@ -194,7 +226,7 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
     private fun bindUI() = launch(Dispatchers.Main) {
         val navController = findNavController()
         if (userProvider.isLoggedIn()) {
-            val user = viewModel.user.await()
+            viewModel.user.await()
 
             setProfileImage(userProvider.getProfilePic().toString())
             name_profile.setText(userProvider.getUserName())
@@ -223,7 +255,7 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
         if (requestCode == RC_UPDATE_IMG && resultCode == Activity.RESULT_OK && data!!.data != null) {
             imageUri = data.data
             uploadImageToDatabase()
-        }else{
+        } else {
             makeText(context, getString(R.string.image_uploading_error), Toast.LENGTH_LONG).show()
         }
     }
@@ -266,7 +298,11 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
             uploadTask.addOnProgressListener {
                 progressBarHorizontal.max = it.totalByteCount.toInt()
                 progressBarHorizontal.progress = it.bytesTransferred.toInt()
-                textViewHorizontalProgress.text = getString(R.string.upload_percentage,(it.bytesTransferred/1000).toInt(),(it.totalByteCount/1000).toInt())
+                textViewHorizontalProgress.text = getString(
+                    R.string.upload_percentage,
+                    (it.bytesTransferred / 1000).toInt(),
+                    (it.totalByteCount / 1000).toInt()
+                )
             }
 
         }
@@ -289,7 +325,6 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
     /**
      * Makes text view focusable and editable
      * @param fieldsMap Map of EditText component to be enabled
-     * @param KeyListener EditText key listener
      */
     private fun enableAllTextField(fieldsMap: MutableMap<EditText, KeyListener>) {
         fieldsMap.forEach {
@@ -297,7 +332,6 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
             it.key.isFocusableInTouchMode = true
         }
     }
-
 
 
     /**
