@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
 import android.widget.Toast.makeText
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -18,7 +19,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.track4deals.R
 import com.example.track4deals.data.constants.AppConstants.Companion.RC_UPDATE_IMG
-import com.example.track4deals.internal.ScopedFragment
 import com.example.track4deals.internal.UserProvider
 import com.example.track4deals.ui.login.LoginFragment
 import com.google.android.gms.tasks.Continuation
@@ -30,13 +30,11 @@ import com.google.firebase.storage.StorageTask
 import com.google.firebase.storage.UploadTask
 import kotlinx.android.synthetic.main.element_row_rv.view.*
 import kotlinx.android.synthetic.main.fragment_profile.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.x.closestKodein
 import org.kodein.di.generic.instance
 
-class ProfileFragment : ScopedFragment(), KodeinAware {
+class ProfileFragment : Fragment(), KodeinAware {
     override val kodein by closestKodein()
     private val profileViewModelFactory: ProfileViewModelFactory by instance()
     private val userProvider: UserProvider by instance()
@@ -199,7 +197,6 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
                     getString(R.string.generic_error) + " ${it.message}",
                     Toast.LENGTH_LONG
                 ).show()
-
         })
 
         viewModel.pictureChangeRes.observe(viewLifecycleOwner, Observer {
@@ -217,17 +214,13 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
                     getString(R.string.generic_error) + " ${it.message}",
                     Toast.LENGTH_LONG
                 ).show()
-
         })
-
     }
 
 
-    private fun bindUI() = launch(Dispatchers.Main) {
+    private fun bindUI() {
         val navController = findNavController()
         if (userProvider.isLoggedIn()) {
-            viewModel.user.await()
-
             setProfileImage(userProvider.getProfilePic().toString())
             name_profile.setText(userProvider.getUserName())
             fullname_field.text = userProvider.getUserName()

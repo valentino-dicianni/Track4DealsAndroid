@@ -12,13 +12,13 @@ import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.track4deals.R
 import com.example.track4deals.data.constants.AppConstants.Companion.RC_SIGN_IN
 import com.example.track4deals.data.models.LoggedInUserView
-import com.example.track4deals.internal.ScopedFragment
 import com.example.track4deals.ui.register.RegisterFragment
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -31,7 +31,7 @@ import org.kodein.di.android.x.closestKodein
 import org.kodein.di.generic.instance
 
 
-class LoginFragment : ScopedFragment(), KodeinAware {
+class LoginFragment : Fragment(), KodeinAware {
     override val kodein by closestKodein()
     private val loginViewModelFactory: LoginViewModelFactory by instance()
     private lateinit var loginViewModel: LoginViewModel

@@ -4,12 +4,12 @@ import android.content.Context
 import android.os.Bundle
 import android.text.Html
 import android.text.Html.FROM_HTML_MODE_COMPACT
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.track4deals.R
@@ -17,16 +17,14 @@ import com.example.track4deals.data.constants.AppConstants.Companion.SERVER_OK
 import com.example.track4deals.data.database.entity.ProductEntity
 import com.example.track4deals.data.models.Product
 import com.example.track4deals.data.models.ServerResponse
-import com.example.track4deals.internal.ScopedFragment
 import com.example.track4deals.internal.UserProvider
-import com.example.track4deals.ui.login.LoginFragment.Companion.TAG
 import kotlinx.android.synthetic.main.fragment_offers.group_loading
 import kotlinx.android.synthetic.main.fragment_tracking.*
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.x.closestKodein
 import org.kodein.di.generic.instance
 
-class TrackingFragment : ScopedFragment(), KodeinAware {
+class TrackingFragment : Fragment(), KodeinAware {
     private lateinit var trackingViewModel: TrackingViewModel
     override val kodein by closestKodein()
     private val trackingViewModelFactory: TrackingViewModelFactory by instance()
@@ -130,7 +128,7 @@ class TrackingFragment : ScopedFragment(), KodeinAware {
     private fun showDialogError(context: Context, response: ServerResponse) {
         val builder = AlertDialog.Builder(context)
         builder.setTitle(R.string.warning)
-        builder.setMessage("${response.err}")
+        builder.setMessage(response.err)
 
         builder.setNeutralButton(R.string.closeBtn) { _, _ ->
             edit_text_link.setText("")

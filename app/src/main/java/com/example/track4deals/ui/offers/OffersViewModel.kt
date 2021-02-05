@@ -57,6 +57,4 @@ class OffersViewModel(
             productRepository.removeTrackingProduct(it).value?.let { emit(it) }
         }
     }
-
-
 }

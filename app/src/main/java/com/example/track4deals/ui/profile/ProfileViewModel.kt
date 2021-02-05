@@ -8,7 +8,6 @@ import com.example.track4deals.data.models.FirebaseOperationResponse
 import com.example.track4deals.data.models.UserInfo
 import com.example.track4deals.data.repository.AuthRepository
 import com.example.track4deals.data.repository.UserRepository
-import com.example.track4deals.internal.lazyDeferred
 
 class ProfileViewModel(
     private val userRepository: UserRepository,
@@ -79,8 +78,9 @@ class ProfileViewModel(
         }
 
 
-    val user by lazyDeferred {
-        userRepository.getUser()
+
+    val userResponse = liveData {
+        emit(userRepository.getUser().value)
     }
 
     // switchMap starts a coroutine whenever the value of a LiveData changes.

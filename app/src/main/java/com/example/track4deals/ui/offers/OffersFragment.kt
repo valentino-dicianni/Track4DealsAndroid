@@ -65,7 +65,7 @@ class OffersFragment : Fragment(), KodeinAware, OnProductListener {
             swipeContainer.isRefreshing = false
         }
 
-        offersViewModel.addTrackingRes.observe(viewLifecycleOwner, Observer {
+        offersViewModel.addTrackingRes.observe(viewLifecycleOwner, {
             if (it.ok == SERVER_OK) {
                 Toast.makeText(context, getString(R.string.track_added), Toast.LENGTH_LONG).show()
             } else {
@@ -73,7 +73,7 @@ class OffersFragment : Fragment(), KodeinAware, OnProductListener {
             }
         })
 
-        offersViewModel.removeTrackingRes.observe(viewLifecycleOwner, Observer {
+        offersViewModel.removeTrackingRes.observe(viewLifecycleOwner, {
             if (it.ok == SERVER_OK) {
                 Toast.makeText(context, getString(R.string.track_remove), Toast.LENGTH_LONG).show()
             } else {
@@ -81,10 +81,9 @@ class OffersFragment : Fragment(), KodeinAware, OnProductListener {
             }
         })
 
-        userProvider.loadingComplete.observe(viewLifecycleOwner, Observer {
+        userProvider.loadingComplete.observe(viewLifecycleOwner, {
             // Bind recycler view
             bindUI()
-
         })
 
         offersViewModel.offersRes.observe(viewLifecycleOwner, Observer {
