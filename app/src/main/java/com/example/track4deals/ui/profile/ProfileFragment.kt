@@ -1,7 +1,6 @@
 package com.example.track4deals.ui.profile
 
 import android.app.Activity
-import android.app.ProgressDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -11,7 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
-import android.widget.Toast.LENGTH_LONG
 import android.widget.Toast.makeText
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -23,7 +21,6 @@ import com.example.track4deals.data.constants.AppConstants.Companion.RC_UPDATE_I
 import com.example.track4deals.internal.ScopedFragment
 import com.example.track4deals.internal.UserProvider
 import com.example.track4deals.ui.login.LoginFragment
-import com.example.track4deals.ui.offers.recyclerView.FullScreenImageViewActivity
 import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
@@ -121,47 +118,69 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
 
         //VIEWMODEL RESULT LISTENER
 
-        userProvider.loadingComplete.observe(viewLifecycleOwner, Observer {
+        userProvider.loadingComplete.observe(viewLifecycleOwner, {
             bindUI()
         })
 
 
         viewModel.usernameChangeRes.observe(viewLifecycleOwner, Observer {
             if (it == null) return@Observer
-            if (it?.status) {
+            if (it.status) {
                 bindUI()
-                makeText(context,  getString(R.string.username_change_success), Toast.LENGTH_LONG).show()
+                makeText(
+                    context,
+                    getString(R.string.username_change_success),
+                    Toast.LENGTH_LONG
+                ).show()
             } else
-                makeText(context,  getString(R.string.generic_error), Toast.LENGTH_LONG).show()
+                makeText(context, getString(R.string.generic_error), Toast.LENGTH_LONG).show()
         })
 
 
 
-        viewModel.updateEmailResult.observe(viewLifecycleOwner, Observer {
-            if (it == null) return@Observer
-            it.observe(viewLifecycleOwner, Observer {
-                if (it == null) return@Observer
+        viewModel.updateEmailResult.observe(viewLifecycleOwner, Observer { res ->
+            if (res == null) return@Observer
+            res.observe(viewLifecycleOwner, {
+                if (it != null) {
 
-                if (it.status) {
-                    bindUI()
-                    makeText(context, getString(R.string.email_change_success), Toast.LENGTH_LONG).show()
-                } else
-                    makeText(context, getString(R.string.generic_error) + " ${it.message}", Toast.LENGTH_LONG).show()
+                    if (it.status) {
+                        bindUI()
+                        makeText(
+                            context,
+                            getString(R.string.email_change_success),
+                            Toast.LENGTH_LONG
+                        ).show()
+                    } else
+                        makeText(
+                            context,
+                            getString(R.string.generic_error) + " ${it.message}",
+                            Toast.LENGTH_LONG
+                        ).show()
+                }
             })
         })
 
-        viewModel.deleteResult.observe(viewLifecycleOwner, Observer {
-            if (it == null) return@Observer
-            it.observe(viewLifecycleOwner, Observer {
-                if (it == null) return@Observer
+        viewModel.deleteResult.observe(viewLifecycleOwner, Observer { res ->
+            if (res == null) return@Observer
+            res.observe(viewLifecycleOwner, {
+                if (it != null) {
 
-                if (it.status) {
-                    makeText(context,  getString(R.string.user_delete_success), Toast.LENGTH_LONG).show()
-                    FirebaseAuth.getInstance().signOut()
-                    userProvider.flush()
-                    navigateLogin()
-                } else
-                    makeText(context, getString(R.string.generic_error) + " ${it.message}", Toast.LENGTH_LONG).show()
+                    if (it.status) {
+                        makeText(
+                            context,
+                            getString(R.string.user_delete_success),
+                            Toast.LENGTH_LONG
+                        ).show()
+                        FirebaseAuth.getInstance().signOut()
+                        userProvider.flush()
+                        navigateLogin()
+                    } else
+                        makeText(
+                            context,
+                            getString(R.string.generic_error) + " ${it.message}",
+                            Toast.LENGTH_LONG
+                        ).show()
+                }
             })
         })
 
@@ -169,9 +188,17 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
             if (it == null) return@Observer
 
             if (it.status) {
-                makeText(context, getString(R.string.password_change_success), Toast.LENGTH_LONG).show()
+                makeText(
+                    context,
+                    getString(R.string.password_change_success),
+                    Toast.LENGTH_LONG
+                ).show()
             } else
-                makeText(context, getString(R.string.generic_error) + " ${it.message}", Toast.LENGTH_LONG).show()
+                makeText(
+                    context,
+                    getString(R.string.generic_error) + " ${it.message}",
+                    Toast.LENGTH_LONG
+                ).show()
 
         })
 
@@ -179,9 +206,17 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
             if (it == null) return@Observer
 
             if (it.status) {
-                makeText(context, getString(R.string.password_change_success), Toast.LENGTH_LONG).show()
+                makeText(
+                    context,
+                    getString(R.string.picture_change_success),
+                    Toast.LENGTH_LONG
+                ).show()
             } else
-                makeText(context, getString(R.string.generic_error) + " ${it.message}", Toast.LENGTH_LONG).show()
+                makeText(
+                    context,
+                    getString(R.string.generic_error) + " ${it.message}",
+                    Toast.LENGTH_LONG
+                ).show()
 
         })
 
@@ -191,7 +226,7 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
     private fun bindUI() = launch(Dispatchers.Main) {
         val navController = findNavController()
         if (userProvider.isLoggedIn()) {
-            val user = viewModel.user.await()
+            viewModel.user.await()
 
             setProfileImage(userProvider.getProfilePic().toString())
             name_profile.setText(userProvider.getUserName())
@@ -200,6 +235,7 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
             email_profile.setText(userProvider.getEmail())
             item_tracked_label.text = userProvider.getNumTracking().toString()
             group_loading.visibility = View.GONE
+            group_uploading.visibility = View.GONE
             groupProfile.visibility = View.VISIBLE
         } else {
             navController.navigate(R.id.navigation_login)
@@ -218,18 +254,20 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
 
         if (requestCode == RC_UPDATE_IMG && resultCode == Activity.RESULT_OK && data!!.data != null) {
             imageUri = data.data
-            makeText(context, getString(R.string.image_uploading), Toast.LENGTH_LONG).show()
             uploadImageToDatabase()
+        } else {
+            makeText(context, getString(R.string.image_uploading_error), Toast.LENGTH_LONG).show()
         }
     }
 
     private fun uploadImageToDatabase() {
-        val progressBar = ProgressDialog(context)
-        progressBar.setMessage("Image is uploading, please wait...")
-        progressBar.show()
+
+        //Show the progressBar
+        groupProfile.visibility = View.GONE
+        group_uploading.visibility = View.VISIBLE
 
         if (imageUri != null) {
-            val fileRef = storageRef!!.child(System.currentTimeMillis().toString() + ".jpg")
+            val fileRef = storageRef!!.child(userProvider.getUserName() + ".jpg")
 
             val uploadTask: StorageTask<*>
             uploadTask = fileRef.putFile(imageUri!!)
@@ -242,15 +280,31 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
                 }
                 return@Continuation fileRef.downloadUrl
             }).addOnCompleteListener { task ->
-                if(task.isSuccessful){
+                //if the task is done change the picture url through viewModel
+                if (task.isSuccessful) {
                     val downloadUrl = task.result
                     if (downloadUrl != null) {
                         viewModel.updatePicture(downloadUrl)
                     }
                     setProfileImage(downloadUrl.toString())
-                    progressBar.dismiss()
                 }
+
+                group_uploading.visibility = View.GONE
+                groupProfile.visibility = View.VISIBLE
             }
+
+
+            //Updating the percentage on the progressBar
+            uploadTask.addOnProgressListener {
+                progressBarHorizontal.max = it.totalByteCount.toInt()
+                progressBarHorizontal.progress = it.bytesTransferred.toInt()
+                textViewHorizontalProgress.text = getString(
+                    R.string.upload_percentage,
+                    (it.bytesTransferred / 1000).toInt(),
+                    (it.totalByteCount / 1000).toInt()
+                )
+            }
+
         }
     }
 
@@ -271,7 +325,6 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
     /**
      * Makes text view focusable and editable
      * @param fieldsMap Map of EditText component to be enabled
-     * @param KeyListener EditText key listener
      */
     private fun enableAllTextField(fieldsMap: MutableMap<EditText, KeyListener>) {
         fieldsMap.forEach {
@@ -279,7 +332,6 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
             it.key.isFocusableInTouchMode = true
         }
     }
-
 
 
     /**
