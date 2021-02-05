@@ -45,6 +45,43 @@
         app:layout_constraintTop_toBottomOf="@+id/progressBar_loading"
         app:layout_constraintVertical_bias="0.0" />
 
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/group_uploading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:visibility="invisible"
+        app:constraint_referenced_ids="progressBarHorizontal, textViewHorizontalProgress"
+        tools:context=".ui.profile.ProfileFragment"/>
+    <ProgressBar
+        android:id="@+id/progressBarHorizontal"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="false"
+        android:max="100"
+        android:minHeight="50dp"
+        android:minWidth="200dp"
+        android:progress="1"
+        android:progressBackgroundTint="@android:color/darker_gray"
+        android:progressTint="@color/primaryDarkColorBlue"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/progressBar_loading"
+        app:layout_constraintVertical_bias="0.0"/>
+
+    <TextView
+        android:id="@+id/textViewHorizontalProgress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/progressBarHorizontal"
+        app:layout_constraintVertical_bias="0.0"/>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/groupProfile"
         android:layout_width="match_parent"
@@ -52,7 +89,7 @@
         android:background="@color/design_default_color_background"
         android:orientation="vertical"
         android:visibility="invisible"
-        tools:context=".ui.offers.OffersFragment">
+        tools:context=".ui.profile.ProfileFragment">
 
 
         <ScrollView

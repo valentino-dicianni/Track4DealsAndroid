@@ -1,15 +1,18 @@
 package com.example.track4deals.ui.profile
 
 import android.app.Activity
+import android.app.Dialog
 import android.app.ProgressDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
 import android.text.method.KeyListener
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.ProgressBar
 import android.widget.Toast
 import android.widget.Toast.LENGTH_LONG
 import android.widget.Toast.makeText
@@ -179,7 +182,7 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
             if (it == null) return@Observer
 
             if (it.status) {
-                makeText(context, getString(R.string.password_change_success), Toast.LENGTH_LONG).show()
+                makeText(context, getString(R.string.picture_change_success), Toast.LENGTH_LONG).show()
             } else
                 makeText(context, getString(R.string.generic_error) + " ${it.message}", Toast.LENGTH_LONG).show()
 
@@ -200,6 +203,7 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
             email_profile.setText(userProvider.getEmail())
             item_tracked_label.text = userProvider.getNumTracking().toString()
             group_loading.visibility = View.GONE
+            group_uploading.visibility = View.GONE
             groupProfile.visibility = View.VISIBLE
         } else {
             navController.navigate(R.id.navigation_login)
@@ -218,18 +222,20 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
 
         if (requestCode == RC_UPDATE_IMG && resultCode == Activity.RESULT_OK && data!!.data != null) {
             imageUri = data.data
-            makeText(context, getString(R.string.image_uploading), Toast.LENGTH_LONG).show()
             uploadImageToDatabase()
+        }else{
+            makeText(context, getString(R.string.image_uploading_error), Toast.LENGTH_LONG).show()
         }
     }
 
     private fun uploadImageToDatabase() {
-        val progressBar = ProgressDialog(context)
-        progressBar.setMessage("Image is uploading, please wait...")
-        progressBar.show()
+
+        //Show the progressBar
+        groupProfile.visibility = View.GONE
+        group_uploading.visibility = View.VISIBLE
 
         if (imageUri != null) {
-            val fileRef = storageRef!!.child(System.currentTimeMillis().toString() + ".jpg")
+            val fileRef = storageRef!!.child(userProvider.getUserName() + ".jpg")
 
             val uploadTask: StorageTask<*>
             uploadTask = fileRef.putFile(imageUri!!)
@@ -242,15 +248,27 @@ class ProfileFragment : ScopedFragment(), KodeinAware {
                 }
                 return@Continuation fileRef.downloadUrl
             }).addOnCompleteListener { task ->
-                if(task.isSuccessful){
+                //if the task is done change the picture url through viewModel
+                if (task.isSuccessful) {
                     val downloadUrl = task.result
                     if (downloadUrl != null) {
                         viewModel.updatePicture(downloadUrl)
                     }
                     setProfileImage(downloadUrl.toString())
-                    progressBar.dismiss()
                 }
+
+                group_uploading.visibility = View.GONE
+                groupProfile.visibility = View.VISIBLE
             }
+
+
+            //Updating the percentage on the progressBar
+            uploadTask.addOnProgressListener {
+                progressBarHorizontal.max = it.totalByteCount.toInt()
+                progressBarHorizontal.progress = it.bytesTransferred.toInt()
+                textViewHorizontalProgress.text = getString(R.string.upload_percentage,(it.bytesTransferred/1000).toInt(),(it.totalByteCount/1000).toInt())
+            }
+
         }
     }
 

@@ -39,6 +39,8 @@
     <string name="password_change_success">Password modificata con successo</string>
     <string name="picture_change_success">Immagine modificata con successo</string>
     <string name="image_uploading">Caricamento immagine...</string>
+    <string name="image_uploading_error">Errore nel caricamento dell\'immagine</string>
+    <string name="upload_percentage">Caricamento in corso...\n %d kB / %d kB</string>
     <!-- Strings related to change password -->
     <string name="old_password">Vecchia Password</string>
     <string name="new_password">Nuova Password</string>

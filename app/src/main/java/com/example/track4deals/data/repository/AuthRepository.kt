@@ -180,7 +180,10 @@ class AuthRepository(
         userProvider.updateUsername(username, _usernameChangeRes)
     }
 
-    fun updatePicture(uri: Uri, _pictureChangeRes: MutableLiveData<FirebaseOperationResponse>) {
+    fun updatePicture(
+        uri: Uri,
+        _pictureChangeRes: MutableLiveData<FirebaseOperationResponse>
+    ) {
         userProvider.updatePicture(uri, _pictureChangeRes)
     }
 
