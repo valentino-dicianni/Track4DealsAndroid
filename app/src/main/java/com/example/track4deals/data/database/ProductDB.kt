@@ -9,7 +9,8 @@ import com.example.track4deals.data.database.entity.ProductEntity
 
 @Database(
     entities = [ProductEntity::class],
-    version = 1
+    version = 1,
+    exportSchema = false
 )
 @TypeConverters(DateConverter::class)
 
