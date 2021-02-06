@@ -10,14 +10,11 @@ import com.example.track4deals.data.repository.AuthRepository
 import com.example.track4deals.data.repository.UserRepository
 
 class ProfileViewModel(
-    private val userRepository: UserRepository,
     private val authRepository: AuthRepository
 ) : ViewModel() {
 
     private val changeForm = MutableLiveData<ChangePasswordFormState>()
     val changeFormState: LiveData<ChangePasswordFormState> = changeForm
-    private val modifiedUser = MutableLiveData<UserInfo>()
-    private var firebaseResponse = MutableLiveData<FirebaseOperationResponse>()
     private val modifiedEmail = MutableLiveData<String>()
     private val passwordLive = MutableLiveData<String>()
     private val deleteLive = MutableLiveData<Boolean>()
@@ -80,17 +77,6 @@ class ProfileViewModel(
 
 
 
-    val userResponse = liveData {
-        emit(userRepository.getUser().value)
-    }
-
-    // switchMap starts a coroutine whenever the value of a LiveData changes.
-    val modUserResult = modifiedUser.switchMap {
-        liveData {
-            userRepository.modifyUser(it).value?.let { emit(it) }
-        }
-    }
-
     val updateEmailResult = changeEmailPairLiveData.switchMap {
         liveData {
             authRepository.updateEmail(it.second, it.first, _emailChangeRes)
@@ -103,10 +89,6 @@ class ProfileViewModel(
             authRepository.delete(it.first, _deleteRes)
             emit(deleteRes)
         }
-    }
-
-    fun modifyUser(u: UserInfo) {
-        this.modifiedUser.postValue(u)
     }
 
     fun updateUsername(newUsername: String) {
@@ -134,9 +116,12 @@ class ProfileViewModel(
     }
 
 
-    //INPUT:    String value from change password text field
-    //OUTPUT:   No returned value.
-    //Set the LiveData variable changeForm.value with right ChangePasswordForm state value for displaying the right error in the view
+    /**
+     * Set the LiveData variable changeForm.value with right ChangePasswordForm state value for displaying the password error in the view
+     * @param oldPswd Password to be changed
+     * @param newPswd New password
+     * @param rptPswd New password again
+     */
     fun passwdDataChanged(oldPswd: String, newPswd: String, rptPswd: String) {
 
         if (!isPasswordValid(oldPswd)) {
