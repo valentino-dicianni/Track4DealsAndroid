@@ -38,9 +38,9 @@
     <string name="user_delete_success">Account eliminato con successo</string>
     <string name="password_change_success">Password modificata con successo</string>
     <string name="picture_change_success">Immagine modificata con successo</string>
-    <string name="image_uploading">Caricamento immagine...</string>
+    <string name="image_uploading">Caricamento immagine…</string>
     <string name="image_uploading_error">Errore nel caricamento dell\'immagine</string>
-    <string name="upload_percentage">Caricamento in corso...\n %d kB / %d kB</string>
+    <string name="upload_percentage">Caricamento in corso…\n %d kB / %d kB</string>
     <!-- Strings related to change password -->
     <string name="old_password">Vecchia Password</string>
     <string name="new_password">Nuova Password</string>
@@ -109,10 +109,10 @@
     <string name="registrationSucceded">Registrazione effettuata</string>
     <string name="emailRegError">Email già registrata</string>
     <string name="errorGLogin">Login Google Fallito</string>
-    <string name="server_client_id">379014634580-3n25lbq8tto0bialld9no5go73rgjgsq.apps.googleusercontent.com</string>
+    <string name="server_client_id">379014634580–3n25lbq8tto0bialld9no5go73rgjgsq.apps.googleusercontent.com</string>
     <string name="mario_rossi_email_com">mario.rossi@email.com</string>
     <string name="mario_rossi">Mario Rossi</string>
-    <string name="trackp_30">30</string>
+    <string name="trackp_0">0</string>
     <string name="imageError">Nessuna immaigine caricata</string>
     <!-- Reset Password -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

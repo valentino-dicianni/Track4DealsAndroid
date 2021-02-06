@@ -60,6 +60,7 @@ class ProfileViewModel(
                 }
             }
         }
+
     private val deletePairLiveData: LiveData<Pair<String, Boolean>> =
         object : MediatorLiveData<Pair<String, Boolean>>() {
             var password: String? = null

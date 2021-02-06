@@ -87,7 +87,6 @@
         android:id="@+id/groupProfile"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/design_default_color_background"
         android:orientation="vertical"
         android:visibility="invisible"
         tools:context=".ui.profile.ProfileFragment">
@@ -154,7 +153,6 @@
                         android:layout_marginStart="10dp"
                         android:layout_marginTop="10dp"
                         android:includeFontPadding="false"
-                        android:text="@string/mario_rossi"
                         android:textColor="@color/white"
                         android:textSize="20sp"
                         android:layout_centerHorizontal="true"/>
@@ -165,7 +163,6 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
                         android:includeFontPadding="false"
-                        android:text="@string/mario_rossi_email_com"
                         android:textColor="@color/white"
                         android:textSize="14sp"
                         android:layout_below="@id/fullname_field"
@@ -207,7 +204,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_centerInParent="true"
                                 android:includeFontPadding="false"
-                                android:text="@string/trackp_30"
+                                android:text="@string/trackp_0"
                                 android:textSize="20sp" />
 
                             <TextView
@@ -245,8 +242,7 @@
                             android:drawablePadding="10dp"
                             android:lines="1"
                             android:maxLines="1"
-                            android:singleLine="true"
-                            android:text="@string/mario_rossi" />
+                            android:singleLine="true" />
 
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -265,8 +261,7 @@
                             android:inputType="textEmailAddress"
                             android:lines="1"
                             android:maxLines="1"
-                            android:singleLine="true"
-                            android:text="@string/mario_rossi_email_com" />
+                            android:singleLine="true" />
 
                     </com.google.android.material.textfield.TextInputLayout>
 
