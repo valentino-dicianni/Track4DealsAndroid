@@ -5,16 +5,14 @@
         <item name="colorPrimary">@color/primaryColorTeal</item>
         <item name="colorPrimaryVariant">@color/primaryDarkColorTeal</item>
         <item name="colorOnPrimary">@color/black</item>
-        <item name="colorBackgroundFloating">@color/black</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/secondaryDarkColorTeal</item>
         <item name="colorSecondaryVariant">@color/secondaryColorTeal</item>
-        <item name="colorOnSecondary">@color/black</item>
-        <item name="android:textColor">@color/primaryTextColorTeal</item>
         <item name="cardBackgroundColor">?attr/colorSecondary</item>
+        <item name="android:textColor">@color/primaryTextColorTeal</item>
+        <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
-        <item name="android:background" tools:targetApi="l">?attr/colorBackgroundFloating</item>
-    </style>
+        </style>
 </resources>

@@ -30,6 +30,9 @@ class SettingsFragment : PreferenceFragmentCompat(), KodeinAware {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         settingsViewModel = ViewModelProvider(this).get(SettingsViewModel::class.java)
+        if(userProvider.isLoggedIn()){
+
+        }
 
     }
 

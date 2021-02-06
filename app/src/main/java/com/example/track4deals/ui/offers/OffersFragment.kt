@@ -141,8 +141,6 @@ class OffersFragment : Fragment(), KodeinAware, OnProductListener {
             groupAdapter.add(this)
         }
         numOffers++
-        group_loading.visibility = View.GONE
-
         if (!userProvider.isLoggedIn()) {
             group_loading.visibility = View.GONE
         }
