@@ -75,10 +75,7 @@ class ProductRepository(
 
     suspend fun getTrackingProducts(): Flow<List<ProductEntity>> {
         return withContext(Dispatchers.IO) {
-            if (isServerFetchNeeded(lastFetchTimeTrackings)) {
-                productDataService.getTracking()
-                lastFetchTimeTrackings = ZonedDateTime.now()
-            }
+            productDataService.getTracking()
             return@withContext productDAO.getAllTracking()
         }
     }
@@ -100,6 +97,10 @@ class ProductRepository(
         return withContext(Dispatchers.IO) {
             return@withContext productDataService.fetchAmazonProduct(ASIN)
         }
+    }
+
+    fun resetTracking() {
+        productDAO.resetTracking()
     }
 
     /**

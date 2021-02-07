@@ -167,6 +167,7 @@ class LoginFragment : Fragment(), KodeinAware {
     }
 
     private fun showLoginFailed(@StringRes errorString: Int) {
+        loading.visibility = View.GONE
         val appContext = context?.applicationContext ?: return
         Toast.makeText(appContext, getString(errorString), Toast.LENGTH_LONG).show()
     }

@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.example.track4deals.R
+import com.example.track4deals.data.repository.ProductRepository
 import com.example.track4deals.internal.UserProvider
 import com.google.firebase.auth.FirebaseAuth
 import org.kodein.di.KodeinAware
@@ -17,9 +18,11 @@ import org.kodein.di.android.x.closestKodein
 import org.kodein.di.generic.instance
 
 
-class SettingsFragment : PreferenceFragmentCompat(), KodeinAware {
+class SettingsFragment() : PreferenceFragmentCompat(), KodeinAware {
     override val kodein by closestKodein()
     private val userProvider by instance<UserProvider>()
+    private val productRepository by instance<ProductRepository>()
+    private val settingsViewModelFactory: SettingsViewModelFactory by instance()
     private lateinit var settingsViewModel: SettingsViewModel
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -29,8 +32,8 @@ class SettingsFragment : PreferenceFragmentCompat(), KodeinAware {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        settingsViewModel = ViewModelProvider(this).get(SettingsViewModel::class.java)
-        if(userProvider.isLoggedIn()){
+        settingsViewModel = ViewModelProvider(this, settingsViewModelFactory).get(SettingsViewModel::class.java)
+        if (userProvider.isLoggedIn()) {
 
         }
 
@@ -41,6 +44,8 @@ class SettingsFragment : PreferenceFragmentCompat(), KodeinAware {
             if (preference.key == context?.getString(R.string.logoutDesc)) {
                 FirebaseAuth.getInstance().signOut()
                 userProvider.flush()
+                settingsViewModel.resetTracking()
+
                 Toast.makeText(context, getString(R.string.logoutExecuted), Toast.LENGTH_LONG)
                     .show()
                 return true

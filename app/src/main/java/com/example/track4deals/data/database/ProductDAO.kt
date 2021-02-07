@@ -25,6 +25,8 @@ interface ProductDAO {
         isDeal: Int
     )
 
+    @Query("update product set is_tracking = 0")
+    fun resetTracking();
 
     @Query("select * from product where isDeal = 1")
     fun getAllProduct(): Flow<List<ProductEntity>>

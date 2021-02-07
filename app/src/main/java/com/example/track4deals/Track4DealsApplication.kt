@@ -19,6 +19,7 @@ import com.example.track4deals.ui.profile.ChangePasswordDialogFragment
 import com.example.track4deals.ui.profile.PasswordConfirmationDialogFragment
 import com.example.track4deals.ui.profile.ProfileViewModelFactory
 import com.example.track4deals.ui.register.RegisterViewModelFactory
+import com.example.track4deals.ui.settings.SettingsViewModelFactory
 import com.example.track4deals.ui.tracking.TrackingViewModelFactory
 import com.jakewharton.threetenabp.AndroidThreeTen
 import org.kodein.di.Kodein
@@ -50,7 +51,7 @@ class Track4DealsApplication : Application(), KodeinAware {
         bind() from provider { TrackingViewModelFactory(instance()) }
         bind() from provider { PasswordConfirmationDialogFragment(instance()) }
         bind() from provider { ChangePasswordDialogFragment(instance()) }
-
+        bind() from provider { SettingsViewModelFactory(instance()) }
     }
 
     override fun onCreate() {
