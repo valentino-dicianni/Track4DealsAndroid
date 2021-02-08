@@ -97,6 +97,11 @@ class SettingsFragment() : PreferenceFragmentCompat(), KodeinAware {
             onSettingChangeListener
         )
 
+        val logOutPref =  preferenceManager.findPreference<Preference>(getString(R.string.logoutDesc))
+
+        logOutPref?.isEnabled = userProvider.isLoggedIn()
+
+
     }
 
     override fun onPreferenceTreeClick(preference: Preference?): Boolean {
@@ -106,6 +111,8 @@ class SettingsFragment() : PreferenceFragmentCompat(), KodeinAware {
                 FirebaseAuth.getInstance().signOut()
                 userProvider.flush()
                 settingsViewModel.resetTracking()
+
+                preference.isEnabled = false
 
                 Toast.makeText(context, getString(R.string.logoutExecuted), Toast.LENGTH_LONG)
                     .show()

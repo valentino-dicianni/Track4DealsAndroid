@@ -23,7 +23,6 @@
             android:title="@string/AppVersion" />
 
         <Preference
-            android:id="@+id/LogoutPreference"
             android:key="@string/logoutDesc"
             android:summary="@string/logoutDesc"
             android:title="@string/logout" />
