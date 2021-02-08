@@ -1,7 +1,6 @@
 package com.example.track4deals.ui.settings
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
@@ -33,9 +32,6 @@ class SettingsFragment() : PreferenceFragmentCompat(), KodeinAware {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         settingsViewModel = ViewModelProvider(this, settingsViewModelFactory).get(SettingsViewModel::class.java)
-        if (userProvider.isLoggedIn()) {
-
-        }
 
     }
 
@@ -49,9 +45,6 @@ class SettingsFragment() : PreferenceFragmentCompat(), KodeinAware {
                 Toast.makeText(context, getString(R.string.logoutExecuted), Toast.LENGTH_LONG)
                     .show()
                 return true
-            }
-            if (preference.key == context?.getString(R.string.GetToken)) {
-                Log.d("TEST: ", "onPreferenceTreeClick: ${userProvider.getToken()}")
             }
             if (preference.key == getString(R.string.Theme)) {
                 if (preference.isEnabled) {

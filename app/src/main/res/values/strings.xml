@@ -119,5 +119,9 @@
     <string name="password_forgotten">Hai dimenticato la password?</string>
     <string name="error_reset_Psw">Errore nel reset della password</string>
     <string name="checkEmail">Email inviata!</string>
+    <string name="sync_header">Sync</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
 
 </resources>

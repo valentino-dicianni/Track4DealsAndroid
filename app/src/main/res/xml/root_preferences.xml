@@ -1,32 +1,27 @@
-<PreferenceScreen xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <PreferenceCategory app:title="@string/notifications">
         <SwitchPreferenceCompat
+            android:defaultValue="true"
             app:key="@string/notifications"
-            app:title="@string/enableNotifications"
-            android:defaultValue="true"/>
+            app:title="@string/enableNotifications" />
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/Theme">
         <SwitchPreferenceCompat
-            app:key="@string/Theme"
-            app:title="@string/enableDarkTheme"
             android:defaultValue="false"
-            />
+            app:key="@string/Theme"
+            app:title="@string/enableDarkTheme" />
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/mainSettings">
-    <Preference
-        android:key="@string/GetToken"
-        android:summary="@string/TokenDesc"
-        android:title="@string/GetToken" />
 
-    <Preference
-        android:key="@string/AppVersion"
-        android:summary="@string/Version"
-        android:title="@string/AppVersion" />
+        <Preference
+            android:key="@string/AppVersion"
+            android:summary="@string/Version"
+            android:title="@string/AppVersion" />
 
         <Preference
             android:id="@+id/LogoutPreference"
