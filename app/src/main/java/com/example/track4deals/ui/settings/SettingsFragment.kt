@@ -1,13 +1,17 @@
 package com.example.track4deals.ui.settings
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.NotificationManagerCompat
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.SwitchPreferenceCompat
 import com.example.track4deals.R
 import com.example.track4deals.data.repository.ProductRepository
 import com.example.track4deals.internal.UserProvider
@@ -20,55 +24,45 @@ import org.kodein.di.generic.instance
 class SettingsFragment() : PreferenceFragmentCompat(), KodeinAware {
     override val kodein by closestKodein()
     private val userProvider by instance<UserProvider>()
-    private val productRepository by instance<ProductRepository>()
     private val settingsViewModelFactory: SettingsViewModelFactory by instance()
     private lateinit var settingsViewModel: SettingsViewModel
+    private val onSettingChangeListener: SharedPreferences.OnSharedPreferenceChangeListener =
+        SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences: SharedPreferences, key: String ->
 
-    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-        setPreferencesFromResource(R.xml.root_preferences, rootKey)
+            when (key) {
+                getString(R.string.darkTheme_preference) -> {
+                    if (sharedPreferences.getBoolean(
+                            getString(R.string.darkTheme_preference),
+                            false
+                        )
+                    ) {
 
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        settingsViewModel = ViewModelProvider(this, settingsViewModelFactory).get(SettingsViewModel::class.java)
-
-    }
-
-    override fun onPreferenceTreeClick(preference: Preference?): Boolean {
-        if (preference != null) {
-            if (preference.key == context?.getString(R.string.logoutDesc)) {
-                FirebaseAuth.getInstance().signOut()
-                userProvider.flush()
-                settingsViewModel.resetTracking()
-
-                Toast.makeText(context, getString(R.string.logoutExecuted), Toast.LENGTH_LONG)
-                    .show()
-                return true
-            }
-            if (preference.key == getString(R.string.Theme)) {
-                if (preference.isEnabled) {
-                    if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                        Toast.makeText(
-                            context,
-                            getString(R.string.enableLightTheme),
-                            Toast.LENGTH_LONG
-                        ).show()
-                    } else {
                         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+
                         Toast.makeText(
                             context,
                             getString(R.string.enableDarkTheme),
                             Toast.LENGTH_LONG
                         ).show()
+
+                    } else {
+
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+
+                        Toast.makeText(
+                            context,
+                            getString(R.string.enableLightTheme),
+                            Toast.LENGTH_LONG
+                        ).show()
+
                     }
                 }
-            }
-            if (preference.key == getString(R.string.notifications)) {
-                if (preference.isEnabled) {
-                    if (NotificationManagerCompat.from(requireContext())
-                            .areNotificationsEnabled()
+
+                getString(R.string.notification_preference) -> {
+                    if (sharedPreferences.getBoolean(
+                            getString(R.string.notification_preference),
+                            false
+                        )
                     ) {
                         Toast.makeText(
                             context,
@@ -82,9 +76,59 @@ class SettingsFragment() : PreferenceFragmentCompat(), KodeinAware {
                             Toast.LENGTH_LONG
                         ).show()
                     }
+
                 }
+
+            }
+
+
+        }
+
+
+    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        setPreferencesFromResource(R.xml.root_preferences, rootKey)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        settingsViewModel =
+            ViewModelProvider(this, settingsViewModelFactory).get(SettingsViewModel::class.java)
+        preferenceManager.sharedPreferences.registerOnSharedPreferenceChangeListener(
+            onSettingChangeListener
+        )
+
+    }
+
+    override fun onPreferenceTreeClick(preference: Preference?): Boolean {
+
+        if (preference != null) {
+            if (preference.key == context?.getString(R.string.logoutDesc)) {
+                FirebaseAuth.getInstance().signOut()
+                userProvider.flush()
+                settingsViewModel.resetTracking()
+
+                Toast.makeText(context, getString(R.string.logoutExecuted), Toast.LENGTH_LONG)
+                    .show()
+                return true
             }
         }
+
         return false
     }
+
+    override fun onResume() {
+        super.onResume()
+        preferenceManager.sharedPreferences.registerOnSharedPreferenceChangeListener(
+            onSettingChangeListener
+        )
+    }
+
+    override fun onPause() {
+        super.onPause()
+        preferenceManager.sharedPreferences.unregisterOnSharedPreferenceChangeListener(
+            onSettingChangeListener
+        )
+    }
+
+
 }

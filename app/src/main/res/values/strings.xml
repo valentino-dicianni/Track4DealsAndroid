@@ -69,8 +69,8 @@
 
     <!-- Sync Preferences -->
     <string name="enableNotifications">Abilita le Notifiche</string>
-    <string name="notificationsOFF">Notfiche abilitate</string>
-    <string name="notificationsON">Notifiche Disabilitate</string>
+    <string name="notificationsOFF">Notfiche disabilitate</string>
+    <string name="notificationsON">Notifiche abilitate</string>
     <string name="enableDarkTheme">Dark Theme</string>
     <string name="enableLightTheme">Light Theme</string>
     <string name="attachment_title">Download incoming attachments</string>
@@ -121,7 +121,9 @@
     <string name="checkEmail">Email inviata!</string>
     <string name="sync_header">Sync</string>
 
-    <!-- Sync Preferences -->
-    <string name="sync_title">Sync email periodically</string>
+    <!-- Preferences -->
+    <string name="darkTheme_preference">isDark</string>
+    <string name="notification_preference">isNotificationOn</string>
+    <string name="first_boot">isFirstBoot</string>
 
 </resources>

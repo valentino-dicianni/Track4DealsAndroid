@@ -1,5 +1,6 @@
 package com.example.track4deals.firebaseNotifications
 
+import android.app.Activity
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -8,6 +9,7 @@ import android.content.Intent
 import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import androidx.preference.PreferenceManager
 import com.example.track4deals.MainActivity
 import com.example.track4deals.R
 import com.example.track4deals.internal.UserProvider
@@ -25,11 +27,11 @@ import org.kodein.di.generic.instance
 class MyFirebaseMessagingService() : FirebaseMessagingService(), KodeinAware {
     override val kodein by closestKodein()
     private val authService: AuthService by instance()
-    private val userProvider :UserProvider by instance()
+    private val userProvider: UserProvider by instance()
 
     override fun onNewToken(token: String) {
         Log.d("MyFirebaseMessagingService", "Refreshed token: $token")
-        if(userProvider.isLoggedIn())
+        if (userProvider.isLoggedIn())
             registerToken(token)
     }
 
@@ -49,7 +51,13 @@ class MyFirebaseMessagingService() : FirebaseMessagingService(), KodeinAware {
             Log.d("MyFirebaseMessagingService", "Message Notification Body: ${it.body}")
         }
         remoteMessage.notification?.let {
-            sendNotification(it);
+            val sharedPref = PreferenceManager.getDefaultSharedPreferences(this)
+
+            val isNotificationEnabled = sharedPref.getBoolean(
+                getString(R.string.notification_preference), true
+            )
+
+            if (isNotificationEnabled) sendNotification(it)
         }
     }
 
