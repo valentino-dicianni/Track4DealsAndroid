@@ -364,6 +364,7 @@ class UserProvider {
 
     fun flush() {
         token = ""
+        profilePic = Uri.EMPTY
     }
 
 }
