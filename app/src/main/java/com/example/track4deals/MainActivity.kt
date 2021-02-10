@@ -1,7 +1,5 @@
 package com.example.track4deals
 
-import android.app.Activity
-import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.os.Bundle
@@ -14,6 +12,7 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.preference.PreferenceManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.FirebaseApp
+import com.jakewharton.threetenabp.AndroidThreeTen
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
 
@@ -27,6 +26,7 @@ class MainActivity : AppCompatActivity(), KodeinAware {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         FirebaseApp.initializeApp(this)
+        AndroidThreeTen.init(this)
         setContentView(R.layout.activity_main)
         val sharedPreference = PreferenceManager.getDefaultSharedPreferences(this)
         setSavedDarkMode(sharedPreference)
@@ -47,15 +47,13 @@ class MainActivity : AppCompatActivity(), KodeinAware {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
-
-
     }
 
     /**
      * Check if the User specified what theme is preferred otherwise use the default theme of the system
      * @param sharedPref SharedPreference instance for retrieving saved state
      */
-    private fun setSavedDarkMode(sharedPref : SharedPreferences) {
+    private fun setSavedDarkMode(sharedPref: SharedPreferences) {
         val isDark = sharedPref.getBoolean(
             getString(R.string.darkTheme_preference), false
         )
@@ -85,18 +83,14 @@ class MainActivity : AppCompatActivity(), KodeinAware {
      * @param sharedPref SharedPreference instance for retrieving saved state
      * @return true if the app is started for the first time, false otherwise
      */
-    private fun isFirstBoot(sharedPref : SharedPreferences): Boolean {
+    private fun isFirstBoot(sharedPref: SharedPreferences): Boolean {
         val isFirstBoot = sharedPref.getBoolean(getString(R.string.first_boot), true)
         return if (isFirstBoot) {
             with(sharedPref.edit()) {
                 putBoolean(getString(R.string.first_boot), false)
                 apply()
             }
-
             true
         } else false
-
     }
-
-
 }

@@ -51,11 +51,5 @@ class Track4DealsApplication : Application(), KodeinAware {
         bind() from provider { TrackingViewModelFactory(instance()) }
         bind() from provider { SettingsViewModelFactory(instance(), instance()) }
     }
-
-    override fun onCreate() {
-        super.onCreate()
-        AndroidThreeTen.init(this)
-    }
-
 }
 

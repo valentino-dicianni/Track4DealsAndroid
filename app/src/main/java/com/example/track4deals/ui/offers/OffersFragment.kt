@@ -106,8 +106,6 @@ class OffersFragment : Fragment(), KodeinAware, OnProductListener {
      * Fetch for offers and tracking products and populate the
      * recycler view with 2 sections (tracking only if user is
      * loggedIn)
-     * @param listener listener interface for buttons
-     * in the items of the recycler view
      */
     private fun bindUI() {
         offersViewModel.getOffers()
@@ -148,7 +146,7 @@ class OffersFragment : Fragment(), KodeinAware, OnProductListener {
 
     /**
      * Add a new group called "Tracking" to the recycler view
-     * @param itemsOffers item list to add in the group
+     * @param itemsTracking item list to add in the group
      */
     private fun addTrackingRecyclerView(
         itemsTracking: List<ProductListItem>
