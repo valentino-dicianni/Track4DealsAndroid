@@ -17,7 +17,7 @@ import org.kodein.di.KodeinAware
 import org.kodein.di.android.x.closestKodein
 import org.kodein.di.generic.instance
 
-class ChangePasswordDialogFragment() : DialogFragment(), KodeinAware {
+class ChangePasswordDialogFragment : DialogFragment(), KodeinAware {
     override val kodein by closestKodein()
     private val profileViewModelFactory: ProfileViewModelFactory by instance()
     private lateinit var viewModel : ProfileViewModel
@@ -33,11 +33,6 @@ class ChangePasswordDialogFragment() : DialogFragment(), KodeinAware {
         viewModel =
             ViewModelProvider(this, profileViewModelFactory).get(ProfileViewModel::class.java)
         return inflater.inflate(R.layout.change_password_fragment, container, false)
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -65,14 +60,8 @@ class ChangePasswordDialogFragment() : DialogFragment(), KodeinAware {
             })
 
         val afterTextChangedListener = object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
-                // ignore
-            }
-
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                // ignore
-            }
-
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable) {
                 viewModel.passwdDataChanged(
                     old_password.text.toString(),
@@ -85,12 +74,10 @@ class ChangePasswordDialogFragment() : DialogFragment(), KodeinAware {
         new_password.addTextChangedListener(afterTextChangedListener)
         repeat_password.addTextChangedListener(afterTextChangedListener)
 
-
         changePassButton.setOnClickListener {
             viewModel.changePassword(old_password.text.toString(), new_password.text.toString())
             dismiss()
         }
-
     }
 
 
