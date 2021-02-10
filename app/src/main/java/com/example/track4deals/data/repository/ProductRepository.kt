@@ -9,6 +9,7 @@ import com.example.track4deals.data.models.ServerResponse
 import com.example.track4deals.services.ProductDataService
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import org.threeten.bp.ZonedDateTime
 
 class ProductRepository(
@@ -50,7 +51,7 @@ class ProductRepository(
         customUpsert: Boolean,
         isTracking: Int
     ) {
-        GlobalScope.launch(Dispatchers.IO) {
+        runBlocking(Dispatchers.IO) {
             val products: ArrayList<Product>? = serverResponse?.response
             if (products != null) {
                 for (p: Product in products) {
@@ -69,14 +70,14 @@ class ProductRepository(
                 productDataService.getOffers()
                 lastFetchTimeOffers = ZonedDateTime.now()
             }
-            return@withContext productDAO.getAllProduct()
+            return@withContext productDAO.getAllProduct().distinctUntilChanged()
         }
     }
 
     suspend fun getTrackingProducts(): Flow<List<ProductEntity>> {
         return withContext(Dispatchers.IO) {
             productDataService.getTracking()
-            return@withContext productDAO.getAllTracking()
+            return@withContext productDAO.getAllTracking().distinctUntilChanged()
         }
     }
 
