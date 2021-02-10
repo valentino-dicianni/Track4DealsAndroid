@@ -30,13 +30,13 @@ import org.kodein.di.generic.*
 class Track4DealsApplication : Application(), KodeinAware {
     override val kodein = Kodein.lazy {
         import(androidXModule(this@Track4DealsApplication)) // for application context
+        bind() from singleton { UserProvider() }
         bind() from singleton { ProductDB(instance()) }
         bind() from singleton { instance<ProductDB>().productDAO() }
         bind() from singleton { ConnectivityInterceptor(instance()) }
         bind() from singleton { JWTinterceptor(instance()) }
         bind() from singleton { OffersService(instance(), instance()) }
         bind() from singleton { ProfileService(instance(), instance()) }
-        bind() from singleton { UserProvider() }
         bind() from singleton { AuthService(instance(), instance()) }
         bind() from singleton { ProductDataService(instance()) }
         bind() from singleton { UserDataService(instance()) }
@@ -49,8 +49,6 @@ class Track4DealsApplication : Application(), KodeinAware {
         bind() from provider { OffersViewModelFactory(instance()) }
         bind() from provider { ProfileViewModelFactory(instance()) }
         bind() from provider { TrackingViewModelFactory(instance()) }
-        bind() from provider { PasswordConfirmationDialogFragment(instance()) }
-        bind() from provider { ChangePasswordDialogFragment(instance()) }
         bind() from provider { SettingsViewModelFactory(instance(), instance()) }
     }
 

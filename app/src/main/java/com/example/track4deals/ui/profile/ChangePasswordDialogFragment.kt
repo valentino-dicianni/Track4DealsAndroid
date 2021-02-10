@@ -1,40 +1,37 @@
 package com.example.track4deals.ui.profile
 
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.Toast
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.example.track4deals.R
-import com.example.track4deals.ui.login.LoginViewModelFactory
 import kotlinx.android.synthetic.main.change_password_fragment.*
 import kotlinx.android.synthetic.main.fragment_login.*
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.x.closestKodein
 import org.kodein.di.generic.instance
-import androidx.lifecycle.Observer
 
-class ChangePasswordDialogFragment(
-    private var viewModel: ProfileViewModel
-) : DialogFragment() {
-
+class ChangePasswordDialogFragment() : DialogFragment(), KodeinAware {
+    override val kodein by closestKodein()
+    private val profileViewModelFactory: ProfileViewModelFactory by instance()
+    private lateinit var viewModel : ProfileViewModel
 
     companion object {
-
         const val TAG = "ChangePasswordFragment"
     }
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        viewModel =
+            ViewModelProvider(this, profileViewModelFactory).get(ProfileViewModel::class.java)
         return inflater.inflate(R.layout.change_password_fragment, container, false)
     }
 
