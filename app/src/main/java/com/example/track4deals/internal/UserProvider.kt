@@ -24,6 +24,7 @@ class UserProvider {
     private lateinit var caregoty_list: Array<String?>
     private var phone: String = ""
     private var numTracking: Int = 0
+    private var googleLogin : Boolean = false
     private var loading = MutableLiveData<Boolean>()
 
     private var firebase = FirebaseAuth.getInstance()
@@ -63,6 +64,9 @@ class UserProvider {
 
     fun setProfilePic(url: Uri) {
         this.profilePic = url
+    }
+    fun setGoogleLogin(value : Boolean){
+        this.googleLogin = value
     }
 
 

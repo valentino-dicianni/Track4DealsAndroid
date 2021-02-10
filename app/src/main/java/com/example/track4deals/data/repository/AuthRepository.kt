@@ -51,6 +51,7 @@ class AuthRepository(
             auth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
                 when {
                     task.isSuccessful -> {
+                        userProvider.setGoogleLogin(false)
                         loginSuccess(result, false)
                     }
                     else -> {
@@ -72,6 +73,7 @@ class AuthRepository(
                 .addOnCompleteListener { task ->
                     when {
                         task.isSuccessful -> {
+                            userProvider.setGoogleLogin(true)
                             loginSuccess(result, true)
                         }
                         else -> {
