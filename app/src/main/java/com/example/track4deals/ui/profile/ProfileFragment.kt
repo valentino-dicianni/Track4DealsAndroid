@@ -81,7 +81,7 @@ class ProfileFragment : Fragment(), KodeinAware {
                         viewModel.updateUsername(name_profile.text.toString())
                     if (email_profile.text.toString() != userProvider.getEmail()) {
                         viewModel.emailDialogNeeded()
-                        PasswordConfirmationDialogFragment().show(
+                        PasswordConfirmationDialogFragment(viewModel).show(
                             parentFragmentManager,
                             PasswordConfirmationDialogFragment.TAG
                         )
@@ -93,7 +93,7 @@ class ProfileFragment : Fragment(), KodeinAware {
         }
 
         change_password_btn.setOnClickListener {
-            ChangePasswordDialogFragment().show(
+            ChangePasswordDialogFragment(viewModel).show(
                 parentFragmentManager,
                 ChangePasswordDialogFragment.TAG
             )
@@ -102,7 +102,7 @@ class ProfileFragment : Fragment(), KodeinAware {
 
         delete_btn.setOnClickListener {
             viewModel.deleteDialogNeeded()
-            PasswordConfirmationDialogFragment().show(
+            PasswordConfirmationDialogFragment(viewModel).show(
                 parentFragmentManager,
                 PasswordConfirmationDialogFragment.TAG
             )

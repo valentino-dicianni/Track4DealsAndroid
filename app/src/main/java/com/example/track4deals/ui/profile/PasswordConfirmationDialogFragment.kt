@@ -14,10 +14,9 @@ import org.kodein.di.KodeinAware
 import org.kodein.di.android.x.closestKodein
 import org.kodein.di.generic.instance
 
-class PasswordConfirmationDialogFragment : DialogFragment(), KodeinAware {
-    override val kodein by closestKodein()
-    private val profileViewModelFactory: ProfileViewModelFactory by instance()
-    private lateinit var viewModel: ProfileViewModel
+class PasswordConfirmationDialogFragment(
+    private var viewModel: ProfileViewModel
+) : DialogFragment(){
 
     companion object {
         const val TAG = "DialogWithData"
@@ -28,8 +27,6 @@ class PasswordConfirmationDialogFragment : DialogFragment(), KodeinAware {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewModel =
-            ViewModelProvider(this, profileViewModelFactory).get(ProfileViewModel::class.java)
         return inflater.inflate(R.layout.fragment_profile_edit_dialog, container, false)
     }
 

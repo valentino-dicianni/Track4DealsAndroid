@@ -49,6 +49,8 @@ class Track4DealsApplication : Application(), KodeinAware {
         bind() from provider { OffersViewModelFactory(instance()) }
         bind() from provider { ProfileViewModelFactory(instance()) }
         bind() from provider { TrackingViewModelFactory(instance()) }
+        bind() from provider { PasswordConfirmationDialogFragment(instance()) }
+        bind() from provider { ChangePasswordDialogFragment(instance()) }
         bind() from provider { SettingsViewModelFactory(instance(), instance()) }
     }
 }

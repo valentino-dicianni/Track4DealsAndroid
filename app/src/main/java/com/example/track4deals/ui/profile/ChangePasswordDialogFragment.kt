@@ -13,14 +13,11 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.track4deals.R
 import kotlinx.android.synthetic.main.change_password_fragment.*
 import kotlinx.android.synthetic.main.fragment_login.*
-import org.kodein.di.KodeinAware
-import org.kodein.di.android.x.closestKodein
-import org.kodein.di.generic.instance
 
-class ChangePasswordDialogFragment : DialogFragment(), KodeinAware {
-    override val kodein by closestKodein()
-    private val profileViewModelFactory: ProfileViewModelFactory by instance()
-    private lateinit var viewModel : ProfileViewModel
+class ChangePasswordDialogFragment(
+    private var viewModel: ProfileViewModel
+) : DialogFragment() {
+
 
     companion object {
         const val TAG = "ChangePasswordFragment"
@@ -30,8 +27,7 @@ class ChangePasswordDialogFragment : DialogFragment(), KodeinAware {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewModel =
-            ViewModelProvider(this, profileViewModelFactory).get(ProfileViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(ProfileViewModel::class.java)
         return inflater.inflate(R.layout.change_password_fragment, container, false)
     }
 
