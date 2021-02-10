@@ -54,12 +54,10 @@ class ProductRepository(
         runBlocking(Dispatchers.IO) {
             val products: ArrayList<Product>? = serverResponse?.response
             if (products != null) {
-                for (p: Product in products) {
-                    if (customUpsert)
-                        productDAO.customUpsert(p.productToEntity(isTracking))
-                    else
-                        productDAO.upsert(p.productToEntity(isTracking))
-                }
+                if (customUpsert)
+                    productDAO.upsertAllCustom(products, isTracking)
+                else
+                    productDAO.upsertAll(products, isTracking)
             }
         }
     }

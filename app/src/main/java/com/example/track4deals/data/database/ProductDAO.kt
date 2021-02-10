@@ -3,6 +3,7 @@ package com.example.track4deals.data.database
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.example.track4deals.data.database.entity.ProductEntity
+import com.example.track4deals.data.models.Product
 import kotlinx.coroutines.flow.Flow
 
 
@@ -34,15 +35,23 @@ interface ProductDAO {
     @Query("select * from product where is_tracking = 1")
     fun getAllTracking(): Flow<List<ProductEntity>>
 
+
     @Transaction
-    fun customUpsert(obj: ProductEntity?) {
-        val id = insert(obj)
-        if (id == -1L) {
-            if (obj != null) {
+    fun upsertAll(products : List<Product>, isTracking: Int) {
+        for (p : Product in products){
+            upsert(p.productToEntity(isTracking))
+        }
+    }
+
+    @Transaction
+    fun upsertAllCustom(products : List<Product>, isTracking: Int) {
+        for (p : Product in products){
+            val obj :ProductEntity = p.productToEntity(isTracking)
+            val id = insert(obj)
+            if (id == -1L) {
                 update(obj.ASIN, obj.normal_price, obj.offer_price, obj.discount_perc, obj.isDeal)
             }
         }
     }
-
 
 }
