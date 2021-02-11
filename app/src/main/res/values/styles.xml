@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="AccentButton" parent="ThemeOverlay.AppCompat.Dark">
+        <item name="colorAccent">?attr/colorPrimaryVariant</item>
+        <item name="colorButtonNormal">@color/colorDisabled</item>
+        <!-- customize colorButtonNormal for the disabled color -->
+        <item name="android:buttonStyle">@style/Widget.AppCompat.Button.Colored</item>
+    </style>
+</resources>
