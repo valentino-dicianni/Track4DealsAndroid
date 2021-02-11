@@ -67,10 +67,6 @@ class ProfileFragment : Fragment(), KodeinAware {
 
         disableAllTextField(formFieldList)
 
-        if (userProvider.isLoggedWithGoogle()) {
-            change_password_btn.isEnabled = false
-        }
-
         //UI LISTENERS
         modify_profile_btn.setOnClickListener {
             when (modify_profile_btn.text) {
@@ -220,6 +216,9 @@ class ProfileFragment : Fragment(), KodeinAware {
             email_field.text = userProvider.getEmail()
             email_profile.setText(userProvider.getEmail())
             item_tracked_label.text = userProvider.getNumTracking().toString()
+            if (userProvider.isLoggedWithGoogle()) {
+                change_password_btn.isEnabled = false
+            }
             group_loading.visibility = View.GONE
             group_uploading.visibility = View.GONE
             groupProfile.visibility = View.VISIBLE

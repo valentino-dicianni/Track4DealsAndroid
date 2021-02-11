@@ -91,7 +91,7 @@ class AuthRepository(
                                 putString("googleTokenId", idToken)
                                 apply()
                             }
-
+                            userProvider.setGoogleLogin(true)
                             loginSuccess(result, true)
                         }
                         else -> {
