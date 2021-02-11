@@ -112,6 +112,7 @@
 
         <Button
             android:id="@+id/loginButton"
+            android:theme="@style/AccentButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="start"

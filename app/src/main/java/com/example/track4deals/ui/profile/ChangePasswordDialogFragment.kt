@@ -11,6 +11,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.track4deals.R
+import com.example.track4deals.data.models.ChangePasswordFormState
 import kotlinx.android.synthetic.main.change_password_fragment.*
 import kotlinx.android.synthetic.main.fragment_login.*
 
@@ -71,6 +72,7 @@ class ChangePasswordDialogFragment(
 
         changePassButton.setOnClickListener {
             viewModel.changePassword(old_password.text.toString(), new_password.text.toString())
+            viewModel.invalidatePasswordFormState()
             dismiss()
         }
     }

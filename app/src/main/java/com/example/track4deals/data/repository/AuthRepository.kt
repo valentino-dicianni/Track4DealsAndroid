@@ -4,10 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.net.Uri
 import android.util.Log
-import android.view.View
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.liveData
-import androidx.lifecycle.switchMap
 import androidx.preference.PreferenceManager
 import com.example.track4deals.R
 import com.example.track4deals.data.constants.AppConstants.Companion.SERVER_OK
@@ -61,9 +58,12 @@ class AuthRepository(
                     task.isSuccessful -> {
                         with(sharedPref.edit()) {
                             putString("userPass", password)
+                            putBoolean("isLoggedWithGoogle", false)
                             apply()
                         }
                         userProvider.setPass(password)
+                        userProvider.setGoogleLogin(false)
+                        userProvider.setGoogleAuthToken("")
                         loginSuccess(result, false)
                     }
                     else -> {
@@ -92,7 +92,7 @@ class AuthRepository(
                                 apply()
                             }
                             userProvider.setGoogleLogin(true)
-                            userProvider.setGoogleToken(idToken)
+                            userProvider.setGoogleAuthToken(idToken)
                             loginSuccess(result, true)
                         }
                         else -> {
@@ -109,7 +109,7 @@ class AuthRepository(
         val currentUser = auth.currentUser
         if (currentUser != null) {
             currentUser.getIdToken(false).result?.token?.let {
-                userProvider.loadToken(it)
+                userProvider.loadJwtToken(it)
             }
             currentUser.displayName?.let { userProvider.setUsername(it) }
             currentUser.email?.let { userProvider.setEmail(it) }
@@ -274,7 +274,7 @@ class AuthRepository(
         _emailChangeRes: MutableLiveData<FirebaseOperationResponse>
     ) {
         val credential = if (userProvider.isLoggedWithGoogle()) {
-            GoogleAuthProvider.getCredential(userProvider.getGoogleToken(), null)
+            GoogleAuthProvider.getCredential(userProvider.getGoogleAuthToken(), null)
         } else {
             EmailAuthProvider.getCredential(userProvider.getEmail(), userProvider.getPass())
         }
@@ -333,14 +333,23 @@ class AuthRepository(
             if (it.isSuccessful) {
                 auth.currentUser!!.updatePassword(newpass)
                     .addOnCompleteListener { task ->
-                        if (task.isSuccessful)
+                        if (task.isSuccessful){
+
+                            with(sharedPref.edit()) {
+                                putString("userPass", newpass)
+                                apply()
+                            }
+
+                            userProvider.setPass(newpass)
+
                             _passwordChangeRes.postValue(
                                 FirebaseOperationResponse(
                                     true,
                                     FirebaseOperation.UPDATEPASSWORD,
                                     ""
                                 )
-                            ) else _passwordChangeRes.postValue(
+                            )
+                        } else _passwordChangeRes.postValue(
                             FirebaseOperationResponse(
                                 false,
                                 FirebaseOperation.UPDATEPASSWORD,
@@ -397,7 +406,7 @@ class AuthRepository(
      */
     fun delete(_deleteRes: MutableLiveData<FirebaseOperationResponse>) {
         val credential = if (userProvider.isLoggedWithGoogle()) {
-            GoogleAuthProvider.getCredential(userProvider.getGoogleToken(), null)
+            GoogleAuthProvider.getCredential(userProvider.getGoogleAuthToken(), null)
         } else {
             EmailAuthProvider.getCredential(userProvider.getEmail(), userProvider.getPass())
         }

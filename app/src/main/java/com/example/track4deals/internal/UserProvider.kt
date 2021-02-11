@@ -3,25 +3,16 @@ package com.example.track4deals.internal
 import android.content.Context
 import android.content.SharedPreferences
 import android.net.Uri
-import android.util.LogPrinter
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.liveData
 import androidx.lifecycle.switchMap
 import androidx.preference.PreferenceManager
-import com.example.track4deals.data.models.FirebaseOperation
-import com.example.track4deals.data.models.FirebaseOperationResponse
-import com.example.track4deals.data.models.ServerResponse
-import com.google.firebase.FirebaseException
 import com.google.firebase.auth.*
-import com.google.firebase.auth.ktx.userProfileChangeRequest
-import java.lang.Exception
-import java.security.AuthProvider
 
 class UserProvider(
     private val context: Context
 ) {
-    private var token: String = ""
+    private var jwtToken: String = ""
     private var username: String = ""
     private var email: String = ""
     private var profilePic: Uri = Uri.EMPTY
@@ -29,7 +20,7 @@ class UserProvider(
     private var phone: String = ""
     private var numTracking: Int = 0
     private var googleLogin: Boolean = false
-    private var googleToken: String = ""
+    private var googleAuthToken: String = ""
     private var loading = MutableLiveData<Boolean>()
     private var password: String = ""
     private var firebase = FirebaseAuth.getInstance()
@@ -37,13 +28,13 @@ class UserProvider(
         PreferenceManager.getDefaultSharedPreferences(context)
 
     init {
-        getToken {
-            token = it
+        getJwtToken {
+            jwtToken = it
             loading.postValue(true)
         }
 
         googleLogin = this.sharedPref.getBoolean("isLoggedWithGoogle", false)
-        googleToken = this.sharedPref.getString("googleTokenId", "")!!
+        googleAuthToken = this.sharedPref.getString("googleTokenId", "")!!
         password = this.sharedPref.getString("userPass", "")!!
     }
 
@@ -54,10 +45,10 @@ class UserProvider(
     }
 
 
-    fun getToken() = token
+    fun getJwtToken() = jwtToken
 
-    fun loadToken(token: String) {
-        this.token = token
+    fun loadJwtToken(token: String) {
+        this.jwtToken = token
     }
 
     fun setUsername(username: String) {
@@ -85,16 +76,16 @@ class UserProvider(
         this.googleLogin = value
     }
 
-    fun setGoogleToken(token: String) {
-        this.googleToken = token
+    fun setGoogleAuthToken(token: String) {
+        this.googleAuthToken = token
     }
 
     fun isLoggedWithGoogle(): Boolean {
         return this.googleLogin
     }
 
-    fun getGoogleToken(): String {
-        return this.googleToken
+    fun getGoogleAuthToken(): String {
+        return this.googleAuthToken
     }
 
     fun getProfilePic(): Uri {
@@ -126,7 +117,7 @@ class UserProvider(
     }
 
     fun isLoggedIn(): Boolean {
-        if (token != "") {
+        if (jwtToken != "") {
             return true
         }
         return false
@@ -137,7 +128,7 @@ class UserProvider(
      * Populate displayName, email and photoUrl with server data
      * @param callback callback function for returning JWT
      */
-    private fun getToken(callback: (String) -> Unit) {
+    private fun getJwtToken(callback: (String) -> Unit) {
         val user = firebase.currentUser
         if (user != null) {
             user.getIdToken(false).addOnCompleteListener {
@@ -156,7 +147,7 @@ class UserProvider(
     }
 
     fun flush() {
-        token = ""
+        jwtToken = ""
         profilePic = Uri.EMPTY
         googleLogin = false
 

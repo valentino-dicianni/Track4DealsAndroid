@@ -86,6 +86,9 @@ class ProfileViewModel(
         }
     }
 
+    fun invalidatePasswordFormState(){
+        changeForm.value = ChangePasswordFormState(isDataValid = false)
+    }
 
     // A placeholder password validation check
     private fun isPasswordValid(password: String): Boolean {

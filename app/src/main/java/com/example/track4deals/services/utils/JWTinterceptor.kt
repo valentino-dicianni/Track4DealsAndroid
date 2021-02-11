@@ -11,7 +11,7 @@ class JWTinterceptor(
     override fun intercept(chain: Interceptor.Chain): Response {
         val newRequest: Request
         newRequest = if (userProvider.isLoggedIn()) {
-            val token = userProvider.getToken()
+            val token = userProvider.getJwtToken()
             chain.request().newBuilder()
                 .addHeader("Authorization", "Bearer $token")
                 .build()
