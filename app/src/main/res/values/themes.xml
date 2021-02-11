@@ -8,6 +8,7 @@
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/secondaryColorTeal</item>
         <item name="colorSecondaryVariant">@color/secondaryLightColorTeal</item>
+        <item name="colorButtonNormal">?attr/colorPrimaryVariant</item>
         <item name="cardBackgroundColor">?attr/colorSecondary</item>
         <item name="android:textColor">@color/secondaryTextColorTeal</item>
         <item name="colorOnSecondary">@color/secondaryTextColorTeal</item>
