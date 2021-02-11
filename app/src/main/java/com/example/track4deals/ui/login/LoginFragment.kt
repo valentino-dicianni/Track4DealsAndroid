@@ -1,5 +1,6 @@
 package com.example.track4deals.ui.login
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -73,21 +74,32 @@ class LoginFragment : Fragment(), KodeinAware {
                     return@Observer
                 }
 
-                if(forgotFormStete.isDataValid){
+                if (forgotFormStete.isDataValid) {
                     forgot_password.isEnabled = true
-                    forgot_password.setTextColor(ContextCompat.getColor(requireContext(), R.color.primaryDarkColorBlue))
-                }else{
+                    forgot_password.setTextColor(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.primaryDarkColorBlue
+                        )
+                    )
+                } else {
                     forgot_password.isEnabled = false
-                    forgot_password.setTextColor(ContextCompat.getColor(requireContext(), R.color.primaryDarkColorGray))
+                    forgot_password.setTextColor(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.primaryDarkColorGray
+                        )
+                    )
                 }
 
             })
 
         loginViewModel.changePswResponse.observe(viewLifecycleOwner, Observer {
-            if(it.status) {
+            if (it.status) {
                 Toast.makeText(context, getString(R.string.checkEmail), Toast.LENGTH_LONG).show()
             } else {
-                Toast.makeText(context, getString(R.string.error_reset_Psw), Toast.LENGTH_LONG).show()
+                Toast.makeText(context, getString(R.string.error_reset_Psw), Toast.LENGTH_LONG)
+                    .show()
 
             }
         })

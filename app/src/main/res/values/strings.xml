@@ -15,7 +15,7 @@
     <string name="action_cancel">Cancella</string>
     <string name="action_sign_in_short">Accedi</string>
     <string name="welcome">"Benvenuto!"</string>
-    <string name="invalid_username">Non è unsername valido</string>
+    <string name="invalid_username">Non è un username valido</string>
     <string name="invalid_password">La password deve essere maggiore di 5 caratteri</string>
     <string name="login_failed">Login fallito</string>
     <string name="register_failed">Registrazione fallita</string>
@@ -102,9 +102,10 @@
     <string name="registrationTokenMsg">"Registrazione Firebase token FMC: "</string>
     <!-- Confirmation Dialog -->
     <string name="dialog_message_email">Per modificare l\'email è necessario reinserire la password:</string>
-    <string name="dialog_message_delete">Per eliminare l\'account è necessario reinserire la password:</string>
+    <string name="dialog_message_delete">Sicuro di voler eliminare l\'account?</string>
     <string name="caps_edit">MODIFICA</string>
     <string name="caps_delete">ELIMINA</string>
+    <string name="caps_abort">ANNULLA</string>
     <string name="notSamePsw">Le password non coincidono</string>
     <string name="registrationSucceded">Registrazione effettuata</string>
     <string name="emailRegError">Email già registrata</string>
@@ -113,7 +114,7 @@
     <string name="mario_rossi_email_com">mario.rossi@email.com</string>
     <string name="mario_rossi">Mario Rossi</string>
     <string name="trackp_0">0</string>
-    <string name="imageError">Nessuna immaigine caricata</string>
+
     <!-- Reset Password -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="password_forgotten">Hai dimenticato la password?</string>
@@ -125,5 +126,7 @@
     <string name="darkTheme_preference">isDark</string>
     <string name="notification_preference">isNotificationOn</string>
     <string name="first_boot">isFirstBoot</string>
+    <string name="isLoggedWithGoogle">isLoggedWithGoogle</string>
+    <string name="googleTokenId">googleTokenId</string>
 
 </resources>

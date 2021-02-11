@@ -28,5 +28,4 @@
             android:title="@string/logout" />
     </PreferenceCategory>
 
-
 </PreferenceScreen>

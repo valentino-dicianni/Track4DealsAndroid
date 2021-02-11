@@ -16,7 +16,6 @@ import com.example.track4deals.services.UserDataService
 import com.example.track4deals.ui.login.LoginViewModelFactory
 import com.example.track4deals.ui.offers.OffersViewModelFactory
 import com.example.track4deals.ui.profile.ChangePasswordDialogFragment
-import com.example.track4deals.ui.profile.PasswordConfirmationDialogFragment
 import com.example.track4deals.ui.profile.ProfileViewModelFactory
 import com.example.track4deals.ui.register.RegisterViewModelFactory
 import com.example.track4deals.ui.settings.SettingsViewModelFactory
@@ -30,7 +29,7 @@ import org.kodein.di.generic.*
 class Track4DealsApplication : Application(), KodeinAware {
     override val kodein = Kodein.lazy {
         import(androidXModule(this@Track4DealsApplication)) // for application context
-        bind() from singleton { UserProvider() }
+        bind() from singleton { UserProvider(instance()) }
         bind() from singleton { ProductDB(instance()) }
         bind() from singleton { instance<ProductDB>().productDAO() }
         bind() from singleton { ConnectivityInterceptor(instance()) }
@@ -41,7 +40,7 @@ class Track4DealsApplication : Application(), KodeinAware {
         bind() from singleton { ProductDataService(instance()) }
         bind() from singleton { UserDataService(instance()) }
         bind() from singleton { ProductRepository(instance(), instance()) }
-        bind() from singleton { AuthRepository(instance(), instance(), instance()) }
+        bind() from singleton { AuthRepository(instance(), instance(), instance(), instance()) }
         bind() from singleton { UserRepository(instance()) }
 
         bind() from provider { RegisterViewModelFactory(instance()) }
@@ -49,7 +48,6 @@ class Track4DealsApplication : Application(), KodeinAware {
         bind() from provider { OffersViewModelFactory(instance()) }
         bind() from provider { ProfileViewModelFactory(instance()) }
         bind() from provider { TrackingViewModelFactory(instance()) }
-        bind() from provider { PasswordConfirmationDialogFragment(instance()) }
         bind() from provider { ChangePasswordDialogFragment(instance()) }
         bind() from provider { SettingsViewModelFactory(instance(), instance()) }
     }

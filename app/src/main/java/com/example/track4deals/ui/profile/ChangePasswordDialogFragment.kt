@@ -27,7 +27,6 @@ class ChangePasswordDialogFragment(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewModel = ViewModelProvider(this).get(ProfileViewModel::class.java)
         return inflater.inflate(R.layout.change_password_fragment, container, false)
     }
 

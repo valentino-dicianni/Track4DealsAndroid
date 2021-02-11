@@ -1,6 +1,7 @@
 package com.example.track4deals.ui.profile
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -66,12 +67,22 @@ class ProfileFragment : Fragment(), KodeinAware {
 
         disableAllTextField(formFieldList)
 
+        if (userProvider.isLoggedWithGoogle()) {
+            change_password_btn.isEnabled = false
+        }
+
         //UI LISTENERS
         modify_profile_btn.setOnClickListener {
             when (modify_profile_btn.text) {
 
                 getString(R.string.edit_button_it) -> {
-                    enableAllTextField(mapOfFields)
+                    if(userProvider.isLoggedWithGoogle()) {
+                        name_profile.keyListener = mapOfFields[name_profile]
+                        name_profile.isFocusableInTouchMode = true
+                    }else {
+                        enableAllTextField(mapOfFields)
+                    }
+
                     modify_profile_btn.text = getString(R.string.Save)
                 }
 
@@ -80,12 +91,7 @@ class ProfileFragment : Fragment(), KodeinAware {
                     if (name_profile.text.toString() != userProvider.getUserName())
                         viewModel.updateUsername(name_profile.text.toString())
                     if (email_profile.text.toString() != userProvider.getEmail()) {
-                        viewModel.emailDialogNeeded()
-                        PasswordConfirmationDialogFragment(viewModel).show(
-                            parentFragmentManager,
-                            PasswordConfirmationDialogFragment.TAG
-                        )
-                        viewModel.modifyEmail(email_profile.text.toString())
+                        viewModel.updateEmail(email_profile.text.toString())
                     }
                     modify_profile_btn.text = getString(R.string.edit_button_it)
                 }
@@ -101,12 +107,7 @@ class ProfileFragment : Fragment(), KodeinAware {
 
 
         delete_btn.setOnClickListener {
-            viewModel.deleteDialogNeeded()
-            PasswordConfirmationDialogFragment(viewModel).show(
-                parentFragmentManager,
-                PasswordConfirmationDialogFragment.TAG
-            )
-            viewModel.delete(true)
+            deleteAlertDialog(view)
         }
 
         edit_image_icon.setOnClickListener {
@@ -135,52 +136,44 @@ class ProfileFragment : Fragment(), KodeinAware {
         })
 
 
+        viewModel.emailChangeRes.observe(viewLifecycleOwner, Observer {
+            if (it == null) return@Observer
 
-        viewModel.updateEmailResult.observe(viewLifecycleOwner, Observer { res ->
-            if (res == null) return@Observer
-            res.observe(viewLifecycleOwner, {
-                if (it != null) {
-
-                    if (it.status) {
-                        bindUI()
-                        makeText(
-                            context,
-                            getString(R.string.email_change_success),
-                            Toast.LENGTH_LONG
-                        ).show()
-                    } else
-                        makeText(
-                            context,
-                            getString(R.string.generic_error) + " ${it.message}",
-                            Toast.LENGTH_LONG
-                        ).show()
-                }
-            })
+            if (it.status) {
+                bindUI()
+                makeText(
+                    context,
+                    getString(R.string.email_change_success),
+                    Toast.LENGTH_LONG
+                ).show()
+            } else
+                makeText(
+                    context,
+                    getString(R.string.generic_error) + " ${it.message}",
+                    Toast.LENGTH_LONG
+                ).show()
         })
 
-        viewModel.deleteResult.observe(viewLifecycleOwner, Observer { res ->
-            if (res == null) return@Observer
-            res.observe(viewLifecycleOwner, {
-                if (it != null) {
+        viewModel.deleteRes.observe(viewLifecycleOwner, Observer {
+            if (it == null) return@Observer
 
-                    if (it.status) {
-                        makeText(
-                            context,
-                            getString(R.string.user_delete_success),
-                            Toast.LENGTH_LONG
-                        ).show()
-                        FirebaseAuth.getInstance().signOut()
-                        userProvider.flush()
-                        navigateLogin()
-                    } else
-                        makeText(
-                            context,
-                            getString(R.string.generic_error) + " ${it.message}",
-                            Toast.LENGTH_LONG
-                        ).show()
-                }
-            })
+            if (it.status) {
+                makeText(
+                    context,
+                    getString(R.string.user_delete_success),
+                    Toast.LENGTH_LONG
+                ).show()
+                FirebaseAuth.getInstance().signOut()
+                userProvider.flush()
+                navigateLogin()
+            } else
+                makeText(
+                    context,
+                    getString(R.string.generic_error) + " ${it.message}",
+                    Toast.LENGTH_LONG
+                ).show()
         })
+
 
         viewModel.passwordChangeRes.observe(viewLifecycleOwner, Observer {
             if (it == null) return@Observer
@@ -359,6 +352,29 @@ class ProfileFragment : Fragment(), KodeinAware {
                 .addToBackStack(LoginFragment.TAG)
                 .commit()
         }
+    }
+
+    // When User cilcks on dialog button, call this method
+    fun deleteAlertDialog(view: View) {
+        //Instantiate builder variable
+        val builder = AlertDialog.Builder(view.context)
+
+        // set title
+        builder.setTitle(getString(R.string.dialog_message_delete))
+
+        builder.setPositiveButton(
+            getString(R.string.caps_delete)) { dialog, id ->
+            viewModel.delete()
+
+        }
+
+        builder.setNegativeButton(
+            getString(R.string.caps_abort)) { dialog, id ->
+           dialog.dismiss()
+        }
+
+
+        builder.show()
     }
 
 

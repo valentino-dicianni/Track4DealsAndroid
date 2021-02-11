@@ -1,9 +1,14 @@
 package com.example.track4deals.data.repository
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.net.Uri
 import android.util.Log
-import androidx.lifecycle.LiveData
+import android.view.View
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.liveData
+import androidx.lifecycle.switchMap
+import androidx.preference.PreferenceManager
 import com.example.track4deals.R
 import com.example.track4deals.data.constants.AppConstants.Companion.SERVER_OK
 import com.example.track4deals.data.models.*
@@ -11,12 +16,12 @@ import com.example.track4deals.services.utils.NoConnectivityException
 import com.example.track4deals.internal.UserProvider
 import com.example.track4deals.services.AuthService
 import com.example.track4deals.services.OffersService
-import com.example.track4deals.services.ProductDataService
 import com.example.track4deals.services.utils.NoInternetException
 import com.google.android.gms.tasks.OnCompleteListener
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.*
+import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.messaging.FirebaseMessaging
+import kotlinx.android.synthetic.main.fragment_login.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -32,10 +37,13 @@ import java.net.SocketTimeoutException
 class AuthRepository(
     private val userProvider: UserProvider,
     private val authService: AuthService,
-    private val offersService: OffersService
+    private val offersService: OffersService,
+    private val context: Context
 ) {
     private var auth: FirebaseAuth = FirebaseAuth.getInstance()
     private var messaging: FirebaseMessaging = FirebaseMessaging.getInstance()
+    private var sharedPref: SharedPreferences =
+        PreferenceManager.getDefaultSharedPreferences(context)
 
 
     companion object {
@@ -51,7 +59,11 @@ class AuthRepository(
             auth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
                 when {
                     task.isSuccessful -> {
-                        userProvider.setGoogleLogin(false)
+                        with(sharedPref.edit()) {
+                            putString("userPass", password)
+                            apply()
+                        }
+                        userProvider.setPass(password)
                         loginSuccess(result, false)
                     }
                     else -> {
@@ -73,7 +85,13 @@ class AuthRepository(
                 .addOnCompleteListener { task ->
                     when {
                         task.isSuccessful -> {
-                            userProvider.setGoogleLogin(true)
+
+                            with(sharedPref.edit()) {
+                                putBoolean("isLoggedWithGoogle", true)
+                                putString("googleTokenId", idToken)
+                                apply()
+                            }
+
                             loginSuccess(result, true)
                         }
                         else -> {
@@ -174,49 +192,243 @@ class AuthRepository(
         })
     }
 
-
+    /**
+     * Ask Firebase to change username
+     * @param username username to be changed
+     * @param _usernameChangeRes liveData updated with the result of the request
+     */
     fun updateUsername(
         username: String,
         _usernameChangeRes: MutableLiveData<FirebaseOperationResponse>
     ) {
-        userProvider.updateUsername(username, _usernameChangeRes)
+        val profileUpdates = userProfileChangeRequest {
+            displayName = username
+        }
+
+        auth.currentUser!!.updateProfile(profileUpdates)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    userProvider.setUsername(username)
+                    _usernameChangeRes.postValue(
+                        FirebaseOperationResponse(
+                            true,
+                            FirebaseOperation.UPDATEUSERNAME,
+                            ""
+                        )
+                    )
+                } else _usernameChangeRes.postValue(
+                    FirebaseOperationResponse(
+                        false,
+                        FirebaseOperation.UPDATEUSERNAME,
+                        task.exception?.message.toString()
+                    )
+                )
+            }
     }
 
+    /**
+     * Ask Firebase to update profile picture uri
+     * @param pic new picture uri
+     * @param _pictureChangeRes liveData updated with the result of the request
+     */
     fun updatePicture(
-        uri: Uri,
+        pic: Uri,
         _pictureChangeRes: MutableLiveData<FirebaseOperationResponse>
     ) {
-        userProvider.updatePicture(uri, _pictureChangeRes)
+        val profileUpdates = userProfileChangeRequest {
+            photoUri = pic
+        }
+
+        auth.currentUser!!.updateProfile(profileUpdates)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    _pictureChangeRes.postValue(
+                        FirebaseOperationResponse(
+                            true,
+                            FirebaseOperation.UPDATEPIC,
+                            ""
+                        )
+                    )
+                    userProvider.setProfilePic(pic)
+                } else _pictureChangeRes.postValue(
+                    FirebaseOperationResponse(
+                        false,
+                        FirebaseOperation.UPDATEPIC,
+                        task.exception?.message.toString()
+                    )
+                )
+            }
+
     }
 
-    suspend fun updateEmail(
+    /**
+     * Ask Firebase to update profile email
+     * Since it's a sensitive operation password confirmation is required
+     * @param email new email
+     * @param password user password
+     * @param _emailChangeRes liveData updated with the result of the request
+     */
+    fun updateEmail(
         email: String,
-        password: String,
         _emailChangeRes: MutableLiveData<FirebaseOperationResponse>
     ) {
-        return withContext(Dispatchers.IO) {
-            userProvider.updateEmail(email, password, _emailChangeRes)
+        val credential = if (userProvider.isLoggedWithGoogle()) {
+            GoogleAuthProvider.getCredential(userProvider.getGoogleToken(), null)
+        } else {
+            EmailAuthProvider.getCredential(userProvider.getEmail(), userProvider.getPass())
         }
+
+        auth.currentUser!!.reauthenticate(credential).addOnCompleteListener() {
+
+            if (it.isSuccessful) {
+                auth.currentUser!!.updateEmail(email)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            userProvider.setEmail(email)
+                            _emailChangeRes.postValue(
+                                FirebaseOperationResponse(
+                                    true,
+                                    FirebaseOperation.UPDATEEMAIL,
+                                    ""
+                                )
+                            )
+                        } else _emailChangeRes.postValue(
+                            FirebaseOperationResponse(
+                                false,
+                                FirebaseOperation.UPDATEEMAIL,
+                                task.exception?.message.toString()
+                            )
+                        )
+                    }
+            } else _emailChangeRes.postValue(
+                FirebaseOperationResponse(
+                    false,
+                    FirebaseOperation.UPDATEEMAIL,
+                    it.exception?.message.toString()
+                )
+            )
+
+        }
+
     }
 
+
+    /**
+     * Reauthenticate user and then ask Firebase to change password
+     * @param oldpass old password
+     * @param newpass new password
+     * @param _passwordChangeRes liveData updated with the result of the request
+     */
     fun updatePassword(
         oldpass: String,
         newpass: String,
         _passwordChangeRes: MutableLiveData<FirebaseOperationResponse>
     ) {
-        userProvider.updatePassword(oldpass, newpass, _passwordChangeRes)
+        val credential: AuthCredential =
+            EmailAuthProvider.getCredential(userProvider.getEmail(), oldpass)
+
+        auth.currentUser!!.reauthenticate(credential).addOnCompleteListener() {
+
+            if (it.isSuccessful) {
+                auth.currentUser!!.updatePassword(newpass)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful)
+                            _passwordChangeRes.postValue(
+                                FirebaseOperationResponse(
+                                    true,
+                                    FirebaseOperation.UPDATEPASSWORD,
+                                    ""
+                                )
+                            ) else _passwordChangeRes.postValue(
+                            FirebaseOperationResponse(
+                                false,
+                                FirebaseOperation.UPDATEPASSWORD,
+                                task.exception?.message.toString()
+                            )
+                        )
+
+                    }
+            } else _passwordChangeRes.postValue(
+                FirebaseOperationResponse(
+                    false,
+                    FirebaseOperation.UPDATEPASSWORD,
+                    it.exception?.message.toString()
+                )
+            )
+        }
     }
 
+    /**
+     * Ask Firebase to reset users password
+     * An email will be sent to given address with reset password instruction
+     * @param email email of the account to be resetted
+     * @param _pictureChangeRes liveData updated with the result of the request
+     */
     fun resetPassword(
         email: String,
         _passwordResetRes: MutableLiveData<FirebaseOperationResponse>
     ) {
-        userProvider.resetPassword(email, _passwordResetRes)
+        auth.sendPasswordResetEmail(email)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful)
+                    _passwordResetRes.postValue(
+                        FirebaseOperationResponse(
+                            true,
+                            FirebaseOperation.RESETPASSWORD,
+                            ""
+                        )
+                    )
+                else _passwordResetRes.postValue(
+                    FirebaseOperationResponse(
+                        false,
+                        FirebaseOperation.RESETPASSWORD,
+                        task.exception?.message.toString()
+                    )
+                )
+            }
     }
 
-    suspend fun delete(password: String, _deleteRes: MutableLiveData<FirebaseOperationResponse>) {
-        return withContext(Dispatchers.IO) {
-            userProvider.delete(password, _deleteRes)
+    /**
+     * Ask Firebase to delete current user profile
+     * Since it's a sensitive operation password confirmation is required
+     * @param password user password
+     * @param _deleteRes liveData updated with the result of the request
+     */
+    fun delete(_deleteRes: MutableLiveData<FirebaseOperationResponse>) {
+        val credential = if (userProvider.isLoggedWithGoogle()) {
+            GoogleAuthProvider.getCredential(userProvider.getGoogleToken(), null)
+        } else {
+            EmailAuthProvider.getCredential(userProvider.getEmail(), userProvider.getPass())
+        }
+
+        auth.currentUser!!.reauthenticate(credential).addOnCompleteListener() {
+
+            if (it.isSuccessful) {
+                auth.currentUser!!.delete()
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            if (task.isSuccessful) _deleteRes.postValue(
+                                FirebaseOperationResponse(
+                                    true,
+                                    FirebaseOperation.DELETE,
+                                    ""
+                                )
+                            ) else _deleteRes.postValue(
+                                FirebaseOperationResponse(
+                                    false,
+                                    FirebaseOperation.DELETE,
+                                    task.exception?.message.toString()
+                                )
+                            )
+                        }
+                    }
+            } else _deleteRes.postValue(
+                FirebaseOperationResponse(
+                    false,
+                    FirebaseOperation.DELETE,
+                    it.exception?.message.toString()
+                )
+            )
         }
     }
 }
